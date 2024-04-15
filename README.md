@@ -5,11 +5,12 @@ Run nyo muna ung xampp ung APACHE at MYSQL
 
 Terminal commands:
 [1] cp .env.example .env
-[2] php artisan migrate
-[3] php install
-[4] php run dev
-[5] php artisan generate:key
-[6] php artisan serve
+[2] composer install
+[3] php artisan migrate
+[4] php artisan key:generate
+[5] npm install
+[6] npm run dev
+[7] php artisan serve
 
 pag may error message nyo lang ako
 
