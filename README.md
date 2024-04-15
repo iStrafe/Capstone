@@ -4,12 +4,12 @@ Pag na install nyo ung project gawin nyo muna dis sa terminal sa vscode, Make su
 Run nyo muna ung xampp ung APACHE at MYSQL
 
 Terminal commands:
-cp .env.example .env
-php artisan migrate
-php install
-php run dev
-php artisan generate:key
-php artisan serve
+[1] cp .env.example .env
+[2] php artisan migrate
+[3] php install
+[4] php run dev
+[5] php artisan generate:key
+[6] php artisan serve
 
 pag may error message nyo lang ako
 
