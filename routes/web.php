@@ -18,3 +18,23 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__.'/auth.php';
+
+Route::get('services', function () {
+    return view('services');
+});
+
+Route::get('Adopt', function () {
+    return view('adopt');
+});
+
+Route::get('Report', function () {
+    return view('report');
+});
+
+Route::get('Donate', function () {
+    return view('donate');
+});
+
+Route::get('ContactUs', function(){
+    return view ('contactus');
+});
