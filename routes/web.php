@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CatinfoController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\serviceController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -48,9 +49,16 @@ Route::get('aboutus', function () {
     return view('aboutus');
 });
 
-Route::get('/services', function () {
-    return view('services');
-})->middleware(['auth', 'verified'])->name('services');
+Route::middleware('auth')->group(function () {
+
+
+    //Service page routes
+    Route::get('/services',[serviceController::class,'showServices']);
+    Route::get('/adopt',[serviceController::class,'showAdopt']);
+    Route::get('/donate',[serviceController::class,'showDonate']);
+    Route::get('/report',[serviceController::class,'showReport']);
+   
+});
 
 Route::get('events', function () {
     return view('events');
@@ -64,17 +72,11 @@ Route::get('feed', function(){
     return view ('feed');
 });
 
+//Service page
+/*
+Route::group(['prefix' => 'service'],function(){
 
-//Services routes
-Route::get('Adopt', function () {
-    return view('adopt');
-});
+    Route::get('/',[serviceController::class,'showServices']);
 
-Route::get('Report', function () {
-    return view('report');
-});
-
-Route::get('Donate', function () {
-    return view('donate');
-});
+})->middleware(['auth', 'verified'])->name('services');*/
 

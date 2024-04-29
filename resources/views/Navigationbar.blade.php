@@ -4,7 +4,7 @@
                 <a class="navbar-brand px-4 py-3" href="{{url('aboutus')}}">ABOUT US</a>
                 <a class="navbar-brand px-4 py-3" href="{{url('services')}}">SERVICES</a>
                 <a class="navbar-brand px-4 py-3" href="{{url('events')}}">NEWS / EVENTS</a>
-                <a class="navbar-brand px-4 py-3" href="contactus">CONTACT US</a>
+                <a class="navbar-brand px-4 py-3" href="{{url('ContactUs')}}">CONTACT US</a>
                 <a class="navbar-brand px-4 py-3" href="#">FEED</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
