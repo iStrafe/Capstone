@@ -104,14 +104,17 @@
 
     </head>
     <body class="..">
-       <div class="font-sans antialiased dark:bg-black dark:text-white/50">
+       <div class="font-sans antialiased dark:bg-black dark:text-white/50 border border-warning">
             @include('Navigationbar')
         </div>
 
+        <div>
+          <img src="images\Cat2.jpg" alt="Jane" style="width:100%; height: 500px;">
+        </div>
+
     <div class="about-section border border-warning">
-        <img src="images\Cat2.jpg" alt="Jane" style="width:100%; height: 500px;">
         <div class="centered">
-          <h1 class>CONTACT US</h1>
+            <h1 class>CONTACT US</h1>
         </div>
     </div>
 
@@ -119,18 +122,18 @@
       <h2 style="text-align:center"><b>Our Team</b></h2>
     </div>
 
-<div class="row">
-  <div class="column">
-    <div class="card">
-      <img src="images\Bartolazo.jpg" alt="Jane" style="width:100%;">
-      <div class="container">
-        <h2>Althea Elline G. Bartolazo</h2>
-        <p class="title">UI/UX</p>
-        <p>althea.elline.bartolazo@adamson.edu.ph</p>
-        <p><button class="button">Contact</button></p>
+    <div class="row">
+        <div class="column">
+            <div class="card">
+              <img src="images\Bartolazo.jpg" alt="Jane" style="width:100%;">
+                <div class="container">
+                  <h2>Althea Elline G. Bartolazo</h2>
+                    <p class="title">UI/UX</p>
+                    <p>althea.elline.bartolazo@adamson.edu.ph</p>
+                    <p><button class="button">Contact</button></p>
+                </div>
+          </div>
       </div>
-    </div>
-  </div>
 
   <div class="column">
     <div class="card">
