@@ -8,6 +8,7 @@
                             body {
                   font-family: Arial, Helvetica, sans-serif;
                   margin: 0;
+                  background-color: #ff9966;
                 }
 
                 html {
@@ -33,7 +34,7 @@
                 .about-section {
                   padding: 50px;
                   text-align: center;
-                  background-color: #ff9966;
+                  background-color: black;
                   color: white;
                 }
 
