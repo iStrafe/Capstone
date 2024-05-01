@@ -11,8 +11,8 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
 </head>
 
+<body>
 
-<div class="container-sm my-5">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"></script>
     <div class="carousel slide" id="carouseltest"
     data-bs-wrap="true"
@@ -21,31 +21,35 @@
 
  <div class="carousel-inner">
 
- <div class="carousel-item active"
- data-bs-interval="2000">
- <div class="d-flex justify-content-center">
-    <img src="images\Guardians of life.jpg" class="w-35">
-</div>
- </div>
+     <div class="carousel-item active"data-bs-interval="2000">
+     <div class="d-flex justify-content-center">
+     <img src="images\Guardians of life.jpg" class="w-35">
+      </div>
+    </div>
 
- <div class="carousel-item"
- data-bs-interval="2000">
+
+ <div class="carousel-item"data-bs-interval="2000">
  <div class="d-flex justify-content-center">
     <img src="images\catto donations.jpg" class="w-50">
     <div class="carousel-caption d-none d-md-block">
         <button class="btn btn-primary" href="{{ url('https://www.facebook.com/groups/946027585595117') }}">Redirect</button>
     </div>
-</div>
- </div>
+     </div>
+    </div>
 
- <div class="carousel-item"
- data-bs-interval="2000">
+ 
+
+ <div class="carousel-item" data-bs-interval="2000">
  <div class="d-flex justify-content-center">
     <img src="images\cute-feline-cate.jpg" class="w-75">
 </div>
  </div>
 
- </div>
+
+</div>
+
+
+
 <button class="carousel-control-prev" type="button"
 data-bs-target="#carouseltest"
 data-bs-slide="prev">
@@ -82,13 +86,6 @@ data-bs-slide="next"><span class="carousel-control-next-icon"></span></button>
                   
              </div>
 </div> 
- 
-
-    
-</style>
-</body>
-
-</html>
 <style>
     h1{
         font-size: 50px;
@@ -106,3 +103,6 @@ data-bs-slide="next"><span class="carousel-control-next-icon"></span></button>
         };
     
 </style>
+</body>
+
+</html>
