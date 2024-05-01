@@ -108,9 +108,11 @@
             @include('Navigationbar')
         </div>
 
-    <div class="about-section">
-        <img src="images\cute-feline-cate.jpg" alt="Jane" style="width:100%; height: 300px;">
-        <div class="centered"><h1>CONTACT US</h1></div>
+    <div class="about-section border border-warning">
+        <img src="images\Cat2.jpg" alt="Jane" style="width:100%; height: 500px;">
+        <div class="centered">
+          <h1 class>CONTACT US</h1>
+        </div>
     </div>
 
     <div class="team">
@@ -132,7 +134,7 @@
 
   <div class="column">
     <div class="card">
-      <img src="images/dogpfp.png" alt="Mike" style="width:100%">
+      <img src="images/pissbuk.jpg" alt="Mike" style="width:100%">
       <div class="container">
         <h2>Reginald Unisa</h2>
         <p class="title">Project Manager</p>
@@ -144,7 +146,7 @@
 
   <div class="column">
     <div class="card">
-      <img src="images/dogpfp.png" alt="John" style="width:100%">
+      <img src="images/pissbuk.jpg" alt="John" style="width:100%">
       <div class="container">
         <h2>Jan Amhir Ventanilla</h2>
         <p class="title">Lead Programmer</p>

@@ -38,8 +38,11 @@
 =======
                 height: 60vh;
                 padding: 0 8%;
+<<<<<<< HEAD
 >>>>>>> 2ec0914622893a991e320805a0111cd271a020df
                 background-color:white;
+=======
+>>>>>>> ad806b514497c2dac495421d15b0940c3727494e
             }
 
             .container h1{
