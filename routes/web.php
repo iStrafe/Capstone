@@ -15,8 +15,8 @@ Route::get('/test', function () {
 });
 
 Route::get('admintest',[CatinfoController::class,'index'])->name('admin.admintest');
-Route::get('admintest/create',[CatinfoController::class,'create'])->name('admin.create');
-Route::post('admintest',[CatinfoController::class,'store'])->name('admin.store');
+Route::get('admintest/create',[CatinfoController::class,'create']);
+Route::post('admintest/create',[CatinfoController::class,'store'])->name('admin.store');
 
 
 
@@ -49,6 +49,8 @@ Route::get('aboutus', function () {
     return view('aboutus');
 });
 
+
+//Service Page
 Route::middleware('auth')->group(function () {
 
 
