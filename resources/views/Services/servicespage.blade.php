@@ -20,6 +20,9 @@
 
                 <a href="http://127.0.0.1:8000/report"><div class="service">
                 <h2>Report Cat</h2>
+                </div>
+                <div class="service">
+                <a href="http://127.0.0.1:8000/report"><h2>Report Cat</h2></a>
                     <p>Notify us that require attention, <br> such as those in need of assistance, <br> food and shelter.</p>
                 </div></a>
 
