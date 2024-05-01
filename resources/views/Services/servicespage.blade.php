@@ -14,25 +14,12 @@
             <h1>OUR SERVICES</h1>
             <div class="row">
 
-<<<<<<< HEAD
-                <a href="http://127.0.0.1:8000/report"><div class="service">
-                <h2>Report Cat</h2>
-<<<<<<< HEAD
-=======
-                </div>
-                <div class="service">
-                <a href="http://127.0.0.1:8000/report"><h2>Report Cat</h2></a>
->>>>>>> 2ec0914622893a991e320805a0111cd271a020df
-                    <p>Notify us that require attention, <br> such as those in need of assistance, <br> food and shelter.</p>
-                </div></a>
-=======
                 <a href="{{url('adopt')}}">
                     <div class="service">
                         <h2>Adopt</h2>
                         <p>Give home to those in need, <br> Make them feel the warmth of a home, <br> Adopt an AduCat Now!</p>
                     </div>
                 </a>
->>>>>>> ad806b514497c2dac495421d15b0940c3727494e
 
                 <a href="{{url('adopt')}}">
                     <div class="service">

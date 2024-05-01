@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-<h1>report</h1>
-=======
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     @include('scripts')
     <head class="..">
@@ -26,20 +23,5 @@
 
 
 </div>
-<<<<<<< HEAD
-<style>
-.main-div{
-    max-width: 400px;
-    padding: 5px;
-}
-.col1, .col2{
-    max-width: 180px;
-    padding: 
-}
-</style>
-</body>
->>>>>>> 2ec0914622893a991e320805a0111cd271a020df
-=======
 
 </body>
->>>>>>> ad806b514497c2dac495421d15b0940c3727494e
