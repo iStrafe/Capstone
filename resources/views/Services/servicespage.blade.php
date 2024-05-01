@@ -18,7 +18,7 @@
                     <p>Give home to those in need, <br> Make them feel the warmth of a home, <br> Adopt an AduCat Now!</p>
                 </div>
                 <div class="service">
-                <a href="http://127.0.0.1:8000/Report"><h2>Report Cat</h2></a>
+                <a href="http://127.0.0.1:8000/report"><h2>Report Cat</h2></a>
                     <p>Notify us that require attention, <br> such as those in need of assistance, <br> food and shelter.</p>
                 </div>
                 <div class="service">

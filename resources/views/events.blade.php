@@ -1,13 +1,17 @@
 
 <head>
-@include('header')
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+    @include('header')
+
+
+     
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title></title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
 </head>
-<body>
-    
+
+
 <div class="container-sm my-5">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"></script>
     <div class="carousel slide" id="carouseltest"

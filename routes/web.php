@@ -71,6 +71,12 @@ Route::get('ContactUs', function(){
 Route::get('feed', function(){
     return view ('feed');
 });
+Route::get('header', function(){
+    return view ('header');
+});
+
+
+
 
 //Service page
 /*
