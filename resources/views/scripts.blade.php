@@ -32,6 +32,8 @@
 
             .container{
                 width: 100%;
+                height: 5vh;
+                padding: 0 10%;
                 height: 60vh;
                 padding: 0 8%;
             }
