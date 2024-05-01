@@ -34,6 +34,7 @@
                 width: 100%;
                 height: 60vh;
                 padding: 0 8%;
+                background-color:white;
             }
 
             .container h1{
@@ -75,7 +76,7 @@
                 border-radius: 5px;
                 font-size: 14px;
                 cursor: pointer;
-                background: white;
+                background: lightgray;
                 transition: transform 0.5s, background 0.5s;
                 box-shadow: 0 10px 8px 0 rgba(0, 0, 0, 0.2);
             }
