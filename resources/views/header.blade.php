@@ -1,6 +1,5 @@
-<html>
-    <head>
-    
+<head>
+     
      <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -11,7 +10,6 @@
         <link href="https://fonts.bunny.net/css?family=figtree:400,600&display=swap" rel="stylesheet" />
          <!-- Scripts -->
         @vite(['resources/sass/app.scss', 'resources/js/app.js'])
-        @include('scripts')
 
         <!-- Styles -->
         <style>
@@ -34,121 +32,21 @@
                 <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
-
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <!--In between navbar items and dropdown menu-->
                 </ul>
-
-                <form class="d-flex px-5" role="search">
-                     @if (Route::has('login'))
-                            <nav class="-mx-3 flex flex-1 justify-end ">
-                                @auth
-                                   <!--Dropdown menu-->
-                                    <div class="dropdown">
-                                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                             <div>{{ Auth::user()->name }}</div>
-                                             
-                                        </button>
-                                        
-                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                                <x-dropdown-link :href="route('profile.edit')" class="dropdown-item">
-                                                {{ __('Profile') }}
-                                                </x-dropdown-link>
-
-                                            <form method="POST" action="{{ route('logout') }}">
-                                                @csrf
-                                                <x-dropdown-link :href="route('logout')" class="dropdown-item"
-                                                        onclick="event.preventDefault();
-                                                                    this.closest('form').submit();">
-                                                    {{ __('Log Out') }}
-                                                </x-dropdown-link>
-                                            </form>
-                                        </div>
-                                    </div>  <!--Dropdown menu end-->
-                                @else
-                                    <a
-                                        href="{{ route('login') }}"
-                                        class="rounded-md px-5 py-3 text-white ring-1 ring-transparent transition hover:text-White/70 focus:outline-none focus-visible:ring-[#FF2D20] dark:text-white dark:hover:text-white/100 dark:focus-visible:ring-white"
-                                    >
-                                        Log in
-                                    </a>
-
-                                    @if (Route::has('register'))
-                                        <a
-                                            href="{{ route('register') }}"
-                                            class="rounded-md px-5 py-3 text-white ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20] dark:text-white dark:hover:text-white/80 dark:focus-visible:ring-white"
-                                        >
-                                            Register
-                                        </a>
-                                    @endif
-                                @endauth
-                                <div class="dropdown show">
-                            </nav>
-                        @endif
-                    </ul>
-                </form>
+            
                 </div>
             </div>
         </nav>
 
-        <section class="bg-black py-5">
+        <section class="bg-black">
             <div class="container">
                 <div class="center">
-                    <div class="input-group mb-3">
-                            <input type="text" class="form-control" placeholder="Search Cat" aria-label="Recipient's username" aria-describedby="basic-addon2">
-                        <div class="input-group-append">
-                            <button class="btn btn-outline-secondary" type="button">Advanced Search</button>
-                        </div>
-                    </div>
+                   
                 </div>
             </div>
         </section>
 
-        <div id="carouselExampleDark" class="carousel carousel-dark slide">
-  <div class="carousel-indicators">
-    <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
-    <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="1" aria-label="Slide 2"></button>
-    <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="2" aria-label="Slide 3"></button>
-  </div>
-  <div class="carousel-inner">
-    <div class="carousel-item active" data-bs-interval="10000">
-      <img src="..." class="d-block w-100" alt="...">
-      <div class="carousel-caption d-none d-md-block">
-        <h5>First slide label</h5>
-        <p>Some representative placeholder content for the first slide.</p>
-      </div>
-    </div>
-    <div class="carousel-item" data-bs-interval="2000">
-      <img src="..." class="d-block w-100" alt="...">
-      <div class="carousel-caption d-none d-md-block">
-        <h5>Second slide label</h5>
-        <p>Some representative placeholder content for the second slide.</p>
-      </div>
-    </div>
-    <div class="carousel-item">
-      <img src="..." class="d-block w-100" alt="...">
-      <div class="carousel-caption d-none d-md-block">
-        <h5>Third slide label</h5>
-        <p>Some representative placeholder content for the third slide.</p>
-      </div>
-    </div>
-  </div>
-  <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleDark" data-bs-slide="prev">
-    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-    <span class="visually-hidden">Previous</span>
-  </button>
-  <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleDark" data-bs-slide="next">
-    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-    <span class="visually-hidden">Next</span>
-  </button>
-</div>
-
         
         
     </body>
-
-
-    
-</html>
-
-
