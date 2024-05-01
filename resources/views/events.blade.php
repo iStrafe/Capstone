@@ -83,9 +83,12 @@ data-bs-slide="next"><span class="carousel-control-next-icon"></span></button>
              </div>
 </div> 
  
-        
+
+    
+</style>
 </body>
 
+</html>
 <style>
     h1{
         font-size: 50px;
