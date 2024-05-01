@@ -34,7 +34,6 @@
                 width: 100%;
                 height: 60vh;
                 padding: 0 8%;
-                background-color:white;
             }
 
             .container h1{

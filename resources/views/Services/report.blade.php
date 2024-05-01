@@ -23,14 +23,5 @@
 
 
 </div>
-<style>
-.main-div{
-    max-width: 400px;
-    padding: 5px;
-}
-.col1, .col2{
-    max-width: 180px;
-    padding: 
-}
-</style>
+
 </body>
