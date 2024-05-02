@@ -1,7 +1,12 @@
+<!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     @include('scripts')
-    <head class="..">
-     
+    <style>
+
+        
+
+    </style>
+    <body class="..">
         <div class="font-sans antialiased dark:bg-black dark:text-white/50">
             @include('Navigationbar')
         </div>

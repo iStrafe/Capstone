@@ -32,7 +32,7 @@
  <div class="d-flex justify-content-center">
     <img src="images\catto donations.jpg" class="w-50">
     <div class="carousel-caption d-none d-md-block">
-        <button class="btn btn-primary" href="{{ url('https://www.facebook.com/groups/946027585595117') }}">Redirect</button>
+    <a href="https://web.facebook.com/groups/946027585595117/permalink/2416565838541277/" class="btn btn-primary btn-lg" role="button" aria-disabled="true">Redirect</a>
     </div>
      </div>
     </div>
