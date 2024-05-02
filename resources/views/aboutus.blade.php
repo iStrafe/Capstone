@@ -2,6 +2,9 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     @include('scripts')
     <style>
+        *{
+            
+        }
         .text1{
             margin: auto;
             width: 70%;
@@ -32,7 +35,7 @@
 
     </style>
     <body class="..">
-        <div class="font-sans antialiased dark:bg-black dark:text-white/50">
+        <div class="font-sans antialiased dark:bg-black dark:text-white/50 border border-warning">
             @include('Navigationbar')
         </div>
 

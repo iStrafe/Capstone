@@ -34,6 +34,7 @@ Route::get('/admintest', function () {
     return view('admin.admintest');
 })->middleware(['auth', 'verified'])->name('admintest');
 
+//Authentication
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -44,10 +45,12 @@ Route::middleware('auth')->group(function () {
 
 require __DIR__.'/auth.php';
 
-//Navbar Routes
-Route::get('aboutus', function () {
+//============= Navbar Routes ===============
+
+//About-us page
+Route::get('/aboutus', function () {
     return view('aboutus');
-});
+})->middleware(['auth', 'verified'])->name('aboutus');
 
 
 //Service Page
@@ -62,22 +65,17 @@ Route::middleware('auth')->group(function () {
    
 });
 
-Route::get('events', function () {
+Route::get('/events', function () {
     return view('events');
-});
+})->middleware(['auth', 'verified'])->name('events');
 
-Route::get('ContactUs', function(){
-    return view ('contactus');
-});
+Route::get('/ContactUs', function () {
+    return view('ContactUs');
+})->middleware(['auth', 'verified'])->name('contactus');
 
-Route::get('feed', function(){
-    return view ('feed');
-});
-Route::get('header', function(){
-    return view ('header');
-});
-
-
+Route::get('/feed', function () {
+    return view('feed');
+})->middleware(['auth', 'verified'])->name('feed');
 
 
 //Service page
