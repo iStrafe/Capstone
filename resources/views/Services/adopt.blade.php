@@ -7,12 +7,12 @@
 
     </style>
     <body class="..">
-        <div class="font-sans antialiased dark:bg-black dark:text-white/50">
+        <div class="font-sans antialiased dark:bg-black dark:text-white/50 border border-warning">
             @include('Navigationbar')
         </div>
 
         <div class="about-section">
-        <img src="images\cute-feline-cate.jpg" alt="Jane" style="width:100%; height: 300px;">
+        <img src="images\Cat2.jpg" alt="Jane" style="width:100%; height: 500px;">
         </div>
 
 

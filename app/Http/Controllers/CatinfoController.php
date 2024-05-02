@@ -31,6 +31,30 @@ class CatinfoController extends Controller
 
         return redirect()->route('admin.store');
     }
+
+
+     public function reportpage(){
+        return view('Services.report');
+    }
+
+      public function report(Request $request){
+        //dd($request);
+        $data = [
+                    'name' => $request->input('name'),
+                    'gender' => $request->input('gender'),
+                    'breed' => $request->input('breed'),
+                    'eye_color' => $request->input('eye_color'),
+                    'fur_color' => $request->input('fur_color'),
+                    'last_seen_date' => date('Y-m-d H:i:s'),
+                    'last_seen_location' => $request->input('last_seen_location'),
+                    'contact_email' => $request->input('contact_email'),
+                    'catimage' => $request->input('catimage')
+                ];
+
+        $result = DB::table('reportcat')->insert($data);
+
+        return redirect()->route('admin.report');
+    }
     public function deleteInfo(Request $request){
         
     }
