@@ -2,9 +2,6 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     @include('scripts')
     <style>
-        *{
-            width:100%;
-        }
         .text1{
             margin: auto;
             width: 70%;
