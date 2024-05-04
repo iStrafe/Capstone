@@ -59,7 +59,7 @@ class CatinfoController extends Controller
 
     public function viewCatInformation2(){
         $displayData = DB::table('catinfo')->get();
-        return view('dashboard',compact('displayData'));
+        return view('admin.create',compact('displayData'));
     }
 
     // ============ Report page route =============

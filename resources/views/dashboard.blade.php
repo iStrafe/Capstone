@@ -14,8 +14,8 @@
 
          <section class="bg-blacks">
             <div class="container">
+             <h1>SEARCH CAT</h1>
                 <div class="center">
-                 <h1>SEARCH CAT</h1>
                     <div class="input-group mb-3">
                             <input type="text" class="form-control" placeholder="Search Cat" aria-label="Recipient's username" aria-describedby="basic-addon2">
                         <div class="input-group-append">
@@ -36,7 +36,9 @@
                                     <h5 class="card-title">Fur color: {{$catinfo->fur_color}}</h5>
                                     <p class="card-text">Description: {{$catinfo->description}}</p>
                                 </div>
-                                <div class="card-footer bg-transparent border-success"></div>
+                                <div class="card-footer bg-transparent border-success">
+                                      <a href="#" class="btn btn-primary">Adopt</a>
+                                </div>
                             </div>
                         </table>@endforeach
                     </div>

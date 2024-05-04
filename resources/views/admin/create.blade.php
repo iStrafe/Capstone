@@ -43,10 +43,6 @@
                     <input type="text" name="status" placeholder="status">
                 </div>
                 <div>
-                 <div>
-                    <label for="">Upload Image</label>
-                    <input type="file" name="cat_image" placeholder="cat_image">
-                </div>
                     <label for="">Submit</label>
                     <input type="submit" value="Save new info">
                 </div>
@@ -72,7 +68,6 @@
              </div>
            </div>
         
-
 </body>
 <style>
     body {
