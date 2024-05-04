@@ -7,90 +7,60 @@
 
     </style>
     <body class="..">
-        <div class="font-sans antialiased dark:bg-black dark:text-white/50">
+        <div class="font-sans antialiased dark:bg-black dark:text-white/50 border border-warning">
             @include('Navigationbar')
         </div>
-
-        <div class="about-section">
-        <img src="images\cute-feline-cate.jpg" alt="Jane" style="width:100%; height: 300px;">
-        </div>
-
-       
-       
-       
-        <div class="container">
-        <h1>Report Cats</h1>
-        <div class="row">
-
-            <div class="g-col-6">
-                
-            <div class="card" style="width: 18rem;">
-            <div class="card-body">
-  
-            <div class="form-check">
-           <input class="form-check-input position-static" type="checkbox" id="blankCheckbox" value="option1" aria-label="...">Lost
-           </div>
-
-           <div class="form-check">
-           <input class="form-check-input position-static" type="checkbox" id="blankCheckbox" value="option1" aria-label="...">Found/Stray
-           </div>
+</head>
+<body>
 
 
-               <form>
-               <div class="form-group">
-              <label for="formGroupExampleInput2">Date</label>
-              <input type="text" class="form-control" id="formGroupExampleInput2" placeholder="">
-               </div>
-
-                   <div class="form-group">
-                  <label for="formGroupExampleInput2">Pet Name</label>
-                  <input type="text" class="form-control" id="formGroupExampleInput2" placeholder="">
-                 </div>
-
-                     <div class="form-group">
-                     <label for="formGroupExampleInput2">Sex</label>
-                     <input type="text" class="form-control" id="formGroupExampleInput2" placeholder="">
-                    </div>
-                           <div class="form-group">
-                           <label for="formGroupExampleInput2">Color</label>
-                            <input type="text" class="form-control" id="formGroupExampleInput2" placeholder="">
-                            </div>
-
-                                   <div class="form-group">
-                                 <label for="formGroupExampleInput2">Size</label>
-                                 <input type="text" class="form-control" id="formGroupExampleInput2" placeholder="">
-                                </div>
-
-                                     <div class="form-group">
-                                       <label for="formGroupExampleInput2">Contact Email</label>
-                                      <input type="text" class="form-control" id="formGroupExampleInput2" placeholder="">
-                                    </div>
-
-                                          <div class="form-group">
-                                         <label for="formGroupExampleInput2">Nearest Location Seen</label>
-                                         <input type="text" class="form-control" id="formGroupExampleInput2" placeholder="">
-                                         </div>
-                                              
-                                             <div class="form-group">
-                                               <label for="formGroupExampleInput2">Upload Picture</label>
-                                            <input type="text" class="form-control" id="formGroupExampleInput2" placeholder="">
-                                             </div>
-  </div>
-  </div>
-</form>
-
-
-
-  </div>
-</div>
-
+<form method="POST" action="{{route('admin.report')}}">
+                @csrf
+                @method('POST')
+            <div class="container">
+                <div class="form-control">
+                    <label for="">Name</label>
+                    <input type="text" name="name" placeholder="name">
+                </div>
+                <div class="form-control">
+                    <label for="">Gender</label>
+                    <input type="text" name="gender" placeholder="gender">
+                </div>
+                <div class="form-control">
+                    <label for="">Breed</label>
+                    <input type="text" name="breed" placeholder="Breed">
+                </div>
+                <div class="form-control">
+                    <label for="">Eye Color</label>
+                    <input type="text" name="eye_color" placeholder="eye color">
+                </div>
+                <div class="form-control">
+                    <label for="">Fur Color</label>
+                    <input type="text" name="fur_color" placeholder="fur color">
+                </div>
+                <div class="form-control">
+                    <label for="">Last seen date</label>
+                    <input type="date" name="last_seen_date" placeholder="last seen date">
+                </div>
+                <div class="form-control">
+                    <label for="">Last seen location</label>
+                    <input type="text" name="last_seen_location" placeholder="last seen location">
+                </div>
+                <div class="form-control">
+                    <label for="">Contact email</label>
+                    <input type="email" name="contact_email" placeholder="contact email">
+                </div>
+                <div class="form-control">
+                    <label for="">Upload image</label>
+                    <input type="file" name="catimage" placeholder="upload image">
+                </div>
+                <div class="btn btn-outline-secondary">
+                    <label for="">Submit</label>
+                    <input type="submit" value="Save new info">
+                </div>
             </div>
+                    
+            </form>
 
 
-
-
-
-
-        </div>
-      
 </body>

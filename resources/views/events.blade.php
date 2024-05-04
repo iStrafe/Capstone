@@ -1,7 +1,7 @@
 
 <head>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-    @include('header')
+    
 
 
      
@@ -10,21 +10,23 @@
 <title></title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
 </head>
-
-<body>
+    @include('scripts')
+<body class="font-sans antialiased dark:bg-black dark:text-white/50">
+    <div class="border border-warning">
+        @include('Navigationbar')
+    </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"></script>
-    <div class="carousel slide" id="carouseltest"
-    data-bs-wrap="true"
-    data-bs-slide="carousel">
+    <div class="carousel slide py-5" id="carouseltest"
+        data-bs-wrap="true"
+        data-bs-slide="carousel">
    
 
- <div class="carousel-inner">
-
-     <div class="carousel-item active"data-bs-interval="2000">
-     <div class="d-flex justify-content-center">
-     <img src="images\Guardians of life.jpg" class="w-35">
-      </div>
+        <div class="carousel-inner">
+            <div class="carousel-item active"data-bs-interval="2000">
+            <div class="d-flex justify-content-center">
+            <img src="images\Guardians of life.jpg" class="w-35">
+        </div>
     </div>
 
 

@@ -21,14 +21,14 @@
                     </div>
                 </a>
 
-                <a href="{{url('adopt')}}">
+                <a href="{{url('report')}}">
                     <div class="service">
                         <h2>Report Cat</h2>
                         <p>Notify us that require attention, <br> such as those in need of assistance,  <br> food and shelter.</p>
                     </div>
                 </a>
 
-                <a href="{{url('adopt')}}">
+                <a href="{{url('donate')}}">
                     <div class="service">
                         <h2>Donate</h2>
                         <p>Help our feline friends provide their needs, <br> We accept cashless donations</p>

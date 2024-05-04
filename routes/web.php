@@ -18,6 +18,11 @@ Route::get('admintest',[CatinfoController::class,'index'])->name('admin.admintes
 Route::get('admintest/create',[CatinfoController::class,'create']);
 Route::post('admintest/create',[CatinfoController::class,'store'])->name('admin.store');
 
+Route::get('Services/report',[CatinfoController::class,'reportpage']);
+Route::post('Services/report',[CatinfoController::class,'report'])->name('admin.report');
+
+
+
 
 
 
