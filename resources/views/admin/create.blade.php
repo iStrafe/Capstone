@@ -44,9 +44,9 @@
                 </div>
                     
             </form>
-<!--
+
               <table border="1">
-            @foreach($name as $catinfo)
+            @foreach($displayData as $catinfo)
             <tr>
                 <td>{{$catinfo->id}}</td>
                 <td>{{$catinfo->name}}</td>
@@ -56,6 +56,8 @@
                 <td>{{$catinfo->description}}</td>
                 <td></td>
             </tr>@endforeach
-        </table>-->
+        </table>
+
+        
 </body>
 </html>
