@@ -9,12 +9,24 @@ use Illuminate\Support\Facades\DB;
 class CatinfoController extends Controller
 {
     public function index(){
-        $displayData = DB::table('catinfo')->get();
-        return view('admin.admintest',['displayData' => $displayData]);
+        //$data = DB::all();
+       // $displayData = DB::table('catinfo')->get();
+      //  return view('admin.create',['displayData' => $displayData]);
+       //  $displayData = DB::all();
+        //return view('admin.index',['displayData' => $displayData]);
+
+
+        $select = DB::select('select * from catinfo');
+        return view('admin.create')->with('name',$select);
     }
+
     public function create(){
         return view('admin.create');
     }
+
+    
+
+    // =============== Add Cat to Database ==============
     public function store(Request $request){
         //dd($request);
         $data = [
@@ -32,11 +44,14 @@ class CatinfoController extends Controller
         return redirect()->route('admin.store');
     }
 
-
+    // ============ Report page route =============
      public function reportpage(){
         return view('Services.report');
     }
 
+
+
+        //============ Report Cat form ==============
       public function report(Request $request){
         //dd($request);
         $data = [
@@ -55,6 +70,7 @@ class CatinfoController extends Controller
 
         return redirect()->route('admin.report');
     }
+
     public function deleteInfo(Request $request){
         
     }
