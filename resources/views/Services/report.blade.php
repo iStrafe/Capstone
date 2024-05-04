@@ -13,8 +13,14 @@
 </head>
 <body>
 
+<div class="about-section">
+        <img src="images\Cat2.jpg" alt="Jane" style="width:100%; height: 500px;">
+        </div>
 
-<form method="POST" action="{{route('admin.report')}}">
+<div class="container">
+    <div class="row">
+        <div class="col-sm">
+            <form method="POST" action="{{route('admin.report')}}">
                 @csrf
                 @method('POST')
             <div class="container">
@@ -54,13 +60,45 @@
                     <label for="">Upload image</label>
                     <input type="file" name="catimage" placeholder="upload image">
                 </div>
-                <div class="btn btn-outline-secondary">
+                <div class="btn btn-outline-secondary" >
                     <label for="">Submit</label>
                     <input type="submit" value="Save new info">
                 </div>
             </div>
                     
             </form>
+        </div>
+        <div calss="col-sm">
+
+<div class="card" style="width: 18rem;">
+<img class="card-img-top" src="images\lost cats.jpg" alt="Card image cap">
+<div class="card-body">
+
+<a href="" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">Lost Cats</a>
+
+</div>
+</div> 
 
 
+
+
+
+
+        </div>
+        <div calss="col-sm">
+
+        <div class="card" style="width: 25rem;">
+  <img class="card-img-top" src="images\found cats.jpg" alt="Card image cap">
+  <div class="card-body">
+
+  <a href="" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">Found Cats</a>
+
+  </div>
+</div> 
+
+  </div>
+</div> 
+        </div>
+</div>
+</div>
 </body>
