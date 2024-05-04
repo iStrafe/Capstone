@@ -16,13 +16,20 @@ Route::get('/test', function () {
 Route::get('admintest/create',[CatinfoController::class,'index'])->name('admin.index');
 Route::get('admintest/create',[CatinfoController::class,'create']);
 Route::post('admintest/create',[CatinfoController::class,'store'])->name('admin.store');
-Route::get('admintest/create',[CatinfoController::class,'viewCatInformation'])->name('catinfo.view');
+//Route::get('admintest/create',[CatinfoController::class,'viewCatInformation'])->name('catinfo.view');
 
 //======= services controllers ======
 Route::get('Services/report',[CatinfoController::class,'reportpage']);
 Route::post('Services/report',[CatinfoController::class,'report'])->name('admin.report');
 
 
+Route::middleware('auth')->group(function () {
+
+    
+    Route::get('home',[CatinfoController::class,'viewCatInformation'])->name('dashboard');
+    
+   
+});
 
 
 
@@ -37,9 +44,9 @@ Route::get('/', function () {
 });
 
 // ====== logged-in user homepage
-Route::get('/home', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+//Route::get('/home', function () {
+    //return view('dashboard');
+//})->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::get('/admintest', function () {
     return view('admin.admintest');

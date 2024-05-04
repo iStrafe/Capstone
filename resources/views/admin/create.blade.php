@@ -39,25 +39,15 @@
                     <input type="text" name="status" placeholder="status">
                 </div>
                 <div>
+                 <div>
+                    <label for="">Upload Image</label>
+                    <input type="file" name="cat_image" placeholder="cat_image">
+                </div>
                     <label for="">Submit</label>
                     <input type="submit" value="Save new info">
                 </div>
                     
             </form>
 
-              <table border="1">
-            @foreach($displayData as $catinfo)
-            <tr>
-                <td>{{$catinfo->id}}</td>
-                <td>{{$catinfo->name}}</td>
-                <td>{{$catinfo->gender}}</td>
-                <td>{{$catinfo->eye_color}}</td>
-                <td>{{$catinfo->fur_color}}</td>
-                <td>{{$catinfo->description}}</td>
-                <td></td>
-            </tr>@endforeach
-        </table>
-
-        
 </body>
 </html>

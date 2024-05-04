@@ -24,6 +24,10 @@ class CatinfoController extends Controller
         return view('admin.create');
     }
 
+     public function HomePageRoute(){
+        return view('dashboard');
+    }
+
     
 
     // =============== Add Cat to Database ==============
@@ -36,6 +40,7 @@ class CatinfoController extends Controller
                     'eye_color' => $request->input('eye_color'),
                     'fur_color' => $request->input('fur_color'),
                     'description' => $request->input('description'),
+                    'cat_image' => $request->input('cat_image'),
                     'status' => $request->input('status')
                 ];
 
@@ -49,7 +54,12 @@ class CatinfoController extends Controller
     //======= Display data in Homepage =======
     public function viewCatInformation(){
         $displayData = DB::table('catinfo')->get();
-        return view('admin.create',compact('displayData'));
+        return view('dashboard',compact('displayData'));
+    }
+
+    public function viewCatInformation2(){
+        $displayData = DB::table('catinfo')->get();
+        return view('dashboard',compact('displayData'));
     }
 
     // ============ Report page route =============
