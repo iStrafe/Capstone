@@ -149,11 +149,11 @@
 
   <div class="column">
     <div class="card">
-      <img src="images/pissbuk.jpg" alt="John" style="width:100%">
+      <img src="images\WIN_20240317_11_56_00_Pro.jpg" alt="John" style="width:88%">
       <div class="container">
         <h2>Jan Amhir Ventanilla</h2>
-        <p class="title">Lead Programmer</p>
-        <p>john@example.com</p>
+        <p class="title">Programmer</p>
+        <p>jan.amhir.ventanilla956@adamson.edu.ph</p>
         <p><button class="button">Contact</button></p>
       </div>
     </div>
