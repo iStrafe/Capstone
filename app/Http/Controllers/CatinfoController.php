@@ -30,7 +30,7 @@ class CatinfoController extends Controller
     public function store(Request $request){
         //dd($request);
         $data = [
-                    'name' => $request->input('title'),
+                    'name' => $request->input('name'),
                     'gender' => $request->input('gender'),
                     'breed' => $request->input('breed'),
                     'eye_color' => $request->input('eye_color'),
@@ -42,6 +42,14 @@ class CatinfoController extends Controller
         $result = DB::table('catinfo')->insert($data);
 
         return redirect()->route('admin.store');
+    }
+
+
+
+    //======= Display data in Homepage =======
+    public function viewCatInformation(){
+        $displayData = DB::table('catinfo')->get();
+        return view('admin.create',compact('displayData'));
     }
 
     // ============ Report page route =============

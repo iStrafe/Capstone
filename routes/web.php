@@ -16,11 +16,11 @@ Route::get('/test', function () {
 Route::get('admintest/create',[CatinfoController::class,'index'])->name('admin.index');
 Route::get('admintest/create',[CatinfoController::class,'create']);
 Route::post('admintest/create',[CatinfoController::class,'store'])->name('admin.store');
+Route::get('admintest/create',[CatinfoController::class,'viewCatInformation'])->name('catinfo.view');
 
 //======= services controllers ======
 Route::get('Services/report',[CatinfoController::class,'reportpage']);
 Route::post('Services/report',[CatinfoController::class,'report'])->name('admin.report');
-
 
 
 
