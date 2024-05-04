@@ -69,25 +69,27 @@ data-bs-slide="next"><span class="carousel-control-next-icon"></span></button>
     
    
 </div>
-</div>
-    <div class="container my-5">
-    <div>
+ <div class="container-fluid">
+    <div class="row">
+             <div>
                 <h1>Unleashing Hope:transforming Lives, One paw at a time<h1>
                   
              </div>
-</div>
+    </div>
 
-</div>
-<div class="container my-5">
-    <div>
-                <p>Welcome to the heartwarming world of ADUCats, together to create stories of 
+
+    <div class="row">
+            <div>
+                <div class="col-sm">
+                <h2>Welcome to the heartwarming world of ADUCats, together to create stories of 
                     compassion, resilience, and second chances. Our mission is simple but profound
                     to help homeless cats. Join us on this encredible journey as we celebrate the joy 
                     of adoption and the extraordinary bond between humans and their four-legged friends.
-                </p>
-                  
+                </h2>
+                 </div>  
              </div>
-</div> 
+      </div> 
+</div>
 <style>
     h1{
         font-size: 50px;
@@ -96,14 +98,12 @@ data-bs-slide="next"><span class="carousel-control-next-icon"></span></button>
     body{
             background-color: #ff9966;
         };
-        p{
-            font-size: 30px;
+        h2{
+            font-size: 45px;
+            text-align: center;
         };
-        .container{
-       margin-top:100px;
-       margin-bottom:100px; 
-        };
-    
+      
+        
 </style>
 </body>
 
