@@ -6,15 +6,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
 </head>
-<body>
+<body class="font-sans antialiased dark:bg-black">
 
     
-    <h1>Create Information</h1>
+    <h1 class="dark:text-white/50">Create Information</h1>
      <div class="container">
          <form method="POST" action="{{route('admin.store')}}">
                 @csrf
                 @method('POST')
-                <div>
+                <table>
+                    <div class="row">
+                         <div>
                     <label for="">Name</label>
                     <input type="text" name="name" placeholder="name">
                 </div>
@@ -42,17 +44,32 @@
                     <label for="">Status</label>
                     <input type="text" name="status" placeholder="status">
                 </div>
+                 <div>
+                    <label for="">Upload Image</label>
+                    <input type="file" name="cat_image" placeholder="Upload Image">
+                </div>
                 <div>
                     <label for="">Submit</label>
                     <input type="submit" value="Save new info">
                 </div>
-                    
+                    </div>
+                </table>
             </form>
        </div>
+
             <div class="container">
+            <h1>Cat Records</h1>
              <div class="row">
                 <div class="col-auto mr-auto">
-              <table border="1">
+        <table border="3">
+            <div class="border border-warning">
+                <td>ID</td>
+                <td>Name</td>
+                <td>Gender</td>
+                <td>Eye_color</td>
+                <td>Fur_color</td>
+                <td>Description</td>
+            </div>
             @foreach($displayData as $catinfo)
             <tr>
                 <td>{{$catinfo->id}}</td>

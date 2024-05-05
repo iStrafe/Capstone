@@ -40,7 +40,7 @@
                                       <a href="#" class="btn btn-primary">Adopt</a>
                                 </div>
                             </div>
-                        </table>@endforeach
+                        </div>@endforeach
                     </div>
                 </div>
 
