@@ -12,25 +12,60 @@ Route::get('/test', function () {
     return view('test');
 });
 
+Route::get('admin',function(){
+    return view('admintest');
+})->middleware(['auth'])->name('admin');
+
+Route::get('userDashboard',function(){
+    return view('dashboard');
+})->middleware(['auth'])->name('dashboard');
+
+//About us Route
+Route::get('/aboutus', function () {
+    return view('aboutus');
+})->name('aboutus');
+
+//Home Route
+Route::get('/', function () {
+    return view('home');
+})->name('home');
+
+//Events Route
+Route::get('/events', function () {
+    return view('events');
+})->name('events');
+
+//Contact page route
+Route::get('/ContactUs', function () {
+    return view('ContactUs');
+})->name('contactus');
+
+//Feed page route
+Route::get('/feed', function () {
+    return view('feed');
+})->name('feed');
+
 //======== views/admin controllers =======
 Route::get('admintest/create',[CatinfoController::class,'index'])->name('admin.index');
 Route::get('admintest/create',[CatinfoController::class,'create']);
 Route::post('admintest/create',[CatinfoController::class,'store'])->name('admin.store');
 Route::get('admintest/create',[CatinfoController::class,'viewCatInformation2'])->name('catinfo.view');
 
+Route::get('admintest/search', [CatinfoController::class, 'search'])->name('admin.create');
+
+
 //======= services controllers ======
 Route::get('Services/report',[CatinfoController::class,'reportpage']);
 Route::post('Services/report',[CatinfoController::class,'report'])->name('admin.report');
-
+//Route::get('admintest/create',[CatinfoController::class,'viewReportInformation'])->name('reportinfo.view');
 
 Route::middleware('auth')->group(function () {
 
     
-    Route::get('home',[CatinfoController::class,'viewCatInformation'])->name('dashboard');
+    Route::get('dashboard',[CatinfoController::class,'viewCatInformation'])->name('dashboard');
     
    
 });
-
 
 
 
@@ -38,19 +73,11 @@ Route::get('/homecopy', function () {
     return view('homecopy');
 });
 
-// ===== Not logged-in user home page
-Route::get('/', function () {
-    return view('home');
-});
 
 // ====== logged-in user homepage
 //Route::get('/home', function () {
     //return view('dashboard');
 //})->middleware(['auth', 'verified'])->name('dashboard');
-
-Route::get('/admintest', function () {
-    return view('admin.admintest');
-})->middleware(['auth', 'verified'])->name('admintest');
 
 //Authentication
 Route::middleware('auth')->group(function () {
@@ -66,9 +93,9 @@ require __DIR__.'/auth.php';
 //============= Navbar Routes =============== 
 
 //About-us page
-Route::get('/aboutus', function () {
-    return view('aboutus');
-})->middleware(['auth', 'verified'])->name('aboutus');
+//Route::get('/aboutus', function () {
+   // return view('aboutus');
+//})->middleware(['auth', 'verified'])->name('aboutus');
 
 
 //Service Page
@@ -84,19 +111,6 @@ Route::middleware('auth')->group(function () {
 });
 
 //News & Events page routes
-Route::get('/events', function () {
-    return view('events');
-})->middleware(['auth', 'verified'])->name('events');
-
-//Contact page routes
-Route::get('/ContactUs', function () {
-    return view('ContactUs');
-})->middleware(['auth', 'verified'])->name('contactus');
-
-//Feed page routes
-Route::get('/feed', function () {
-    return view('feed');
-})->middleware(['auth', 'verified'])->name('feed');
 
 
 //Service page

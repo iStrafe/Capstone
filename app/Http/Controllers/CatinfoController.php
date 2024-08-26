@@ -49,9 +49,24 @@ class CatinfoController extends Controller
         return redirect()->route('admin.store');
     }
 
+    public function search(Request $request) {
+    $query = $request->input('query');
+
+    $displayData = DB::table('catinfo')
+                    ->where('name', 'LIKE', "%{$query}%")
+                    ->orWhere('gender', 'LIKE', "%{$query}%")
+                    ->orWhere('breed', 'LIKE', "%{$query}%")
+                    ->orWhere('eye_color', 'LIKE', "%{$query}%")
+                    ->orWhere('fur_color', 'LIKE', "%{$query}%")
+                    ->orWhere('description', 'LIKE', "%{$query}%")
+                    ->get();
+
+    return view('admin.create', compact('displayData'));
+}
 
 
-    //======= Display data in Homepage =======
+    //======= Display data in Homepage and Adminpage =======
+    // Note: This section is for displaying information from the database. 
     public function viewCatInformation(){
         $displayData = DB::table('catinfo')->get();
         return view('dashboard',compact('displayData'));
@@ -59,14 +74,19 @@ class CatinfoController extends Controller
 
     public function viewCatInformation2(){
         $displayData = DB::table('catinfo')->get();
+      //  $displayreportdata = DB::table('reportcat')->get();
         return view('admin.create',compact('displayData'));
     }
-
+    
     // ============ Report page route =============
      public function reportpage(){
         return view('Services.report');
     }
-
+    //=========== Display report data in Admin page
+   /* public function viewReportInformation(){
+        $displayreportdata = DB::table('reportcat')->get();
+        return view('admin.create',compact('displayreportdata'));
+    }*/
 
 
         //============ Report Cat form ==============

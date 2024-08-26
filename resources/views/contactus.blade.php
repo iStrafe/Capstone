@@ -125,11 +125,11 @@
     <div class="row">
         <div class="column">
             <div class="card">
-              <img src="images\Bartolazo.jpg" alt="Jane" style="width:100%;">
+              <img src="images/pissbuk.jpg" alt="Jane" style="width:100%;">
                 <div class="container">
-                  <h2>Althea Elline G. Bartolazo</h2>
+                  <h2>...</h2>
                     <p class="title">UI/UX</p>
-                    <p>althea.elline.bartolazo@adamson.edu.ph</p>
+                    <p>...@adamson.edu.ph</p>
                     <p><button class="button">Contact</button></p>
                 </div>
           </div>
@@ -139,9 +139,21 @@
     <div class="card">
       <img src="images/pissbuk.jpg" alt="Mike" style="width:100%">
       <div class="container">
-        <h2>Reginald Unisa</h2>
+        <h2>...</h2>
         <p class="title">Project Manager</p>
-        <p>mike@example.com</p>
+        <p>...@example.com</p>
+        <p><button class="button">Contact</button></p>
+      </div>
+    </div>
+  </div>
+
+   <div class="column">
+    <div class="card">
+      <img src="images/pissbuk.jpg" alt="Mike" style="width:100%">
+      <div class="container">
+        <h2>...</h2>
+        <p class="title">Project Manager</p>
+        <p>...@example.com</p>
         <p><button class="button">Contact</button></p>
       </div>
     </div>
@@ -149,23 +161,11 @@
 
   <div class="column">
     <div class="card">
-      <img src="images\WIN_20240317_11_56_00_Pro.jpg" alt="John" style="width:88%">
+      <img src="images/pissbuk.jpg" alt="Mike" style="width:100%">
       <div class="container">
-        <h2>Jan Amhir Ventanilla</h2>
-        <p class="title">Programmer</p>
-        <p>jan.amhir.ventanilla956@adamson.edu.ph</p>
-        <p><button class="button">Contact</button></p>
-      </div>
-    </div>
-  </div>
-
-  <div class="column">
-    <div class="card">
-      <img src="images\Ganoy.jpg" alt="Mike" style="width:100%">
-      <div class="container">
-        <h2>Gabrielle Ganoy</h2>
-        <p class="title">Database Administrator</p>
-        <p>mike@example.com</p>
+        <h2>...</h2>
+        <p class="title">...</p>
+        <p>...@example.com</p>
         <p><button class="button">Contact</button></p>
       </div>
     </div>

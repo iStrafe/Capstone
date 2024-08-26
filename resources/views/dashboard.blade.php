@@ -37,7 +37,7 @@
                                     <p class="card-text">Description: {{$catinfo->description}}</p>
                                 </div>
                                 <div class="card-footer bg-transparent border-success">
-                                      <a href="#" class="btn btn-primary">Adopt</a>
+                                      <a href="#" class="btn btn-primary">View More Info</a>
                                 </div>
                             </div>
                         </div>@endforeach

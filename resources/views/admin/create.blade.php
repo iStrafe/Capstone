@@ -7,7 +7,7 @@
     <title>Document</title>
 </head>
 <body class="font-sans antialiased dark:bg-black">
-
+@include('admin/adminNavbar')
     
     <h1 class="dark:text-white/50">Create Information</h1>
      <div class="container">
@@ -16,74 +16,91 @@
                 @method('POST')
                 <table>
                     <div class="row">
-                         <div>
-                    <label for="">Name</label>
-                    <input type="text" name="name" placeholder="name">
-                </div>
-                <div>
-                    <label for="">Gender</label>
-                    <input type="text" name="gender" placeholder="gender">
-                </div>
-                <div>
-                    <label for="">Breed</label>
-                    <input type="text" name="breed" placeholder="Breed">
-                </div>
-                <div>
-                    <label for="">Eye Color</label>
-                    <input type="text" name="eye_color" placeholder="eye color">
-                </div>
-                <div>
-                    <label for="">Fur Color</label>
-                    <input type="text" name="fur_color" placeholder="fur color">
-                </div>
-                <div>
-                    <label for="">Description</label>
-                    <input type="text" name="description" placeholder="description">
-                </div>
-                <div>
-                    <label for="">Status</label>
-                    <input type="text" name="status" placeholder="status">
-                </div>
-                 <div>
-                    <label for="">Upload Image</label>
-                    <input type="file" name="cat_image" placeholder="Upload Image">
-                </div>
-                <div>
-                    <label for="">Submit</label>
-                    <input type="submit" value="Save new info">
-                </div>
+                        <div>
+                            <label for="">Name</label>
+                            <input type="text" name="name" placeholder="name">
+                        </div>
+
+                        <div>
+                            <label for="">Gender</label>
+                            <input type="text" name="gender" placeholder="gender">
+                        </div>
+
+                        <div>
+                            <label for="">Breed</label>
+                            <input type="text" name="breed" placeholder="Breed">
+                        </div>
+
+                        <div>
+                            <label for="">Eye Color</label>
+                            <input type="text" name="eye_color" placeholder="eye color">
+                        </div>
+
+                        <div>
+                            <label for="">Fur Color</label>
+                            <input type="text" name="fur_color" placeholder="fur color">
+                        </div>
+
+                        <div>
+                            <label for="">Description</label>
+                            <input type="text" name="description" placeholder="description">
+                        </div>
+
+                        <div>
+                            <label for="">Status</label>
+                            <input type="text" name="status" placeholder="status">
+                        </div>
+
+                        <div>
+                            <label for="">Upload Image</label>
+                            <input type="file" name="cat_image" placeholder="Upload Image">
+                        </div>
+                        <div>
+                            <label for="">Submit</label>
+                            <input type="submit" value="Save new info">
+                        </div>
                     </div>
                 </table>
             </form>
        </div>
 
-            <div class="container">
-            <h1>Cat Records</h1>
-             <div class="row">
-                <div class="col-auto mr-auto">
-        <table border="3">
-            <div class="border border-warning">
-                <td>ID</td>
-                <td>Name</td>
-                <td>Gender</td>
-                <td>Eye_color</td>
-                <td>Fur_color</td>
-                <td>Description</td>
+             <div class="container">
+        <h1>Cat Records</h1>
+        <form method="GET" action="{{ route('admin.create') }}">
+            <input type="text" name="query" placeholder="Search records">
+            <button type="submit">Search</button>
+        </form>
+        <div class="row">
+            <div class="col-auto mr-auto">
+                <table border="3">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Gender</th>
+                            <th>Breed</th>
+                            <th>Eye Color</th>
+                            <th>Fur Color</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($displayData as $catinfo)
+                        <tr>
+                            <td>{{$catinfo->id}}</td>
+                            <td>{{$catinfo->name}}</td>
+                            <td>{{$catinfo->gender}}</td>
+                            <td>{{$catinfo->breed}}</td>
+                            <td>{{$catinfo->eye_color}}</td>
+                            <td>{{$catinfo->fur_color}}</td>
+                            <td>{{$catinfo->description}}</td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
             </div>
-            @foreach($displayData as $catinfo)
-            <tr>
-                <td>{{$catinfo->id}}</td>
-                <td>{{$catinfo->name}}</td>
-                <td>{{$catinfo->gender}}</td>
-                <td>{{$catinfo->eye_color}}</td>
-                <td>{{$catinfo->fur_color}}</td>
-                <td>{{$catinfo->description}}</td>
-                <td></td>
-            </tr>@endforeach
-        </table>
-                </div>
-             </div>
-           </div>
+        </div>
+    </div>
         
 </body>
 <style>
@@ -94,7 +111,9 @@
     }
     
     .container {
-        max-width: 800px;
+        max-width:auto;
+        max-height:auto;
+        
         margin: 20px auto;
         padding: 20px;
         border: 1px solid #ccc;
