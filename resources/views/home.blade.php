@@ -62,6 +62,7 @@
 <body class="font-sans antialiased">
     <nav class="navbar navbar-expand-lg" data-bs-theme="dark">
         <div class="container-fluid">
+        
             <a class="navbar-brand px-5 py-3" href="{{ url('/') }}">HOME</a>
             <a class="navbar-brand px-4 py-3" href="{{ url('aboutus') }}">ABOUT US</a>
             <a class="navbar-brand px-4 py-3" href="{{ url('services') }}">SERVICES</a>
@@ -73,11 +74,9 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <!--In between navbar items and dropdown menu-->
-                </ul>
                 
-                <!-- Right Side Of Navbar -->
-                <ul class="navbar-nav ms-auto">
+                </ul>
+                    <ul class="navbar-nav ms-auto">
                     <!-- Authentication Links -->
                     @guest
                         <li class="nav-item">
@@ -110,13 +109,6 @@
             </div>
         </div>
     </nav>
-
-
-
-        <div class="border border-warning">
-            <img src="images\Cat2.jpg"  style="width:100%; height: 500px;">
-        </div>
-    </nav>
     <br><br><br><br><br>
     <section>
         <div class="container">
@@ -129,15 +121,8 @@
                         <button class="btn btn-outline-secondary" type="button">Advanced Search</button>
                     </div>
                 </div>
-            </div> 
-        </section>
-
-        
-
-        
-        
-    </body>
-
-
-    
+            </div>
+        </div>
+    </section>
+</body>
 </html>

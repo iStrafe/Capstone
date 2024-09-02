@@ -3,6 +3,7 @@
 use App\Http\Controllers\CatinfoController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\serviceController;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 
@@ -12,12 +13,23 @@ Route::get('/test', function () {
     return view('test');
 });
 
+//Route for admin upon login
 Route::get('admin',function(){
     return view('admintest');
 })->middleware(['auth'])->name('admin');
 
+Route::get('adminDashboard',function(){
+    return view('admin.admintest');
+});
+
+
+//Route for Users upon login
 Route::get('userDashboard',function(){
+    if(!Auth::user()){
+        redirect('/');
+    }
     return view('dashboard');
+   
 })->middleware(['auth'])->name('dashboard');
 
 //About us Route
@@ -45,11 +57,11 @@ Route::get('/feed', function () {
     return view('feed');
 })->name('feed');
 
-//======== views/admin controllers =======
-Route::get('admintest/create',[CatinfoController::class,'index'])->name('admin.index');
-Route::get('admintest/create',[CatinfoController::class,'create']);
-Route::post('admintest/create',[CatinfoController::class,'store'])->name('admin.store');
-Route::get('admintest/create',[CatinfoController::class,'viewCatInformation2'])->name('catinfo.view');
+//========admin controllers =======
+Route::get('admintestDashboard',[CatinfoController::class,'index'])->name('admin.index');
+Route::get('admintestDashboard',[CatinfoController::class,'create']);
+Route::post('admintestDashboard',[CatinfoController::class,'store'])->name('admin.store');
+Route::get('admintestDashboard',[CatinfoController::class,'viewCatInformation2'])->name('catinfo.view');
 
 Route::get('admintest/search', [CatinfoController::class, 'search'])->name('admin.create');
 
@@ -79,7 +91,7 @@ Route::get('/homecopy', function () {
     //return view('dashboard');
 //})->middleware(['auth', 'verified'])->name('dashboard');
 
-//Authentication
+//Authentication - User profile management 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

@@ -52,6 +52,9 @@
 
 <nav class="navbar navbar-expand-lg border-bottom border-body" data-bs-theme="dark">
     <div class="container-fluid">
+             @if(Auth::user()->role === "admin")
+                <a class="navbar-brand px-5 py-3" href="{{url('adminDashboard')}}">Admin Page</a>
+            @endif
         <a class="navbar-brand px-5 py-3" href="{{url('dashboard')}}">HOME</a>
         <a class="navbar-brand px-4 py-3" href="{{url('aboutus')}}">ABOUT US</a>
         <a class="navbar-brand px-4 py-3" href="{{url('services')}}">SERVICES</a>

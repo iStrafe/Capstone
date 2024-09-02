@@ -1,5 +1,61 @@
+<style>
+
+       body {
+            font-family: 'Figtree', sans-serif;
+            background-color: #d0e7ff; /* Light blue background */
+            background-size: cover;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        .navbar {
+            background-color: #03045E; /* Adamson blue */
+            padding: 1rem;
+        }
+        .navbar a {
+            color: white;
+            margin-right: 1rem;
+        }
+        .navbar .dropdown-menu {
+            background-color: #003366;
+        }
+       
+        .logo {
+            max-width: 150px;
+            margin: 0 auto 20px; /* Center the logo and add space below */
+            display: block;
+        }
+        .center {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .input-group {
+            width: 100%;
+            max-width: 500px; /* Adjust the maximum width of the input group */
+        }
+        
+        .footer {
+            background-color: #03045E;
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+            position: relative;
+        }
+        .footer .fs-1 {
+            font-family: serif;
+        }
+        .footer p, .footer h2 {
+            margin: 0;
+        }
+    </style>
+
+
 <nav class="navbar navbar-expand-lg border-bottom border-body" data-bs-theme="dark">
     <div class="container-fluid">
+        @if(Auth::user()->role === "admin")
+            <a class="navbar-brand px-5 py-3" href="{{url('dashboard')}}">Main Page</a>
+        @endif
         <a class="navbar-brand px-5 py-3" href="{{url('')}}">Cat List</a>
         <a class="navbar-brand px-4 py-3" href="{{url('')}}">News</a>
         <a class="navbar-brand px-4 py-3" href="{{url('')}}">Users</a>

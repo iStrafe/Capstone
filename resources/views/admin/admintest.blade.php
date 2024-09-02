@@ -1,1 +1,3 @@
-@include('adminNavbar')
+@include('scripts')
+@include('admin.adminNavbar')
+

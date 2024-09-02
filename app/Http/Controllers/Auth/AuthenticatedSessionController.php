@@ -31,10 +31,10 @@ class AuthenticatedSessionController extends Controller
       //  return redirect()->intended(route('dashboard', absolute: false));
       if($request->user()->role === "admin"){
 
-            return redirect('admintest/create');
+            return redirect('adminDashboard');
 
         }
-
+        
         if($request->user()->role === "user"){
             return redirect('dashboard');
         }

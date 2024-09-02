@@ -17,7 +17,7 @@ class CatinfoController extends Controller
 
 
         $select = DB::select('select * from catinfo');
-        return view('admin.create')->with('name',$select);
+        
     }
 
     public function create(){
