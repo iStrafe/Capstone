@@ -54,7 +54,11 @@
 <nav class="navbar navbar-expand-lg border-bottom border-body" data-bs-theme="dark">
     <div class="container-fluid">
         @if(Auth::user()->role === "admin")
-            <a class="navbar-brand px-5 py-3" href="{{url('dashboard')}}">Main Page</a>
+            <a class="button" data-text="Awesome" href="{{url('dashboard')}}">
+                    <span class="actual-text">&nbsp;Mainpage&nbsp;</span>
+                    <span aria-hidden="true" class="hover-text">&nbsp;Mainpage&nbsp;</span>
+                </a>
+            <!--<a class="navbar-brand px-5 py-3" href="{{url('dashboard')}}">Main Page</a>-->
         @endif
         <a class="navbar-brand px-5 py-3" href="{{url('')}}">Cat List</a>
         <a class="navbar-brand px-4 py-3" href="{{url('')}}">News</a>

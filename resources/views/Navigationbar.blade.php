@@ -48,12 +48,16 @@
         .footer p, .footer h2 {
             margin: 0;
         }
-    </style>
+</style>
 
 <nav class="navbar navbar-expand-lg border-bottom border-body" data-bs-theme="dark">
     <div class="container-fluid">
              @if(Auth::user()->role === "admin")
-                <a class="navbar-brand px-5 py-3" href="{{url('adminDashboard')}}">Admin Page</a>
+                <a class="button" data-text="Awesome" href="{{url('adminDashboard')}}">
+                    <span class="actual-text">&nbsp;adminpage&nbsp;</span>
+                    <span aria-hidden="true" class="hover-text">&nbsp;adminpage&nbsp;</span>
+                </a>
+                <!--<a class="navbar-brand px-5 py-3" href="{{url('adminDashboard')}}">adminpage</a>-->
             @endif
         <a class="navbar-brand px-5 py-3" href="{{url('dashboard')}}">HOME</a>
         <a class="navbar-brand px-4 py-3" href="{{url('aboutus')}}">ABOUT US</a>

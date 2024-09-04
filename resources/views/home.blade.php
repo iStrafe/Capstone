@@ -56,13 +56,13 @@
             width: 100%;
             max-width: 500px; /* Adjust the maximum width of the input group */
         }
+        
     </style>
 </head>
 
 <body class="font-sans antialiased">
     <nav class="navbar navbar-expand-lg" data-bs-theme="dark">
         <div class="container-fluid">
-        
             <a class="navbar-brand px-5 py-3" href="{{ url('/') }}">HOME</a>
             <a class="navbar-brand px-4 py-3" href="{{ url('aboutus') }}">ABOUT US</a>
             <a class="navbar-brand px-4 py-3" href="{{ url('services') }}">SERVICES</a>

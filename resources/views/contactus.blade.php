@@ -106,6 +106,7 @@
     <body class="..">
        <div class="font-sans antialiased dark:bg-black dark:text-white/50 border border-warning">
             @include('Navigationbar')
+            @include('scripts')
         </div>
 
         <div>
