@@ -1,12 +1,28 @@
 <?php
 
 use App\Http\Controllers\CatinfoController;
+use App\Http\Controllers\GoogleAuthController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\serviceController;
+use GuzzleHttp\Psr7\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use Laravel\Socialite\Facades\Socialite;
+use SebastianBergmann\CodeCoverage\Driver\Driver;
+/*
+//Google authentication route
+Route::get('/auth/google/redirect',function(){
+    return Socialite::driver("google")->redirect();
+});
 
+Route::get('/auth/google/callback',function(){
+   return Socialite::driver("google")->user();
+   dd(Socialite::driver("google")->user());
+    // $user->token
+});*/
 
+Route::get('auth/google/redirect', [GoogleAuthController::class, 'redirect'])->name('google-auth');
+Route::get('auth/google/callbacks', [GoogleAuthController::class,'callbackGoogle']);
 
 //test route
 Route::get('/test', function () {
@@ -80,7 +96,7 @@ Route::middleware('auth')->group(function () {
 });
 
 
-
+//Testing route
 Route::get('/homecopy', function () {
     return view('homecopy');
 });
@@ -100,7 +116,7 @@ Route::middleware('auth')->group(function () {
 
 
 
-require __DIR__.'/auth.php';
+
 
 //============= Navbar Routes =============== 
 
@@ -133,3 +149,4 @@ Route::group(['prefix' => 'service'],function(){
 
 })->middleware(['auth', 'verified'])->name('services');*/
 
+require __DIR__.'/auth.php';

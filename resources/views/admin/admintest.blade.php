@@ -1,5 +1,55 @@
 @include('scripts')
 @include('admin.adminNavbar')
+<style>
+            /* Basic reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        .containerAdmin {
+            display: grid;
+            grid-template-rows: auto 1fr auto;
+            grid-template-columns: 200px 1fr;
+            grid-template-areas:
+                "header header"
+                "sidebar main-content"
+                "footer footer";
+            height: 100vh;
+            gap: 10px; /* Optional gap between items */
+        }
+
+        .header {
+            grid-area: header;
+            background-color: #f4f4f4;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .sidebar {
+            grid-area: sidebar;
+            background-color: #e0e0e0;
+            padding: 20px;
+        }
+
+        .main-content {
+            grid-area: main-content;
+            background-color: #ffffff;
+            padding: 20px;
+        }
+
+        .footer {
+            grid-area: footer;
+            background-color: #f4f4f4;
+            padding: 20px;
+            text-align: center;
+        }
+</style>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -9,25 +59,11 @@
     <title>Document</title>
 </head>
 <body>
-    <div class="container text-center">
-  <div class="row">
-    <div class="col-sm-3">
-      Level 1: .col-sm-3
+    <div class="containerAdmin">
+        <header class="header">Header</header>
+        <nav class="sidebar">Sidebar</nav>
+        <main class="main-content">Main Content</main>
+        <footer class="footer">Footer</footer>
     </div>
-    <div class="col-sm-9">
-      <div class="row">
-        <div class="col-8 col-sm-6">
-          Level 2: .col-8 .col-sm-6
-        </div>
-        <div class="col-4 col-sm-6">
-          Level 2: .col-4 .col-sm-6
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-
-    
 </body>
 </html>
