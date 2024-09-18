@@ -59,11 +59,17 @@
     <title>Document</title>
 </head>
 <body>
-    <div class="containerAdmin">
-        <header class="header">Header</header>
-        <nav class="sidebar">Sidebar</nav>
-        <main class="main-content">Main Content</main>
-        <footer class="footer">Footer</footer>
-    </div>
+   
+
+    <form action="/adminDashboard" method="POST">
+    @csrf
+    <input type="text" name="card_number" placeholder="Card Number">
+    <input type="text" name="exp_month" placeholder="Expiration Month">
+    <input type="text" name="exp_year" placeholder="Expiration Year">
+    <input type="text" name="cvc" placeholder="CVC">
+    <input type="hidden" name="payment_intent_id" id="paymentIntentId">
+    <button type="submit">Donate</button>
+</form>
+
 </body>
 </html>

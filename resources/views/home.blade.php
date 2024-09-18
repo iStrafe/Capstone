@@ -56,6 +56,9 @@
             width: 100%;
             max-width: 500px; /* Adjust the maximum width of the input group */
         }
+
+        /*
+        */
         
     </style>
 </head>
@@ -68,46 +71,28 @@
             <a class="navbar-brand px-4 py-3" href="{{ url('services') }}">SERVICES</a>
             <a class="navbar-brand px-4 py-3" href="{{ url('events') }}">NEWS / EVENTS</a>
             <a class="navbar-brand px-4 py-3" href="{{ url('ContactUs') }}">CONTACT US</a>
-            
+
             <!-- Modal trigger button -->
-            <button
-                type="button"
-                class="btn btn-primary btn-lg"
-                data-bs-toggle="modal"
-                data-bs-target="#modalId"
-            >
-                Launch
-            </button>
+            <button type="button" class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#modalId">Launch</button>
             
             <!-- Modal Body -->
             <!-- if you want to close by clicking outside the modal, delete the last endpoint:data-bs-backdrop and data-bs-keyboard -->
-            <div
-                class="modal fade"
-                id="modalId"
-                tabindex="-1"
-                data-bs-backdrop="static"
-                data-bs-keyboard="false"
-                
-                role="dialog"
-                aria-labelledby="modalTitleId"
-                aria-hidden="true"
-            >
+            <div class="modal fade" id="modalId" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false" role="dialog" aria-labelledby="modalTitleId" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-sm" role="document">
                     <div class="modal-content">
-                        <div class="modal-header">
+                        <div class="modal-header"><!--HEADER-->
                             <h5 class="modal-title" id="modalTitleId">
                                 Modal title
                             </h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-                            </button>
-                        </div>
-                        <div class="modal-body">    
-                            BODY
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"> </button>
+                        </div><!--HEADER END-->
+                        <div class="modal-body"><!--BODY-->
+                            Body
+                        </div><!--BODY END-->
+                        <div class="modal-footer"><!--FOOTER-->
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close </button>
                             <button type="button" class="btn btn-primary">Save</button>
-                        </div>
+                        </div><!--FOOTER END-->
                     </div>
                 </div>
             </div>
@@ -119,6 +104,7 @@
                     options,
                 );
             </script>
+                  
             
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">

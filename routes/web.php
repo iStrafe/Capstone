@@ -1,7 +1,9 @@
 <?php
 
 use App\Http\Controllers\CatinfoController;
+use App\Http\Controllers\DonationController;
 use App\Http\Controllers\GoogleAuthController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\serviceController;
 use GuzzleHttp\Psr7\Request;
@@ -9,18 +11,13 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Laravel\Socialite\Facades\Socialite;
 use SebastianBergmann\CodeCoverage\Driver\Driver;
-/*
-//Google authentication route
-Route::get('/auth/google/redirect',function(){
-    return Socialite::driver("google")->redirect();
-});
 
-Route::get('/auth/google/callback',function(){
-   return Socialite::driver("google")->user();
-   dd(Socialite::driver("google")->user());
-    // $user->token
-});*/
 
+//Paymongo Payment
+Route::get('/payment',[PaymentController::class,'paymentView']);
+Route::post('/payment', [PaymentController::class, 'createPayment'])->name('paymongo.create');
+
+//Google Authentication
 Route::get('auth/google/redirect', [GoogleAuthController::class, 'redirect'])->name('google-auth');
 Route::get('auth/google/callbacks', [GoogleAuthController::class,'callbackGoogle']);
 
