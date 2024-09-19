@@ -16,6 +16,8 @@ use SebastianBergmann\CodeCoverage\Driver\Driver;
 //Paymongo Payment
 Route::get('/payment',[PaymentController::class,'paymentView']);
 Route::post('/payment', [PaymentController::class, 'createPayment'])->name('paymongo.create');
+Route::get('/home',[PaymentController::class,'paymentView']);
+Route::post('/home', [PaymentController::class, 'createPayment'])->name('paymongo.create');
 
 //Google Authentication
 Route::get('auth/google/redirect', [GoogleAuthController::class, 'redirect'])->name('google-auth');
