@@ -173,59 +173,8 @@
         </button>
         <!-- Modal trigger button -->
             <button type="button" class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#modalId">DONATE</button>
-
-                <!-- Modal Body -->
-                <!-- Paymongo Modal -->
-                <div class="modal fade" id="modalId" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false" role="dialog" aria-labelledby="modalTitleId" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-lg" role="document">
-                    <div class="modal-content form-container">
-                    <div class="modal-header form">
-                        <span class="heading">Donate via PayMongo</span>
-                        <button type="reset" class="btn-close" data-bs-dismiss="modal" aria-label="Close">CLOSE</button>
-                    </div>
-                  <div class="form">
-                    <form action="{{ route('paymongo.create') }}" method="POST">
-                        @csrf
-                        <div class="mb-3">
-                            <input class="input" placeholder="Amount" type="number" name="amount" id="amount" required>
-                        </div>
-                        <div class="mb-3">
-                            <textarea class="input" type="text" name="description" id="description" required></textarea>
-                        </div>
-                            <div class="button-container">
-                                <button type="submit" class="send-button">Send</button>
-                                <div class="reset-button-container">
-                                    <button type="reset" id="reset-btn" class="reset-button">Reset</button>
-                                </div>
-                            </div>
-                    </form>
-                </div>
-                    <!--
-                    <div class="form">
-                       @csrf
-                        <form action="{{ route('paymongo.create') }}" method="POST">
-                            <div class="mb-3">
-                                <input placeholder="Amount" type="number" name="amount" id="amount" min="1" required class="input" required>
-                            </div>
-                            <div class="mb-3">
-                                <textarea class="input" placeholder="Say Hello" rows="4" type="text" name="description" id="description" required></textarea>
-                            </div>
-                            <div class="button-container">
-                                <button type="submit" class="send-button">Send</button>
-                                <div class="reset-button-container">
-                                    <button type="reset" id="reset-btn" class="reset-button">Reset</button>
-                                </div>
-                            </div>
-                        </form>
-                    </div>-->
-                    </div>
-                </div>
-                </div>
-
-        <!-- Bootstrap Modal Initialization Script -->
-        <script>
-        const myModal = new bootstrap.Modal(document.getElementById('modalId'));
-        </script>
+            @include('payment')
+             
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <!--In between navbar items and dropdown menu-->
