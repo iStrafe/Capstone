@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Log;
 
 class PaymentController extends Controller
 {
-    public function PaymentView(){
+    public function paymentView(){
         return view('payment');
     }
      public function createPayment(Request $request)
@@ -60,6 +60,7 @@ class PaymentController extends Controller
 
             // Redirect to the payment link
             return redirect($paymentUrl);
+            
 
         } catch (RequestException $e) {
             // Handle API errors

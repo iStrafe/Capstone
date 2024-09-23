@@ -153,6 +153,56 @@
             }
 </style>
 
+<!-- Bootstrap Modal -->
+    <div class="modal fade" id="timeoutModal" tabindex="-1" aria-labelledby="timeoutModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="timeoutModalLabel">Session Timeout</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    {{ session('timeoutMessage') }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+     <!-- Idle Detection Script -->
+    <script>
+        let idleTime = 0;
+
+        function timerIncrement() {
+            idleTime++;
+            if (idleTime > 4) { // 5 minutes
+                document.getElementById('logout-form').submit();
+            }
+        }
+
+        document.onload = resetTimer;
+        document.onmousemove = resetTimer;
+        document.onkeypress = resetTimer;
+
+        function resetTimer() {
+            idleTime = 0;
+        }
+
+        setInterval(timerIncrement, 60000); // 1 minute
+
+        // Show timeout modal if session variable exists
+        if(session('timeoutMessage'))
+            var timeoutModal = new bootstrap.Modal(document.getElementById('timeoutModal'));
+            timeoutModal.show();
+            setTimeout(function() {
+                timeoutModal.hide();
+            }, 5000); // Hide after 5 seconds
+        endif
+    </script>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+
 <nav class="navbar navbar-expand-lg border-bottom border-body" data-bs-theme="dark">
     <div class="container-fluid">
              @if(Auth::check() && Auth::user()->role === "admin")
@@ -173,7 +223,9 @@
         </button>
         <!-- Modal trigger button -->
             <button type="button" class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#modalId">DONATE</button>
+            <!--Paymongo Modal-->
             @include('payment')
+
              
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">

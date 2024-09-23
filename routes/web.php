@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Admin\CatController;
 use App\Http\Controllers\CatinfoController;
 use App\Http\Controllers\DonationController;
@@ -25,12 +26,25 @@ Route::prefix('admin')->name('admin.')->group(function () {
 //Paymongo Payment
 Route::get('/payment',[PaymentController::class,'paymentView']);
 Route::post('/payment', [PaymentController::class, 'createPayment'])->name('paymongo.create');
+/*
 Route::get('/home',[PaymentController::class,'paymentView']);
-Route::post('/home', [PaymentController::class, 'createPayment'])->name('paymongo.create');
+Route::post('/home', [PaymentController::class, 'createPayment'])->name('paymongo.create.home');*/
 
 //Google Authentication
 Route::get('auth/google/redirect', [GoogleAuthController::class, 'redirect'])->name('google-auth');
 Route::get('auth/google/callbacks', [GoogleAuthController::class,'callbackGoogle']);
+
+//Session Timeout route
+Route::group(['middleware' => ['web', \App\Http\Middleware\SessionTimeout::class]], function () {
+    Route::get('/home', function () {
+        return view('home');
+    });
+});
+
+//Rout for logout
+Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
+
+//Route for Image verification
 
 //test route
 Route::get('/test', function () {
