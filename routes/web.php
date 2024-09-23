@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\CatController;
 use App\Http\Controllers\CatinfoController;
 use App\Http\Controllers\DonationController;
 use App\Http\Controllers\GoogleAuthController;
@@ -11,6 +12,14 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Laravel\Socialite\Facades\Socialite;
 use SebastianBergmann\CodeCoverage\Driver\Driver;
+
+//Cat Adoption
+
+Route::prefix('admin')->name('admin.')->group(function () {
+    Route::resource('cats', CatController::class);
+});
+
+
 
 
 //Paymongo Payment

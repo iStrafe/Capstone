@@ -60,7 +60,7 @@
                 </a>
             <!--<a class="navbar-brand px-5 py-3" href="{{url('dashboard')}}">Main Page</a>-->
         @endif
-        <a class="navbar-brand px-5 py-3" href="{{url('')}}">Cat List</a>
+        <a class="navbar-brand px-5 py-3" href="{{ route('admin.cats.index') }}">Cat List</a>
         <a class="navbar-brand px-4 py-3" href="{{url('')}}">News</a>
         <a class="navbar-brand px-4 py-3" href="{{url('')}}">Users</a>
         <a class="navbar-brand px-4 py-3" href="{{url('')}}">Donation Records</a>
