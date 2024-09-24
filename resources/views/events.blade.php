@@ -12,7 +12,7 @@
 </head>
     @include('scripts')
 <body class="font-sans antialiased dark:bg-black dark:text-white/50">
-    <div class="border border-warning">
+    <div class="">
         @include('Navigationbar')
     </div>
 

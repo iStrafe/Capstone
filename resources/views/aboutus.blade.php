@@ -35,11 +35,11 @@
 
     </style>
     <body class="..">
-        <div class="font-sans antialiased dark:bg-black dark:text-white/50 border border-warning">
+        <div class="font-sans antialiased dark:bg-black dark:text-white/50">
             @include('Navigationbar')
         </div>
 
-        <div class="about-section border border-warning">
+        <div class="about-section">
             <img src="images\Cat2.jpg" alt="Jane" style="width:100%; height: 500px;">
         </div>
 

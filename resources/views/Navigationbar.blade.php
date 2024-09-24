@@ -1,4 +1,4 @@
-
+@include('scripts')
 <style>
        body {
             font-family: 'Figtree', sans-serif;
@@ -197,10 +197,10 @@
                 timeoutModal.hide();
             }, 5000); // Hide after 5 seconds
         endif
+
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js">
     </script>
 
-    <!-- Bootstrap JS and dependencies -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 
 <nav class="navbar navbar-expand-lg border-bottom border-body" data-bs-theme="dark">
