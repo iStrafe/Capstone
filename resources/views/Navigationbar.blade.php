@@ -212,38 +212,41 @@
                 </a>
                 <!--<a class="navbar-brand px-5 py-3" href="{{url('adminDashboard')}}">adminpage</a>-->
             @endif
-           
-        <a class="navbar-brand px-5 py-3" href="{{url('dashboard')}}">HOME</a>
-        <a class="navbar-brand px-4 py-3" href="{{url('aboutus')}}">ABOUT US</a>
-        <a class="navbar-brand px-4 py-3" href="{{url('services')}}">SERVICES</a>
-        <a class="navbar-brand px-4 py-3" href="{{url('events')}}">NEWS / EVENTS</a>
-        <a class="navbar-brand px-4 py-3" href="{{url('ContactUs')}}">CONTACT US</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+
+        <a class="navbar-brand px-5" href="{{ url('/') }}">HOME</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <!-- Modal trigger button -->
-            <button type="button" class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#modalId">DONATE</button>
-            <!--Paymongo Modal-->
-            @include('payment')
-
-             
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+           
+        <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <!--In between navbar items and dropdown menu-->
+                <li class="nav-item px-4">
+                    <a class="nav-link" href="{{ url('aboutus') }}">ABOUT US</a>
+                </li>
+                <li class="nav-item px-4">
+                    <a class="nav-link" href="{{ url('services') }}">SERVICES</a>
+                </li>
+                <li class="nav-item px-4">
+                    <a class="nav-link" href="{{ url('events') }}">NEWS / EVENTS</a>
+                </li>
+                <li class="nav-item px-4">
+                    <a class="nav-link" href="{{ url('ContactUs') }}">CONTACT US</a>
+                </li>
+
+                <!-- Modal trigger button -->
+                <button type="button" class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#modalId">DONATE</button>
+                <!--Paymongo Modal-->
+                @include('payment')
             </ul>
-            
-            <!-- Right Side Of Navbar -->
+
             <ul class="navbar-nav ms-auto">
-                <!-- Authentication Links -->
                 @guest
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
                     </li>
-                    @if (Route::has('register'))
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
-                        </li>
-                    @endif
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
+                    </li>
                 @else
                     <li class="nav-item dropdown">
                         <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
