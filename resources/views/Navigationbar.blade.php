@@ -213,7 +213,9 @@
                 <!--<a class="navbar-brand px-5 py-3" href="{{url('adminDashboard')}}">adminpage</a>-->
             @endif
 
-        <a class="navbar-brand px-5" href="{{ url('/') }}">HOME</a>
+        <a class="navbar-brand px-5" href="{{ url('/dashboard') }}">HOME</a>
+
+    
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -224,7 +226,7 @@
                     <a class="nav-link" href="{{ url('aboutus') }}">ABOUT US</a>
                 </li>
                 <li class="nav-item px-4">
-                    <a class="nav-link" href="{{ url('services') }}">SERVICES</a>
+                    <a class="nav-link" data-bs-toggle="modal" data-bs-target="#modalId2">ADOPT</a>@include('Services.adopt')
                 </li>
                 <li class="nav-item px-4">
                     <a class="nav-link" href="{{ url('events') }}">NEWS / EVENTS</a>
@@ -234,7 +236,7 @@
                 </li>
 
                 <!-- Modal trigger button -->
-                <button type="button" class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#modalId">DONATE</button>
+                <button type="button" class="btn btn-secondary btn-lg" data-bs-toggle="modal" data-bs-target="#modalId">DONATE</button>
                 <!--Paymongo Modal-->
                 @include('payment')
             </ul>

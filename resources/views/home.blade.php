@@ -12,7 +12,8 @@
     <!-- Styles -->
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
     @include('scripts')
-
+    <!--@include('scripts2')-->
+   
     <style>
         body {
             font-family: 'Figtree', sans-serif;
@@ -84,7 +85,7 @@
                     <a class="nav-link" href="{{ url('aboutus') }}">ABOUT US</a>
                 </li>
                 <li class="nav-item px-4">
-                    <a class="nav-link" href="{{ url('services') }}">SERVICES</a>
+                    <a class="nav-link" data-bs-toggle="modal" data-bs-target="#modalId2">ADOPT</a>@include('Services.adopt')
                 </li>
                 <li class="nav-item px-4">
                     <a class="nav-link" href="{{ url('events') }}">NEWS / EVENTS</a>
@@ -94,7 +95,7 @@
                 </li>
 
                 <!-- Modal trigger button -->
-                <button type="button" class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#modalId">DONATE</button>
+                <button type="button" class="btn btn-secondary btn-lg" data-bs-toggle="modal" data-bs-target="#modalId">DONATE</button>
                 <!--Paymongo Modal-->
                 @include('payment')
             </ul>
@@ -130,7 +131,17 @@
     </div>
 </nav>
 
-    <br><br><br><br><br>
+        <!-- Masthead-->
+        <header class="masthead">
+            <div class="container2"><br><br>
+                <div class="masthead-subheading">Welcome To Our AduCats Website!</div>
+                <div class="masthead-heading text-uppercase">It's Nice To Meet You</div>
+            </div>
+        </header>
+
+        
+
+ 
     <section>
         <div class="container">
             <img src="images/logo.png" alt="Logo" class="logo">
@@ -145,5 +156,33 @@
             </div>
         </div>
     </section>
+
+     <!-- Portfolio Grid-->
+        <section class="page-section bg-light" id="portfolio">
+            <div class="container2">
+                <div class="text-center">
+                    <h2 class="section-heading text-uppercase">OUR CATS</h2>
+                    <h3 class="section-subheading text-muted"></h3>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-4 col-sm-6 mb-4">
+                        <!-- Portfolio item 1-->
+                        <div class="portfolio-item">
+                            <a class="portfolio-link" data-bs-toggle="modal" href="#portfolioModal1">
+                                <div class="portfolio-hover">
+                                    <div class="portfolio-hover-content"><i class="fas fa-plus fa-3x"></i></div>
+                                </div>
+                                <img class="img-fluid" src="assets/img/portfolio/1.jpg" alt="..." />
+                            </a>
+                            <div class="portfolio-caption">
+                                <div class="portfolio-caption-heading">Threads</div>
+                                <div class="portfolio-caption-subheading text-muted">Illustration</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
 </body>
 </html>

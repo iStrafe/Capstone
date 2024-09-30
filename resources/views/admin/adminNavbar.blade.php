@@ -68,7 +68,7 @@
                     <a class="nav-link" href="{{ url('aboutus') }}">ABOUT US</a>
                 </li>
                 <li class="nav-item px-4">
-                    <a class="nav-link" href="{{ url('services') }}">SERVICES</a>
+                    <a class="nav-link" href="{{ url('services') }}">ADOPTION REQUESTS</a>
                 </li>
                 <li class="nav-item px-4">
                     <a class="nav-link" href="{{ url('events') }}">NEWS / EVENTS</a>

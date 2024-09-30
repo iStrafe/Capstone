@@ -6,11 +6,14 @@
         @include('Navigationbar')
     </div>
         
-
         
-        <div class="">
-        <img src="images\Cat2.jpg"  style="width:100%; height: 500px;">
-        </div>
+         <!-- Masthead-->
+        <header class="masthead">
+            <div class="container2"><br><br>
+                <div class="masthead-subheading">Welcome To Our AduCats Website!</div>
+                <div class="masthead-heading text-uppercase">It's Nice To Meet You</div>
+            </div>
+        </header>
 
          <section class="bg-blacks">
             <div class="container">
