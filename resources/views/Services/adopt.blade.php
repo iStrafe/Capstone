@@ -221,26 +221,29 @@
         var adoptButton = document.getElementById('adoptButton');
 
         agreeCheckbox.addEventListener('change', function () {
-        if (agreeCheckbox.checked) {
-            adoptButton.classList.add('enabled');
-            adoptButton.removeAttribute('disabled');
-            adoptButton.setAttribute('href', 'services');
-            adoptButton.onclick = function() { return true; };
-        } else {
-            adoptButton.classList.remove('enabled');
-            adoptButton.setAttribute('disabled', 'disabled');
-            adoptButton.setAttribute('href', '#');
-            adoptButton.onclick = function() { return false; };
-        }
-    });
-    
+            if (agreeCheckbox.checked) {
+                adoptButton.classList.add('enabled');
+                adoptButton.removeAttribute('disabled');
+                adoptButton.setAttribute('href', 'services');
+            } else {
+                adoptButton.classList.remove('enabled');
+                adoptButton.setAttribute('disabled', 'disabled');
+                adoptButton.setAttribute('href', '#');
+            }
+        });
+
+        adoptButton.addEventListener('click', function (event) {
+            if (!agreeCheckbox.checked) {
+                event.preventDefault();
+                alert("Please read the terms and conditions before proceeding to the adoption page.");
+            }
+        });
+
         modalId.addEventListener('show.bs.modal', function (event) {
-              // Button that triggered the modal
-              let button = event.relatedTarget;
-              // Extract info from data-bs-* attributes
-              let recipient = button.getAttribute('data-bs-whatever');
-    
-            // Use above variables to manipulate the DOM
+            // Button that triggered the modal
+            let button = event.relatedTarget;
+            // Extract info from data-bs-* attributes
+            let recipient = button.getAttribute('data-bs-whatever');
         });
     </script>
     

@@ -211,9 +211,13 @@
                     <span aria-hidden="true" class="hover-text">&nbsp;adminpage&nbsp;</span>
                 </a>
                 <!--<a class="navbar-brand px-5 py-3" href="{{url('adminDashboard')}}">adminpage</a>-->
+                 <a class="navbar-brand px-5" href="{{ url('/dashboard') }}">HOME</a>
+    
+                
             @endif
+             <a class="navbar-brand px-5" href="{{ url('/') }}">HOME</a>
 
-        <a class="navbar-brand px-5" href="{{ url('/dashboard') }}">HOME</a>
+       
 
     
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
