@@ -5,6 +5,16 @@
         <body>
     <h1>Add New Cat</h1>
 
+    @if ($errors->any())
+    <div class="alert alert-danger">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
+
     <form action="{{ route('admin.cats.update', $cat->id) }}" method="POST" enctype="multipart/form-data">
         @csrf
         @method('PUT')
