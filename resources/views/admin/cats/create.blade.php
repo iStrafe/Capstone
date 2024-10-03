@@ -3,48 +3,89 @@
 <!DOCTYPE html>
     <title>Add Cat</title>
         <body>
-    <h1>Add New Cat</h1>
+    @if ($errors->any())
+        <div class="alert alert-danger">
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
 
     <form action="{{ route('admin.cats.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
 
-        <label for="name">Name</label>
-        <input type="text" name="name" required>
+        <div class="container-sm">
 
-        <label for="address">Address</label>
-        <input type="text" name="address" required>
+            <div class="mb-3">
+                <label for="name" class="form-label">name</label>
+                <input type="text" name="name" class="form-control" required>
+            </div>
 
-        <label for="telephone_number">Telephone Number</label>
-        <input type="text" name="telephone_number" required>
+            <div class="mb-3">
+            <label for="address" class="form-label">Address</label>
+            <input type="text" class="form-control"name="address" required>
+            </div>
 
-        <label for="mobile_number">Mobile Number</label>
-        <input type="text" name="mobile_number" required>
+            <div class="mb-3">
+            <label for="telephone_number" class="form-label">Telephone Number</label>
+            <input type="text" name="telephone_number" class="form-control" required>
+            </div>
 
-        <label for="cat_name">Cat Name</label>
-        <input type="text" name="cat_name" required>
+            <div class="mb-3">
+            <label for="mobile_number" class="form-label">Mobile Number</label>
+            <input type="text" name="mobile_number" class="form-control" required>
+            </div>
 
-        <label for="cat_image">Cat Image</label>
-        <input type="file" name="cat_image">
+            <div class="mb-3">
+            <label for="cat_name" class="form-label">Cat Name</label>
+            <input type="text" name="cat_name" class="form-control" required>
+            </div>
+            
+            <div class="mb-3">
+            <label for="cat_image" class="form-label">Cat Image</label>
+            <input type="file" name="cat_image" class="form-control">
+            </div>
+            
+            <div class="mb-3">
+            <label for="age" class="form-label">Age</label>
+            <input type="number" name="age" class="form-control" required>
+            </div>
 
-        <label for="age">Age</label>
-        <input type="number" name="age" required>
+            <div class="mb-3">
+            <label for="color" class="form-label">Color</label>
+            <input type="text" name="color" class="form-control" required>
+            </div>
 
-        <label for="color">Color</label>
-        <input type="text" name="color" required>
+            <div class="mb-3">
+            <label for="breed" class="form-label">Breed</label>
+            <input type="text" name="breed" class="form-control" required>
+            </div>
 
-        <label for="breed">Breed</label>
-        <input type="text" name="breed" required>
+            <div class="mb-3">
+            <label for="sex" class="form-label">Sex</label>
+            <select name="sex" class="form-select" required>
+                <option selected>Open this select menu</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+            </select>
+            </div>
 
-        <label for="sex">Sex</label>
-        <select name="sex" required>
-            <option value="Male">Male</option>
-            <option value="Female">Female</option>
-        </select>
+            <div class="mb-3">
+            <label for="date_of_adoption" class="form-label">Date of Adoption</label>
+            <input type="date" name="date_of_adoption" class="form-control" required>
+            </div>
 
-        <label for="date_of_adoption">Date of Adoption</label>
-        <input type="date" name="date_of_adoption" required>
+            <button type="submit" class="btn btn-primary mb-3">Add Cat</button>
 
-        <button type="submit">Add Cat</button>
+        </div>
+
+        
+        <br>
+        
+
+        
     </form>
         </body>
 </html>

@@ -5,8 +5,9 @@
         <body>
 
     <h1>Cat Adoption List</h1>
-    <a href="{{ route('admin.cats.create') }}">Add New Cat</a>
-    <table>
+    <button type="button" class="btn btn-success"><a href="{{ route('admin.cats.create') }}">Add New Cat</a></button>
+    
+    <table class="table table-hover">
         <tr>
             <th>Name</th>
             <th>Address</th>
@@ -41,12 +42,13 @@
                 <td>{{ $cat->sex }}</td>
                 <td>{{ $cat->date_of_adoption }}</td>
                 <td>
-                    <a href="{{ route('admin.cats.show', $cat->id) }}">View</a> | 
-                    <a href="{{ route('admin.cats.edit', $cat->id) }}">Edit</a> | 
+                <button type="button" class="btn btn-link"><a href="{{ route('admin.cats.show', $cat->id) }}">View</a> </button>
+                <button type="button" class="btn btn-link"><a href="{{ route('admin.cats.edit', $cat->id) }}">Edit</a> </button>
+                    
                     <form action="{{ route('admin.cats.destroy', $cat->id) }}" method="POST" style="display:inline">
                         @csrf
                         @method('DELETE')
-                        <button type="submit">Delete</button>
+                        <button type="submit" class="btn btn-link">Delete</button>
                     </form>
                 </td>
             </tr>
