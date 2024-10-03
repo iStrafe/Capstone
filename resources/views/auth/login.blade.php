@@ -1,4 +1,16 @@
 <x-guest-layout>
+    <style>
+        body {
+            background-image: url('public\images\loginbg.jpg');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
 

@@ -3,6 +3,7 @@
 use App\Http\Controllers\CatinfoController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\serviceController;
+use App\Http\Controllers\NewsEventsController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -123,7 +124,7 @@ Route::middleware('auth')->group(function () {
 });
 
 //News & Events page routes
-
+Route::get('/news',[NewsEventsController::class,'showevents']);
 
 //Service page
 /*
