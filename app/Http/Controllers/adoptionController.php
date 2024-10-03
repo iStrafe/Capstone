@@ -11,7 +11,13 @@ class adoptionController extends Controller
         return view('Services.adoptionForm');
     }
 
+    public function showAdoptionRequest(){
+        $adoption_request = DB::table('adoption_request')->get();
+        return view('admin.adoptionRequest', ['adoption_request' => $adoption_request]);
+    }
+
     public function create(Request $request){
+        
         $data = [
             'name' => $request->input('name'),
             'address' => $request->input('address'),
@@ -23,13 +29,10 @@ class adoptionController extends Controller
             'sex' => $request->input('sex'),
             'color' => $request->input('color'),
             'date_of_adoption' => $request->input('date_of_adoption')
-
         ];
 
         $result = DB::table('adoption_request')->insert($data);
 
         return redirect()->route('AdoptionForm');
-
     }
-
 }

@@ -168,7 +168,7 @@
             </label>
 
              <label>
-                <input class="input py-3" type="address" name="age" placeholder="" required>
+                <input class="input py-3" type="address" name="approximate_age" placeholder="" required>
                 <span>Age</span>
             </label>
 

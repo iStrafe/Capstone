@@ -149,15 +149,15 @@ Route::middleware('auth')->group(function () {
 //})->middleware(['auth', 'verified'])->name('aboutus');
 
 
-//Service Page
+//Adoption page
 Route::middleware('auth')->group(function () {
 
 
-    //Service page routes
+    //Adoption page routes
     Route::get('/AdoptionForm',[adoptionController::class,'showAdoptionForm'])->name('AdoptionForm');
+    Route::get('/AdoptionRequest',[adoptionController::class,'showAdoptionRequest'])->name('AdoptionRequest');
     Route::post('/AdoptionForm',[adoptionController::class,'create'])->name('adoption.request');
  
-   
 });
 
 //News & Events page routes
