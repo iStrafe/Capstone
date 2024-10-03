@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Admin\CatController;
+use App\Http\Controllers\adoptionController;
 use App\Http\Controllers\CatinfoController;
 use App\Http\Controllers\DonationController;
 use App\Http\Controllers\GoogleAuthController;
@@ -153,10 +154,9 @@ Route::middleware('auth')->group(function () {
 
 
     //Service page routes
-    Route::get('/services',[serviceController::class,'showServices']);
-    Route::get('/adopt',[serviceController::class,'showAdopt']);
-    Route::get('/donate',[serviceController::class,'showDonate']);
-    Route::get('/report',[serviceController::class,'showReport']);
+    Route::get('/AdoptionForm',[adoptionController::class,'showAdoptionForm'])->name('AdoptionForm');
+    Route::post('/AdoptionForm',[adoptionController::class,'create'])->name('adoption.request');
+ 
    
 });
 

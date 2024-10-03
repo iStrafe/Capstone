@@ -153,7 +153,7 @@
             }
 </style>
 
-<!-- Bootstrap Modal -->
+<!-- Modal for session timeout-->
     <div class="modal fade" id="timeoutModal" tabindex="-1" aria-labelledby="timeoutModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -230,7 +230,7 @@
                     <a class="nav-link" href="{{ url('aboutus') }}">ABOUT US</a>
                 </li>
                 <li class="nav-item px-4">
-                    <a class="nav-link" data-bs-toggle="modal" data-bs-target="#modalId2">ADOPT</a>@include('Services.adopt')
+                    <a class="nav-link" data-bs-toggle="modal" data-bs-target="#modalId2">ADOPT</a>@include('Services.adoptContract')
                 </li>
                 <li class="nav-item px-4">
                     <a class="nav-link" href="{{ url('events') }}">NEWS / EVENTS</a>
