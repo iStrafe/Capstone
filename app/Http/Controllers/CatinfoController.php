@@ -78,10 +78,7 @@ class CatinfoController extends Controller
         return view('admin.create',compact('displayData'));
     }
     
-    // ============ Report page route =============
-     public function reportpage(){
-        return view('Services.report');
-    }
+
     //=========== Display report data in Admin page
    /* public function viewReportInformation(){
         $displayreportdata = DB::table('reportcat')->get();

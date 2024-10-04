@@ -1,252 +1,146 @@
+<!DOCTYPE html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+    @include('scripts')
+    <style>
+
+        
+
+    </style>
+    <body class="..">
+        <div class="font-sans antialiased dark:bg-black dark:text-white/50 border border-warning">
+            @include('Navigationbar')
+        </div>
+
+        <div class="about-section">
+        <img src="images\Cat2.jpg" alt="Jane" style="width:100%; height: 500px;">
+        </div>
 
 
-<style>
-    .plan {
-        border-radius: 16px;
-        box-shadow: 0 30px 30px -25px rgba(0, 38, 255, 0.205);
-        padding: 10px;
-        background-color: #fff;
-        color: #697e91;
-        max-width: 760px;
-    }
+    <div class="container">
+        <h1>Adopt Your Companion</h1>
+        <div class="row">
+            <div class="g-col-6">
 
-    .plan strong {
-        font-weight: 600;
-        color: #425275;
-    }
+                <div class="form-floating">
+                    <select class="form-select" id="Breed" aria-label="Floating label select example">
+                        <option selected>Choose a Breed</option>
+                        <option value="1">Breed One</option>
+                        <option value="2">Breed Two</option>
+                        <option value="3">Breed Three</option>
+                    </select>
+                    <label for="floatingSelect">Breed:</label>
+                </div>
 
-    .plan .inner {
-        align-items: center;
-        padding: 20px;
-        padding-top: 40px;
-        background-color: #ecf0ff;
-        border-radius: 12px;
-        position: relative;
-    }
+                <br>
 
-    .plan .pricing {
-        position: absolute;
-        top: 0;
-        right: 0;
-        background-color: #bed6fb;
-        border-radius: 99em 0 0 99em;
-        display: flex;
-        align-items: center;
-        padding: 0.625em 0.75em;
-        font-size: 1.25rem;
-        font-weight: 600;
-        color: #425475;
-    }
+                <div class="form-floating">
+                    <select class="form-select" id="Gender" aria-label="Floating label select example">
+                        <option selected>Choose gender</option>
+                        <option value="M">Male</option>
+                        <option value="F">Female</option>
+                    </select>
+                    <label for="floatingSelect">Gender:</label>
+                </div>
 
-    .plan .pricing small {
-        color: #707a91;
-        font-size: 0.75em;
-        margin-left: 0.25em;
-    }
+                <br>
 
-    .plan .title {
-        font-weight: 600;
-        font-size: 1.25rem;
-        color: #425675;
-    }
+                <div class="form-floating">
+                    <select class="form-select" id="Size" aria-label="Floating label select example">
+                        <option selected>Choose size</option>
+                        <option value="1">Small</option>
+                        <option value="2">Medium</option>
+                        <option value="3">Large</option>
+                    </select>
+                    <label for="floatingSelect">Size:</label>
+                </div>
 
-    .plan .title + * {
-        margin-top: 0.75rem;
-    }
+                <br>
 
-    .plan .info + * {
-        margin-top: 1rem;
-    }
+                <div class="form-floating">
+                    <input type="input" class="form-control" id="Age" placeholder="age">
+                    <label for="Age">Age:</label>
+                </div>
 
-    .plan .features {
-        display: flex;
-        flex-direction: column;
-    }
+                <br>
 
-    .plan .features li {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
+                <div class="form-floating">
+                    <input type="input" class="form-control" id="Color" placeholder="color">
+                    <label for="Color">Color:</label>
+                </div>
 
-    .plan .features li + * {
-        margin-top: 0.75rem;
-    }
+                <br>
+                
+                <div class="form-floating">
+                    <input type="input" class="form-control" id="Eye" placeholder="eye">
+                    <label for="Eye">Eye Color:</label>
+                </div>
 
-    .plan .features .icon {
-        background-color: #1FCAC5;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        color: #fff;
-        border-radius: 50%;
-        width: 20px;
-        height: 20px;
-    }
+                <br>
+                
+                <div class="form-floating">
+                    <input type="input" class="form-control" id="Head" placeholder="head">
+                    <label for="Head">Head Shape:</label>
+                </div>
 
-    .plan .features .icon svg {
-        width: 14px;
-        height: 14px;
-    }
+                <br>
+                
+                <div class="form-floating">
+                    <input type="input" class="form-control" id="Traits" placeholder="traits">
+                    <label for="Traits">Traits:</label>
+                </div>
 
-    .plan .features + * {
-        margin-top: 1.25rem;
-    }
+                <br>
+            
+            </div>
 
-    .plan .action {
-        width: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: end;
-    }
+            <div class="g-col-6">
 
-    .plan .button {
-        background-color: #6558d3;
-        border-radius: 6px;
-        color: #fff;
-        font-weight: 500;
-        font-size: 1.125rem;
-        text-align: center;
-        border: 0;
-        outline: 0;
-        width: 50%;
-        padding: 0.625em 0.75em;
-        text-decoration: none;
-    }
-
-    .plan .button:hover, .plan .button:focus {
-        background-color: #4133B7;
-    }
-
-    .plan .button.enabled {
-        cursor: pointer;
-        opacity: 1;
-    }
-</style>
-
-
-
-    
-    <!-- Modal -->
-    <div class="modal fade" id="modalId2" tabindex="-1"role="dialog" aria-labelledby="modalTitleId" aria-hidden="true">
-        <div class="modal-dialog  modal-dialog-centered modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-body">
-                     <div class="text-center" style="font-family: 'HK Modular', sans-serif; font-size: 1.5rem; font-weight: bold;">
-                        <p class="title" style="color: white;">AduCats ADOPTION CONTRACT</p>    </div>
-                        <div class="plan">
-                            <div class="inner">
-                                <p class="title">The prospective caregiver agrees:</p>
-                    <ul class="features">
-                        @for ($i = 1; $i <= 12; $i++)
-                            <li>
-                                <span class="icon">
-                                    <svg height="20" width="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M0 0h24v24H0z" fill="none"></path>
-                                        <path fill="currentColor" d="M10 15.172l9.192-9.193 1.415 1.414L10 18l-6.364-6.364 1.414-1.414z"></path>
-                                    </svg>
-                                </span>
-                                <span>
-                                    @switch($i)
-                                        @case(1)
-                                            To provide a Vallid ID.
-                                            @break
-                                        @case(2)
-                                            That the cat is to live in a private residence as a companion animal.
-                                            @break
-                                        @case(3)
-                                            To provide the cat with sufficient quantitties of nuttricious food and refresh water each day.
-                                            @break
-                                        @case(4)
-                                            Never to strike or other wise harm the cat.
-                                            @break
-                                        @case(5)
-                                            Never to have the cat declawed.
-                                            @break
-                                        @case(6)
-                                            To spray/neuter the cat by 5 months of age. Proof of surgery must be mailed to the
-                                            original caregiver within 30 days of the procedure.
-                                            @break
-                                        @case(7)
-                                            To ensure that the cat's vaccination (rabies and 4-in-1) are current and to provide
-                                            veterinary care upon sickness,disease, or injury.
-                                            @break
-                                        @case(8)
-                                            To provide the original caregiver with the contact information of the veterinarian and to 
-                                            give tthe original caregiver premission to talk to access cat's medical records via the aforementioned veterinarian.
-                                            @break
-                                        @case(9)
-                                            To give the original caregiver regular updates regarding the cat;s health status through pictures wich may be done
-                                            via Facebook.
-                                            @break
-                                        @case(10)
-                                            To give the original caregiver the rights to verify that the terms of this adoption agreement are being observed.
-                                            @break
-                                        @case(11)
-                                            That if the car must be relinquished for any reason by the adopter, s/he MUST NOT
-                                            turn the ca over too a humane society, sheler or person, but must return the cat to the original caregiver
-                                            OR AdUCats representative.
-                                            @break
-                                        @case(12)
-                                            That failure to perform the foregoing agreement will cnstitutue a breach of contract. In
-                                            the event of any such breach of contract, the original caregiver has he right or reclaim possession of the adoptetd cat.
-                                            @break
-                                        @default
-                                            team members
-                                    @endswitch
-                                </span>
-                            </li>
-                        @endfor
-                    </ul>
-                <div class="action">
-                    <div class="px-5">
-                        <input type="radio" id="agree" name="agreement" value="agree">
-                        <label for="agree">I agree to the terms</label>
+                <div id="carouselExampleIndicators" class="carousel slide">
+                    <div class="carousel-indicators">
+                        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+                        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
+                        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
+                        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="3" aria-label="Slide 4"></button>
                     </div>
-                    <a class="button" id="adoptButton" href="{{url('#')}}" onclick="return false;">
-                        Adopt a Cat
-                    </a>
+
+                    <div class="carousel-inner">
+                        <div class="carousel-item active">
+                            <a href="#"><img src="images/cute-feline-cate.jpg" class="d-block w-100" alt="..."></a>
+                        </div>
+
+                        <div class="carousel-item">
+                            <a href="#"><img src="images/cute-feline-cate.jpg" class="d-block w-100" alt="..."></a>
+                        </div>
+
+                        <div class="carousel-item">
+                            <a href="#"><img src="images/cute-feline-cate.jpg" class="d-block w-100" alt="..."></a>
+                        </div>
+                        <div class="carousel-item">
+                            <a href="#"><img src="images/cute-feline-cate.jpg" class="d-block w-100" alt="..."></a>
+                        </div>
+                    </div>
+
+                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+
+                    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                </div>
+
+                <br><br><br><br><br><br>
+
+                <div class="d-grid gap-2 col-6 mx-auto">
+                    <button type="button" class="btn btn-success">SEARCH</button>
                 </div>
             </div>
         </div>
-                </div>
-               
-            </div>
-        </div>
-    </div>
-    
-    <script>
-        var modalId = document.getElementById('modalId2');
-        var agreeCheckbox = document.getElementById('agree');
-        var adoptButton = document.getElementById('adoptButton');
 
-        agreeCheckbox.addEventListener('change', function () {
-            if (agreeCheckbox.checked) {
-                adoptButton.classList.add('enabled');
-                adoptButton.removeAttribute('disabled');
-                adoptButton.setAttribute('href', 'services');
-            } else {
-                adoptButton.classList.remove('enabled');
-                adoptButton.setAttribute('disabled', 'disabled');
-                adoptButton.setAttribute('href', '#');
-            }
-        });
+        <br>
 
-        adoptButton.addEventListener('click', function (event) {
-            if (!agreeCheckbox.checked) {
-                event.preventDefault();
-                alert("Please read the terms and conditions before proceeding to the adoption page.");
-            }
-        });
-
-        modalId.addEventListener('show.bs.modal', function (event) {
-            // Button that triggered the modal
-            let button = event.relatedTarget;
-            // Extract info from data-bs-* attributes
-            let recipient = button.getAttribute('data-bs-whatever');
-        });
-    </script>
-    
-
-       
- 
+    </div>           
+</body>
+</html>
