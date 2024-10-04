@@ -9,25 +9,16 @@
     
     <table class="table table-hover">
         <tr>
-            <th>Name</th>
-            <th>Address</th>
-            <th>Telephone</th>
-            <th>Mobile</th>
             <th>Cat Name</th>
             <th>Cat Image</th>
             <th>Age</th>
             <th>Color</th>
             <th>Breed</th>
             <th>Sex</th>
-            <th>Date of Adoption</th>
             <th>Actions</th>
         </tr>
         @foreach($cats as $cat)
             <tr>
-                <td>{{ $cat->name }}</td>
-                <td>{{ $cat->address }}</td>
-                <td>{{ $cat->telephone_number }}</td>
-                <td>{{ $cat->mobile_number }}</td>
                 <td>{{ $cat->cat_name }}</td>
                 <td>
                     @if($cat->cat_image)
@@ -40,7 +31,6 @@
                 <td>{{ $cat->color }}</td>
                 <td>{{ $cat->breed }}</td>
                 <td>{{ $cat->sex }}</td>
-                <td>{{ $cat->date_of_adoption }}</td>
                 <td>
                 <button type="button" class="btn btn-link"><a href="{{ route('admin.cats.show', $cat->id) }}">View</a> </button>
                 <button type="button" class="btn btn-link"><a href="{{ route('admin.cats.edit', $cat->id) }}">Edit</a> </button>

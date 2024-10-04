@@ -13,17 +13,12 @@ return new class extends Migration
     {
         Schema::create('cats', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('address');
-            $table->string('telephone_number');
-            $table->string('mobile_number');
             $table->string('cat_name');
             $table->string('cat_image')->nullable();
             $table->integer('age');
             $table->string('color');
             $table->string('breed');
             $table->enum('sex', ['Male', 'Female']);
-            $table->date('date_of_adoption');
             $table->timestamps();
         });
     }

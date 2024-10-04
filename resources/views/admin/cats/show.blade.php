@@ -13,15 +13,10 @@
         <p>No image available for {{ $cat->cat_name }}</p>
     @endif
 
-    <p><strong>Owner:</strong> {{ $cat->name }}</p>
-    <p><strong>Address:</strong> {{ $cat->address }}</p>
-    <p><strong>Telephone:</strong> {{ $cat->telephone_number }}</p>
-    <p><strong>Mobile:</strong> {{ $cat->mobile_number }}</p>
     <p><strong>Age:</strong> {{ $cat->age }} years</p>
     <p><strong>Color:</strong> {{ $cat->color }}</p>
     <p><strong>Breed:</strong> {{ $cat->breed }}</p>
     <p><strong>Sex:</strong> {{ $cat->sex }}</p>
-    <p><strong>Date of Adoption:</strong> {{ $cat->date_of_adoption }}</p>
 
     <a href="{{ route('admin.cats.index') }}">Back to List</a>
         </body>
