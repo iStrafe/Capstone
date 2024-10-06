@@ -22,6 +22,11 @@ class CatController extends Controller
         $cats = Cat::all();
         return view('dashboard', compact('cats'));
     }
+    public function index3()
+    {
+        $cats = Cat::all();
+        return view('home', compact('cats'));
+    }
 
     /**
      * Show the form for creating a new resource.

@@ -22,8 +22,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
 });
 
 //Route for Users upon login
-
 Route::get('userDashboard', [CatController::class, 'index2'])->middleware(['auth'])->name('dashboard');
+
+//Home Route
+Route::get('/', [CatController::class, 'index3'])->middleware(['auth'])->name('home');
 
 /*
 Route::get('dashboard',function(){
@@ -80,11 +82,6 @@ Route::get('adminDashboard',function(){
 Route::get('/aboutus', function () {
     return view('aboutus');
 })->name('aboutus');
-
-//Home Route
-Route::get('/', function () {
-    return view('home');
-})->name('home');
 
 //Events Route
 Route::get('/events', function () {
