@@ -17,6 +17,17 @@ class CatController extends Controller
         return view('admin.cats.index', compact('cats'));
     }
 
+    public function index2()
+    {
+        $cats = Cat::all();
+        return view('dashboard', compact('cats'));
+    }
+    public function index3()
+    {
+        $cats = Cat::all();
+        return view('home', compact('cats'));
+    }
+
     /**
      * Show the form for creating a new resource.
      */
