@@ -1,13 +1,95 @@
+@include('scripts')
+@include('Navigationbar')
+<style>
+                /* From Uiverse.io by G4b413l */ 
+        .card {
+        position: relative;
+        width: 25em;
+        height: 25em;
+        box-shadow: 0px 1px 13px rgba(0,0,0,0.1);
+        cursor: pointer;
+        transition: all 120ms;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #fff;
+        padding: 0.5em;
+        padding-bottom: 3.4em;
+        }
 
-    
-    <body class="font-sans antialiased dark:bg-black dark:text-white/50">
+        .card::after {
+        content: "Adopt Me!";
+        padding-top: 1.25em;
+        padding-left: 1.25em;
+        position: absolute;
+        left: 0;
+        bottom: -60px;
+        background: #00AC7C;
+        color: #fff;
+        height: 4em;
+        width: 100%;
+        transition: all 80ms;
+        font-weight: 600;
+        text-transform: uppercase;
+        opacity: 0;
+        }
 
-    <div class="">
-        @include('Navigationbar')
-    </div>
-        
-        
-         <!-- Masthead-->
+        .card .title {
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 0.9em;
+        position: absolute;
+        left: 0.625em;
+        bottom: 1.875em;
+        font-weight: 400;
+        color: #000;
+        }
+
+        .card .price {
+        font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+        font-size: 0.9em;
+        position: absolute;
+        left: 0.625em;
+        bottom: 0.625em;
+        color: #000;
+        }
+
+        .card:hover::after {
+        bottom: 0;
+        opacity: 1;
+        }
+
+        .card:active {
+        transform: scale(0.98);
+        }
+
+        .card:active::after {
+        content: "Added !";
+        height: 3.125em;
+        }
+
+        .text {
+        max-width: 55px;
+        }
+
+        .image {
+        background: rgb(241, 241, 241);
+        width: 100%;
+        height: 100%;
+        display: grid;
+        place-items: center;
+        }
+</style>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+
+ <!-- Masthead-->
         <header class="masthead">
             <div class="container2"><br><br>
                 <div class="masthead-subheading">Welcome To Our AduCats Website!</div>
@@ -16,44 +98,37 @@
         </header>
 
          <section class="bg-blacks">
+
             <div class="container">
-             <h1>SEARCH CAT</h1>
-                <div class="center">
-                    <div class="input-group mb-3">
-                            <input type="text" class="form-control" placeholder="Search Cat" aria-label="Recipient's username" aria-describedby="basic-addon2">
-                        <div class="input-group-append">
-                            <button class="btn btn-outline-secondary" type="button">Advanced Search</button>
+               
+                    <div class="center">
+                    <h1>CAT GALLERY</h1>
+                        <div class="input-group mb-3">
+                                <input type="text" class="form-control" placeholder="Search Cat" aria-label="Recipient's username" aria-describedby="basic-addon2">
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-secondary" type="button">search</button>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <div class = "container">
-                    <div class = "row">
-                        <div class="card-group">@foreach($displayData as $catinfo)
-                            <div class="card border border-warning mb-3" style="max-width: 18rem;">
-                                <div class="card-header bg-transparent border-success">{{$catinfo->name}}</div>
-                                 <img class="card-img-top" src="..." alt="Card image cap">
-                                <div class="card-body text-success bg-transparent">
-                                    <h5 class="card-title">Gender: {{$catinfo->gender}}</h5>
-                                    <h5 class="card-title">Eye color: {{$catinfo->eye_color}}</h5>
-                                    <h5 class="card-title">Fur color: {{$catinfo->fur_color}}</h5>
-                                    <p class="card-text">Description: {{$catinfo->description}}</p>
+                <div class="row">
+                    @foreach($cats as $cat)
+                        <div class="col-md-4" data-bs-toggle="modal" data-bs-target="#modalId2">
+                            <div class="card">
+                                <div class="image">
+                                    @if($cat->cat_image)
+                                        <img src="{{ asset('images/' . $cat->cat_image) }}" alt="Image of {{ $cat->cat_name }}" style="width: 100%; height: auto;">
+                                    @else
+                                        <span class="text">No image available</span>
+                                    @endif
                                 </div>
-                                <div class="card-footer bg-transparent border-success">
-                                      <a href="#" class="btn btn-primary">View More Info</a>
-                                </div>
+                                <span class="title">{{ $cat->cat_name }}</span>
+                                <span class="price">{{ $cat->age }} years old</span>
                             </div>
-                        </div>@endforeach
-                    </div>
+                        </div>
+                    @endforeach
                 </div>
-
-
             </div>
-        </section>        
-    </body>
-    
-
-
-
-
-
+        </section>  
+</body>
+</html>
