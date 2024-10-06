@@ -9,13 +9,18 @@ use App\Http\Controllers\GoogleAuthController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\serviceController;
+use App\Http\Controllers\User\CatController as UserCatController;
 use GuzzleHttp\Psr7\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Laravel\Socialite\Facades\Socialite;
 use SebastianBergmann\CodeCoverage\Driver\Driver;
 
-//Cat Adoption
+// User-side routes
+Route::get('/cats', [UserCatController::class, 'index'])->name('user.cats.index');
+Route::get('/cats/{id}', [UserCatController::class, 'show'])->name('user.cats.show');
+Route::get('/cats/adopt/{id}', [UserCatController::class, 'adopt'])->name('user.cats.adopt');
+//Admin Cat Adoption
 
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::resource('cats', CatController::class);
