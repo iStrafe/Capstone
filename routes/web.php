@@ -1,13 +1,52 @@
 <?php
 
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\Admin\CatController;
+use App\Http\Controllers\adoptionController;
 use App\Http\Controllers\CatinfoController;
+use App\Http\Controllers\DonationController;
+use App\Http\Controllers\GoogleAuthController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\serviceController;
-use App\Http\Controllers\NewsEventsController;
+use App\Http\Controllers\EventsController;
+use GuzzleHttp\Psr7\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use Laravel\Socialite\Facades\Socialite;
+use SebastianBergmann\CodeCoverage\Driver\Driver;
+
+//Cat Adoption
+
+Route::prefix('admin')->name('admin.')->group(function () {
+    Route::resource('cats', CatController::class);
+});
 
 
+
+
+//Paymongo Payment
+Route::get('/payment',[PaymentController::class,'paymentView']);
+Route::post('/payment', [PaymentController::class, 'createPayment'])->name('paymongo.create');
+/*
+Route::get('/home',[PaymentController::class,'paymentView']);
+Route::post('/home', [PaymentController::class, 'createPayment'])->name('paymongo.create.home');*/
+
+//Google Authentication
+Route::get('auth/google/redirect', [GoogleAuthController::class, 'redirect'])->name('google-auth');
+Route::get('auth/google/callbacks', [GoogleAuthController::class,'callbackGoogle']);
+
+//Session Timeout route
+Route::group(['middleware' => ['web', \App\Http\Middleware\SessionTimeout::class]], function () {
+    Route::get('/home', function () {
+        return view('home');
+    });
+});
+
+//Rout for logout
+Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
+
+//Route for Image verification
 
 //test route
 Route::get('/test', function () {
@@ -81,7 +120,7 @@ Route::middleware('auth')->group(function () {
 });
 
 
-
+//Testing route
 Route::get('/homecopy', function () {
     return view('homecopy');
 });
@@ -101,7 +140,7 @@ Route::middleware('auth')->group(function () {
 
 
 
-require __DIR__.'/auth.php';
+
 
 //============= Navbar Routes =============== 
 
@@ -116,16 +155,17 @@ Route::middleware('auth')->group(function () {
 
 
     //Service page routes
-    Route::get('/services',[serviceController::class,'showServices']);
-    Route::get('/adopt',[serviceController::class,'showAdopt']);
-    Route::get('/donate',[serviceController::class,'showDonate']);
-    Route::get('/report',[serviceController::class,'showReport']);
+    Route::get('/AdoptionForm',[adoptionController::class,'showAdoptionForm'])->name('AdoptionForm');
+    Route::post('/AdoptionForm',[adoptionController::class,'create'])->name('adoption.request');
+ 
    
 });
 
 //News & Events page routes
-Route::get('/news',[NewsEventsController::class,'showevents']);
 
+Route::get('/news', function () {
+    return view('adminnews');
+})->name('news');
 //Service page
 /*
 Route::group(['prefix' => 'service'],function(){
@@ -134,3 +174,4 @@ Route::group(['prefix' => 'service'],function(){
 
 })->middleware(['auth', 'verified'])->name('services');*/
 
+require __DIR__.'/auth.php';

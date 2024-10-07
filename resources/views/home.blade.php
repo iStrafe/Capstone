@@ -12,7 +12,8 @@
     <!-- Styles -->
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
     @include('scripts')
-
+    <!--@include('scripts2')-->
+   
     <style>
         body {
             font-family: 'Figtree', sans-serif;
@@ -56,60 +57,91 @@
             width: 100%;
             max-width: 500px; /* Adjust the maximum width of the input group */
         }
-        
+
+        /*
+        */
     </style>
 </head>
 
 <body class="font-sans antialiased">
-    <nav class="navbar navbar-expand-lg" data-bs-theme="dark">
-        <div class="container-fluid">
-            <a class="navbar-brand px-5 py-3" href="{{ url('/') }}">HOME</a>
-            <a class="navbar-brand px-4 py-3" href="{{ url('aboutus') }}">ABOUT US</a>
-            <a class="navbar-brand px-4 py-3" href="{{ url('services') }}">SERVICES</a>
-            <a class="navbar-brand px-4 py-3" href="{{ url('events') }}">NEWS / EVENTS</a>
-            <a class="navbar-brand px-4 py-3" href="{{ url('ContactUs') }}">CONTACT US</a>
-            <a class="navbar-brand px-4 py-3" href="#">FEED</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                
-                </ul>
-                    <ul class="navbar-nav ms-auto">
-                    <!-- Authentication Links -->
-                    @guest
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
-                        </li>
-                        @if (Route::has('register'))
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
-                            </li>
-                        @endif
-                    @else
-                        <li class="nav-item dropdown">
-                            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <div>{{ Auth::user()->name }}</div>
-                            </button>
-                            <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
-                                <a class="dropdown-item" href="{{ route('profile.edit') }}">{{ __('Profile') }}</a>
-                                <a class="dropdown-item" href="{{ route('logout') }}"
-                                onclick="event.preventDefault();
-                                document.getElementById('logout-form').submit();">
-                                    {{ __('Log Out') }}
-                                </a>
-                                <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                                    @csrf
-                                </form>
-                            </div>
-                        </li>
-                    @endguest
-                </ul>
-            </div>
+    <nav class="navbar navbar-expand-lg border-bottom border-body" data-bs-theme="dark">
+    <div class="container-fluid">
+             @if(Auth::check() && Auth::user()->role === "admin")
+                <a class="button" data-text="Awesome" href="{{url('adminDashboard')}}">
+                    <span class="actual-text">&nbsp;adminpage&nbsp;</span>
+                    <span aria-hidden="true" class="hover-text">&nbsp;adminpage&nbsp;</span>
+                </a>
+                <!--<a class="navbar-brand px-5 py-3" href="{{url('adminDashboard')}}">adminpage</a>-->
+            @endif
+
+        <a class="navbar-brand px-5" href="{{ url('/') }}">HOME</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+           
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item px-4">
+                    <a class="nav-link" href="{{ url('aboutus') }}">ABOUT US</a>
+                </li>
+                <li class="nav-item px-4">
+                    <a class="nav-link" data-bs-toggle="modal" data-bs-target="#modalId2">ADOPT</a>@include('Services.adoptContract')
+                </li>
+                <li class="nav-item px-4">
+                    <a class="nav-link" href="{{ url('events') }}">NEWS / EVENTS</a>
+                </li>
+                <li class="nav-item px-4">
+                    <a class="nav-link" href="{{ url('ContactUs') }}">CONTACT US</a>
+                </li>
+
+                <!-- Modal trigger button -->
+                <button type="button" class="btn btn-secondary btn-lg" data-bs-toggle="modal" data-bs-target="#modalId">DONATE</button>
+                <!--Paymongo Modal-->
+                @include('payment')
+            </ul>
+
+            <ul class="navbar-nav ms-auto">
+                @guest
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
+                    </li>
+                @else
+                    <li class="nav-item dropdown">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <div>{{ Auth::user()->name }}</div>
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
+                            <a class="dropdown-item" href="{{ route('profile.edit') }}">{{ __('Profile') }}</a>
+                            <a class="dropdown-item" href="{{ route('logout') }}"
+                               onclick="event.preventDefault();
+                               document.getElementById('logout-form').submit();">
+                                {{ __('Log Out') }}
+                            </a>
+                            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                                @csrf
+                            </form>
+                        </div>
+                    </li>
+                @endguest
+            </ul>
         </div>
-    </nav>
-    <br><br><br><br><br>
+    </div>
+</nav>
+
+        <!-- Masthead-->
+        <header class="masthead">
+            <div class="container2"><br><br>
+                <div class="masthead-subheading">Welcome To Our AduCats Website!</div>
+                <div class="masthead-heading text-uppercase">It's Nice To Meet You</div>
+            </div>
+        </header>
+
+        
+
+ 
     <section>
         <div class="container">
             <img src="images/logo.png" alt="Logo" class="logo">
@@ -124,5 +156,33 @@
             </div>
         </div>
     </section>
+
+     <!-- Portfolio Grid-->
+        <section class="page-section bg-light" id="portfolio">
+            <div class="container2">
+                <div class="text-center">
+                    <h2 class="section-heading text-uppercase">OUR CATS</h2>
+                    <h3 class="section-subheading text-muted"></h3>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-4 col-sm-6 mb-4">
+                        <!-- Portfolio item 1-->
+                        <div class="portfolio-item">
+                            <a class="portfolio-link" data-bs-toggle="modal" href="#portfolioModal1">
+                                <div class="portfolio-hover">
+                                    <div class="portfolio-hover-content"><i class="fas fa-plus fa-3x"></i></div>
+                                </div>
+                                <img class="img-fluid" src="assets/img/portfolio/1.jpg" alt="..." />
+                            </a>
+                            <div class="portfolio-caption">
+                                <div class="portfolio-caption-heading">Threads</div>
+                                <div class="portfolio-caption-subheading text-muted">Illustration</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
 </body>
 </html>

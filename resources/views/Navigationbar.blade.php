@@ -1,4 +1,4 @@
-
+@include('scripts')
 <style>
        body {
             font-family: 'Figtree', sans-serif;
@@ -48,42 +48,211 @@
         .footer p, .footer h2 {
             margin: 0;
         }
+
+        */
+
+            /* Paymongo moadal*/ 
+            .orange {
+            color: #ff7a01;
+            }
+
+            .form-container {
+            max-width: 700px;
+            margin: 30px;
+            background-color: #001925;
+            padding: 30px;
+            border-left: 5px solid #00B4D8;
+            clip-path: polygon(0 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%);
+            }
+
+            .heading {
+            display: block;
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            }
+
+            .form-container .form .input {
+            color: #87a4b6;
+            width: 100%;
+            background-color: #002733;
+            border: none;
+            outline: none;
+            padding: 10px;
+            margin-bottom: 20px;
+            font-weight: bold;
+            transition: all 0.2s ease-in-out;
+            border-left: 1px solid transparent;
+            }
+
+            .form-container .form .input:focus {
+            border-left: 5px solid #00B4D8;
+            }
+
+            .form-container .form .textarea {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            outline: none;
+            background-color: #013747;
+            color: #ff7a01;
+            font-weight: bold;
+            resize: none;
+            max-height: 150px;
+            margin-bottom: 20px;
+            border-left: 1px solid transparent;
+            transition: all 0.2s ease-in-out;
+            }
+
+            .form-container .form .textarea:focus {
+            border-left: 5px solid #ff7a01;
+            }
+
+            .form-container .form .button-container {
+            display: flex;
+            gap: 10px;
+            }
+
+            .form-container .form .button-container .send-button {
+            flex-basis: 70%;
+            background: #06d6a0;
+            padding: 10px;
+            color: #edf2fb;
+            text-align: center;
+            font-weight: bold;
+            border: 1px solid transparent;
+            transition: all 0.2s ease-in-out;
+            }
+
+            .form-container .form .button-container .send-button:hover {
+            background: transparent;
+            border: 1px solid #76c893;
+            color: #CAF0F8;
+            }
+
+            .form-container .form .button-container .reset-button-container {
+            filter: drop-shadow(1px 1px 0px #f72585);
+            flex-basis: 30%;
+            }
+
+            .form-container .form .button-container .reset-button-container .reset-button {
+            position: relative;
+            text-align: center;
+            padding: 10px;
+            color: #f72585;
+            font-weight: bold;
+            background: #001925;
+            clip-path: polygon(0 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%);
+            transition: all 0.2s ease-in-out;
+            }
+
+            .form-container .form .button-container .reset-button-container .reset-button:hover {
+            background: #f72585;
+            color: #001925;
+            }
 </style>
+
+<!-- Modal for session timeout-->
+    <div class="modal fade" id="timeoutModal" tabindex="-1" aria-labelledby="timeoutModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="timeoutModalLabel">Session Timeout</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    {{ session('timeoutMessage') }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+     <!-- Idle Detection Script -->
+    <script>
+        let idleTime = 0;
+
+        function timerIncrement() {
+            idleTime++;
+            if (idleTime > 4) { // 5 minutes
+                document.getElementById('logout-form').submit();
+            }
+        }
+
+        document.onload = resetTimer;
+        document.onmousemove = resetTimer;
+        document.onkeypress = resetTimer;
+
+        function resetTimer() {
+            idleTime = 0;
+        }
+
+        setInterval(timerIncrement, 60000); // 1 minute
+
+        // Show timeout modal if session variable exists
+        if(session('timeoutMessage'))
+            var timeoutModal = new bootstrap.Modal(document.getElementById('timeoutModal'));
+            timeoutModal.show();
+            setTimeout(function() {
+                timeoutModal.hide();
+            }, 5000); // Hide after 5 seconds
+        endif
+
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js">
+    </script>
+
+
 
 <nav class="navbar navbar-expand-lg border-bottom border-body" data-bs-theme="dark">
     <div class="container-fluid">
-             @if(Auth::user()->role === "admin")
+             @if(Auth::check() && Auth::user()->role === "admin")
                 <a class="button" data-text="Awesome" href="{{url('adminDashboard')}}">
                     <span class="actual-text">&nbsp;adminpage&nbsp;</span>
                     <span aria-hidden="true" class="hover-text">&nbsp;adminpage&nbsp;</span>
                 </a>
                 <!--<a class="navbar-brand px-5 py-3" href="{{url('adminDashboard')}}">adminpage</a>-->
+                 <a class="navbar-brand px-5" href="{{ url('/dashboard') }}">HOME</a>
+    
+                
             @endif
-        <a class="navbar-brand px-5 py-3" href="{{url('dashboard')}}">HOME</a>
-        <a class="navbar-brand px-4 py-3" href="{{url('aboutus')}}">ABOUT US</a>
-        <a class="navbar-brand px-4 py-3" href="{{url('services')}}">SERVICES</a>
-        <a class="navbar-brand px-4 py-3" href="{{url('events')}}">NEWS / EVENTS</a>
-        <a class="navbar-brand px-4 py-3" href="{{url('ContactUs')}}">CONTACT US</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+             <a class="navbar-brand px-5" href="{{ url('/') }}">HOME</a>
+
+       
+
+    
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+           
+        <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <!--In between navbar items and dropdown menu-->
+                <li class="nav-item px-4">
+                    <a class="nav-link" href="{{ url('aboutus') }}">ABOUT US</a>
+                </li>
+                <li class="nav-item px-4">
+                    <a class="nav-link" data-bs-toggle="modal" data-bs-target="#modalId2">ADOPT</a>@include('Services.adoptContract')
+                </li>
+                <li class="nav-item px-4">
+                    <a class="nav-link" href="{{ url('events') }}">NEWS / EVENTS</a>
+                </li>
+                <li class="nav-item px-4">
+                    <a class="nav-link" href="{{ url('ContactUs') }}">CONTACT US</a>
+                </li>
+
+                <!-- Modal trigger button -->
+                <button type="button" class="btn btn-secondary btn-lg" data-bs-toggle="modal" data-bs-target="#modalId">DONATE</button>
+                <!--Paymongo Modal-->
+                @include('payment')
             </ul>
-            
-            <!-- Right Side Of Navbar -->
+
             <ul class="navbar-nav ms-auto">
-                <!-- Authentication Links -->
                 @guest
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
                     </li>
-                    @if (Route::has('register'))
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
-                        </li>
-                    @endif
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
+                    </li>
                 @else
                     <li class="nav-item dropdown">
                         <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
