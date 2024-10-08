@@ -56,11 +56,34 @@
                         <p class="card-text"><strong>Color:</strong> {{ $cat->color }}</p>
                         <p class="card-text"><strong>Sex:</strong> {{ $cat->sex }}</p>
                         <a href="{{ route('user.cats.show', $cat->id) }}" class="btn btn-primary">View Details</a>
-                        <a href="#" class="btn btn-adopt" data-toggle="modal" data-target="#adoptionFormModal">Proceed to Adopt</a>
+                        <a href="#" class="btn btn-adopt" data-toggle="modal" data-target="#adoptionFormModal"
+                           data-name="{{ $cat->cat_name }}"
+                           data-age="{{ $cat->age }}"
+                           data-sex="{{ $cat->sex }}"
+                           data-color="{{ $cat->color }}"
+                           data-breed="{{ $cat->breed }}">Proceed to Adopt</a>
                     </div>
                 </div>
             @endforeach
         </div>
     </div>
+
+    <script>
+        document.querySelectorAll('.btn-adopt').forEach(button => {
+            button.addEventListener('click', function() {
+                const name = this.getAttribute('data-name');
+                const age = this.getAttribute('data-age');
+                const sex = this.getAttribute('data-sex');
+                const color = this.getAttribute('data-color');
+                const breed = this.getAttribute('data-breed');
+
+                document.querySelector('input[name="name_of_cat"]').value = name;
+                document.querySelector('input[name="approximate_age"]').value = age;
+                document.querySelector('input[name="sex"]').value = sex;
+                document.querySelector('input[name="color"]').value = color;
+                document.querySelector('input[name="breed"]').value = breed;
+            });
+        });
+    </script>
 </body>
 </html>
