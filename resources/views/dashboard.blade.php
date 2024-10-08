@@ -109,23 +109,18 @@
             </div>
         </header>
 
-         <section class="bg-blacks">
-
-            <div class="container">
+         <div class="container">
                
                     <div class="center">
-                    <h1>CAT GALLERY</h1>
+                        <h1>CAT GALLERY</h1>
                         <div class="input-group mb-3">
-                                <input type="text" class="form-control" placeholder="Search Cat" aria-label="Recipient's username" aria-describedby="basic-addon2">
-                            <div class="input-group-append">
-                                <button class="btn btn-outline-secondary" type="button">search</button>
-                            </div>
+                                <input type="text" class="form-control" placeholder="Search Cat" aria-label="Recipient's username" aria-describedby="basic-addon2" id="searchInput">
                         </div>
                     </div>
 
-                <div class="row">
+                <div class="row" id="catGallery">
                     @foreach($cats as $cat)
-                        <div class="col-md-4" data-bs-toggle="modal" data-bs-target="#modalId2">
+                        <div class="col-md-4 cat-card" data-bs-toggle="modal" data-bs-target="#modalId2">
                             <div class="card">
                                 <div class="image">
                                     @if($cat->cat_image)
@@ -142,5 +137,21 @@
                 </div>
             </div>
         </section>  
+
+        <script>
+            document.getElementById('searchInput').addEventListener('input', function() {
+                const searchInput = document.getElementById('searchInput').value.toLowerCase();
+                const catCards = document.querySelectorAll('.cat-card');
+
+                catCards.forEach(function(card) {
+                    const catName = card.querySelector('.title').textContent.toLowerCase();
+                    if (catName.includes(searchInput)) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+        </script>
 </body>
 </html>
