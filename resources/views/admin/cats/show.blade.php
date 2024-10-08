@@ -19,6 +19,7 @@
         <p><strong>Color:</strong> {{ $cat->color }}</p>
         <p><strong>Breed:</strong> {{ $cat->breed }}</p>
         <p><strong>Sex:</strong> {{ $cat->sex }}</p>
+        <p><strong>Medical Record:</strong> {{ $cat->Medical_Record }}</p>
 
         <a href="{{ route('admin.cats.index') }}" class="btn btn-secondary">Back to List</a>
       </div>

@@ -15,6 +15,7 @@
         <th>Color</th>
         <th>Breed</th>
         <th>Sex</th>
+        <th>Medical Record</th>
         <th>Actions</th>
     </tr>
     @foreach($cats as $cat)
@@ -31,6 +32,7 @@
             <td>{{ $cat->color }}</td>
             <td>{{ $cat->breed }}</td>
             <td>{{ $cat->sex }}</td>
+            <td>{{ $cat->Medical_Record }}</td>
             <td>
                 <button type="button" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#showCatModal">View</button>
                 <button type="button" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#editCatModal">Edit</button>

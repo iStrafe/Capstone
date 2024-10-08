@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Admin\CatController;
 use App\Http\Controllers\adoptionController;
 use App\Http\Controllers\CatinfoController;
+use App\Http\Controllers\ContactController;
 use App\Http\Controllers\DonationController;
 use App\Http\Controllers\GoogleAuthController;
 use App\Http\Controllers\PaymentController;
@@ -15,6 +16,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Laravel\Socialite\Facades\Socialite;
 use SebastianBergmann\CodeCoverage\Driver\Driver;
+
+//Contact US route
+Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
 
 // User-side routes
 Route::get('/cats', [UserCatController::class, 'index'])->name('user.cats.index');
