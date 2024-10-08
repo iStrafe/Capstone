@@ -1,5 +1,6 @@
 @include('Navigationbar') <!-- Include your navbar for navigation -->
 @include('scripts')
+@include('Services.adoptionForm')
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -56,7 +57,7 @@
                         <p class="card-text"><strong>Sex:</strong> {{ $cat->sex }}</p>
                         <p class="card-text"><strong>Medical Record:</strong> {{ $cat->Medical_Record }}</p>
                         <a href="{{ route('user.cats.show', $cat->id) }}" class="btn btn-primary">View Details</a>
-                        <a href="{{ route('user.cats.adopt', $cat->id) }}" class="btn btn-adopt">Proceed to Adopt</a>
+                        <a href="#" class="btn btn-adopt" data-toggle="modal" data-target="#adoptionFormModal">Proceed to Adopt</a>
                     </div>
                 </div>
             @endforeach
