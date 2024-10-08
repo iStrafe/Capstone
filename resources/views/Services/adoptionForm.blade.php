@@ -163,28 +163,33 @@
 
                 <div class="py-3">
             <label>
-                <input class="input py-3" type="address" name="name_of_cat" placeholder="" required>
+                <input class="input py-3" type="address" name="name_of_cat" placeholder="" value="{{ $cat->cat_name }}" required>
                 <span>Cat Name</span>
             </label>
 
              <label>
-                <input class="input py-3" type="address" name="approximate_age" placeholder="" required>
+                <input class="input py-3" type="address" name="approximate_age" placeholder="" value="{{ $cat->age }}" required>
                 <span>Age</span>
             </label>
 
             <label>
-                <input class="input py-3" type="address" name="sex" placeholder="" required>
+                <input class="input py-3" type="address" name="sex" placeholder="" value="{{ $cat->sex }}" required>
                 <span>Sex</span>
             </label>
 
             <label>
-                <input class="input py-3" type="address" name="color" placeholder="" required>
+                <input class="input py-3" type="address" name="color" placeholder="" value="{{ $cat->color }}" required>
                 <span>Color</span>
             </label>
 
             <label>
-                <input class="input py-3" type="address" name="breed" placeholder="" required>
+                <input class="input py-3" type="address" name="breed" placeholder="" value="{{ $cat->breed }}" required>
                 <span>Breed</span>
+            </label>
+
+            <label>
+                <input class="input py-3" type="address" name="Medical_Record" placeholder="" value="{{ $cat->Medical_Record }}" required>
+                <span>Medical_Record</span>
             </label>
 
             <label for="date_of_adoption">Date of Adoption</label>

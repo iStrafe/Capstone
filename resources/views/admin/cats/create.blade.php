@@ -57,6 +57,11 @@
               </select>
             </div>
 
+            <div class="mb-3">
+              <label for="Medical_Record" class="form-label">Medical_Record</label>
+              <input type="text" name="Medical_Record" class="form-control" required>
+            </div>
+
             <button type="submit" class="btn btn-primary mb-3" style="color: black;">Add Cat</button>
           </div>
         </form>

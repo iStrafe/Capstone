@@ -54,6 +54,7 @@
                         <p class="card-text"><strong>Age:</strong> {{ $cat->age }} years old</p>
                         <p class="card-text"><strong>Color:</strong> {{ $cat->color }}</p>
                         <p class="card-text"><strong>Sex:</strong> {{ $cat->sex }}</p>
+                        <p class="card-text"><strong>Medical Record:</strong> {{ $cat->Medical_Record }}</p>
                         <a href="{{ route('user.cats.show', $cat->id) }}" class="btn btn-primary">View Details</a>
                         <a href="{{ route('user.cats.adopt', $cat->id) }}" class="btn btn-adopt">Proceed to Adopt</a>
                     </div>

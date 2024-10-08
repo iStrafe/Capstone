@@ -88,6 +88,7 @@
                         <p><strong>Color:</strong> {{ $cat->color }}</p>
                         <p><strong>Breed:</strong> {{ $cat->breed }}</p>
                         <p><strong>Sex:</strong> {{ $cat->sex }}</p>
+                        <p><strong>Medical Record:</strong> {{ $cat->Medical_Record }}</p>
                     </div>
 
                     <a href="{{ route('user.cats.index') }}" class="btn back-button">Back to List</a>

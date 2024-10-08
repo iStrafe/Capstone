@@ -55,6 +55,11 @@
               </select>
             </div>
 
+            <div class="mb-3">
+              <label for="Medical_Record" class="form-label">Medical_Record</label>
+              <input type="text" name="Medical_Record" class="form-control" value="{{ $cat->Medical_Record }}">
+            </div>
+
             <button type="submit" class="btn btn-primary mb-3">Update Cat</button>
             <button type="button" class="btn btn-secondary mb-3" onclick="clearForm()">Clear</button>
           </div>
