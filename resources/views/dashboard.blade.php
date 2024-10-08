@@ -109,19 +109,24 @@
             </div>
         </header>
 
-         <div class="container">
+         <section class="bg-blacks">
+
+            <div class="container">
                
                     <div class="center">
-                        <h1>CAT GALLERY</h1>
+                    <h1>CAT GALLERY</h1>
                         <div class="input-group mb-3">
                                 <input type="text" class="form-control" placeholder="Search Cat" aria-label="Recipient's username" aria-describedby="basic-addon2" id="searchInput">
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-secondary" type="button" id="searchButton">search</button>
+                            </div>
                         </div>
                     </div>
 
                 <div class="row" id="catGallery">
                     @foreach($cats as $cat)
                         <div class="col-md-4 cat-card" data-bs-toggle="modal" data-bs-target="#modalId2">
-                            <div class="card">
+                            <div class="card" data-name="{{ $cat->cat_name }}" data-age="{{ $cat->age }}" data-color="{{ $cat->color }}" data-breed="{{ $cat->breed }}" data-sex="{{ $cat->sex }}">
                                 <div class="image">
                                     @if($cat->cat_image)
                                         <img src="{{ asset('images/' . $cat->cat_image) }}" alt="Image of {{ $cat->cat_name }}" style="width: 100%; height: auto;">
@@ -145,7 +150,12 @@
 
                 catCards.forEach(function(card) {
                     const catName = card.querySelector('.title').textContent.toLowerCase();
-                    if (catName.includes(searchInput)) {
+                    const catAge = card.querySelector('.price').textContent.toLowerCase();
+                    const catColor = card.querySelector('.card').getAttribute('data-color').toLowerCase();
+                    const catBreed = card.querySelector('.card').getAttribute('data-breed').toLowerCase();
+                    const catSex = card.querySelector('.card').getAttribute('data-sex').toLowerCase();
+
+                    if (catName.includes(searchInput) || catAge.includes(searchInput) || catColor.includes(searchInput) || catBreed.includes(searchInput) || catSex.includes(searchInput)) {
                         card.style.display = 'block';
                     } else {
                         card.style.display = 'none';
