@@ -50,6 +50,7 @@
         }
 
            .card {
+        flex-wrap: wrap;
         position: relative;
         width: 25em;
         height: 25em;
@@ -58,13 +59,13 @@
         transition: all 120ms;
         display: flex;
         align-items: center;
-        justify-content: center;
+        justify-content: space-around;
         background: #fff;
         padding: 0.5em;
         padding-bottom: 3.4em;
-        }
+    }
 
-        .card::after {
+    .card::after {
         content: "Adopt Me!";
         padding-top: 1.25em;
         padding-left: 1.25em;
@@ -79,9 +80,9 @@
         font-weight: 600;
         text-transform: uppercase;
         opacity: 0;
-        }
+    }
 
-        .card .title {
+    .card .title {
         font-family: Arial, Helvetica, sans-serif;
         font-size: 0.9em;
         position: absolute;
@@ -89,42 +90,53 @@
         bottom: 1.875em;
         font-weight: 400;
         color: #000;
-        }
+    }
 
-        .card .price {
+    .card .price {
         font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
         font-size: 0.9em;
         position: absolute;
         left: 0.625em;
         bottom: 0.625em;
         color: #000;
-        }
+    }
 
-        .card:hover::after {
+    .card:hover::after {
         bottom: 0;
         opacity: 1;
-        }
+    }
 
-        .card:active {
+    .card:active {
         transform: scale(0.98);
-        }
+    }
 
-        .card:active::after {
+    .card:active::after {
         content: "Added !";
         height: 3.125em;
-        }
+    }
 
-        .text {
+    .text {
         max-width: 55px;
-        }
+    }
 
-        .image {
+    .image {
         background: rgb(241, 241, 241);
         width: 100%;
+        height: 70%; /* Adjust the height as needed */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+    }
+
+    .image img {
+        width: 100%;
         height: 100%;
+        object-fit: cover;
+        background: rgb(241, 241, 241);
         display: grid;
         place-items: center;
-        }
+    }
     </style>
 </head>
 
@@ -209,18 +221,15 @@
             <div class="container">
                
                     <div class="center">
-                    <h1>CAT GALLERY</h1>
+                        <h1>CAT GALLERY</h1>
                         <div class="input-group mb-3">
-                                <input type="text" class="form-control" placeholder="Search Cat" aria-label="Recipient's username" aria-describedby="basic-addon2">
-                            <div class="input-group-append">
-                                <button class="btn btn-outline-secondary" type="button">search</button>
-                            </div>
+                                <input type="text" class="form-control" placeholder="Search Cat" aria-label="Recipient's username" aria-describedby="basic-addon2" id="searchInput">
                         </div>
                     </div>
 
-                <div class="row">
+                <div class="row" id="catGallery">
                     @foreach($cats as $cat)
-                        <div class="col-md-4" data-bs-toggle="modal" data-bs-target="#modalId2">
+                        <div class="col-md-4 cat-card" data-bs-toggle="modal" data-bs-target="#modalId2">
                             <div class="card">
                                 <div class="image">
                                     @if($cat->cat_image)
@@ -237,5 +246,21 @@
                 </div>
             </div>
         </section>  
+
+        <script>
+            document.getElementById('searchInput').addEventListener('input', function() {
+                const searchInput = document.getElementById('searchInput').value.toLowerCase();
+                const catCards = document.querySelectorAll('.cat-card');
+
+                catCards.forEach(function(card) {
+                    const catName = card.querySelector('.title').textContent.toLowerCase();
+                    if (catName.includes(searchInput)) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+        </script>
 </body>
 </html>

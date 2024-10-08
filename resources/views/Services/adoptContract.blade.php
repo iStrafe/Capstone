@@ -124,9 +124,6 @@
     }
 </style>
 
-
-
-    
     <!-- Modal -->
     <div class="modal fade" id="modalId2" tabindex="-1"role="dialog" aria-labelledby="modalTitleId" aria-hidden="true">
         <div class="modal-dialog  modal-dialog-centered modal-lg" role="document">
