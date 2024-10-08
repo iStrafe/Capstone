@@ -189,7 +189,7 @@
                         <input type="date" name="date_of_adoption" required>
                     </div>
 
-                    <button class="submit" value="Save new info">Submit</button>
+                    <button href="{{ route('dashboard') }}" class="submit" value="Save new info">Submit</button>
                     <a href="{{ route('user.cats.index') }}" class="btn btn-success">Back to List</a>
                 </form>
             </div>
