@@ -41,6 +41,9 @@
 <body>
     <div class="container mt-5">
         <h1 class="text-center">Meet Our Cats Available for Adoption</h1>
+                        <div class="input-group mb-3 px-5">
+                            <input type="text" class="form-control" placeholder="Search Cat" aria-label="Recipient's username" aria-describedby="basic-addon2" id="searchInput">
+                        </div>
         <div class="card-container">
             @foreach($cats as $cat)
                 <div class="card cat-card">

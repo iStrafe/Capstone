@@ -234,6 +234,11 @@
                             </div>
                         </div>
                     </div>
+                    <!--Next & previous buttons-->
+                    <div class="pagination-buttons">
+                        <button class="btn btn-outline-secondary" type="button" id="prevBtn" style="display: none;">Previous</button>
+                        <button class="btn btn-outline-secondary" type="button" id="nextBtn" style="display: none;">Next</button>
+                    </div>
 
                 <div class="row" id="catGallery">
                     @foreach($cats as $cat)

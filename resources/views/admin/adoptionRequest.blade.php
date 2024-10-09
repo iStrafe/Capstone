@@ -14,7 +14,7 @@
             <th>Sex</th>
             <th>Color</th>
             <th>Date of Adoption</th>
-            <th>Medical Record</th>
+            <th>Status</th>
         </tr>
     </thead>
     <tbody>
@@ -30,7 +30,7 @@
                 <td>{{ $request->sex }}</td>
                 <td>{{ $request->color }}</td>
                 <td>{{ $request->date_of_adoption }}</td>
-                <td>{{ $request->Medical_Record }}</td>
+                <td>{{ $request->status }}</td>
             </tr>
         @endforeach
     </tbody>
