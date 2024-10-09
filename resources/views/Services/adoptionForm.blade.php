@@ -159,6 +159,11 @@
                         <span>Phone Number</span>
                     </label>
 
+                    <label>
+                        <label for="cat_image" class="form-label">Valid_Id / E-Signature</label>
+                        <input type="file" name="valid_id" class="form-control">
+                    <label>
+
                     <div class="py-3">
                         <label>
                             <input class="input py-3" type="text" name="name_of_cat" placeholder="" required>

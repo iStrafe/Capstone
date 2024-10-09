@@ -12,8 +12,9 @@ class AddStatusToAdoptionRequestTable extends Migration
      */
     public function up()
     {
-        Schema::table('adoption_request', function (Blueprint $table) {
+         Schema::table('adoption_request', function (Blueprint $table) {
             $table->string('status')->default('pending');
+            $table->unsignedBigInteger('valid_id')->nullable();
         });
     }
 
@@ -26,6 +27,7 @@ class AddStatusToAdoptionRequestTable extends Migration
     {
         Schema::table('adoption_request', function (Blueprint $table) {
             $table->dropColumn('status');
+            $table->dropColumn('valid_id');
         });
     }
 }

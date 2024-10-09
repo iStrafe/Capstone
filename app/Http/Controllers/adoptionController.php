@@ -23,15 +23,15 @@ class adoptionController extends Controller
             'address' => $request->input('address'),
             'home_phone' => $request->input('phone'),
             'mobile_phone' => $request->input('phone'),
+            'valid_id' => $request->input('valid_id'),
             'name_of_cat' => $request->input('name_of_cat'),
             'breed' => $request->input('breed'),
             'approximate_age' => $request->input('approximate_age'),
             'sex' => $request->input('sex'),
             'color' => $request->input('color'),
-            'date_of_adoption' => $request->input('date_of_adoption'),
-            'Medical_Record' => $request->input('Medical_Record')
+            'date_of_adoption' => $request->input('date_of_adoption')
         ];
-
+        
         $result = DB::table('adoption_request')->insert($data);
 
         return redirect()->route('user.cats.index');
