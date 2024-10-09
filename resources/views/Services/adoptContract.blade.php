@@ -124,9 +124,6 @@
     }
 </style>
 
-
-
-    
     <!-- Modal -->
     <div class="modal fade" id="modalId2" tabindex="-1"role="dialog" aria-labelledby="modalTitleId" aria-hidden="true">
         <div class="modal-dialog  modal-dialog-centered modal-lg" role="document">
@@ -224,7 +221,7 @@
             if (agreeCheckbox.checked) {
                 adoptButton.classList.add('enabled');
                 adoptButton.removeAttribute('disabled');
-                adoptButton.setAttribute('href', 'AdoptionForm');
+                adoptButton.setAttribute('href', 'cats');
             } else {
                 adoptButton.classList.remove('enabled');
                 adoptButton.setAttribute('disabled', 'disabled');
@@ -237,7 +234,7 @@
                 event.preventDefault();
                 alert("Please read the terms and conditions before proceeding to the adoption page.");
             }else{
-                window.location.href = 'AdoptionForm';    }
+                window.location.href = 'cats';    }
         });
 
         modalId.addEventListener('show.bs.modal', function (event) {

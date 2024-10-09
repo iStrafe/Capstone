@@ -36,7 +36,7 @@ class AuthenticatedSessionController extends Controller
         }
         
         if($request->user()->role === "user"){
-            return redirect('dashboard');
+            return redirect('userDashboard');
         }
 
     }

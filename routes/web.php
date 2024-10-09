@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Admin\CatController;
 use App\Http\Controllers\adoptionController;
 use App\Http\Controllers\CatinfoController;
+use App\Http\Controllers\ContactController;
 use App\Http\Controllers\DonationController;
 use App\Http\Controllers\GoogleAuthController;
 use App\Http\Controllers\PaymentController;
@@ -18,12 +19,40 @@ use Illuminate\Support\Facades\Route;
 use Laravel\Socialite\Facades\Socialite;
 use SebastianBergmann\CodeCoverage\Driver\Driver;
 
-//Cat Adoption
+//Contact US route
+Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
+
+// User-side routes
+Route::middleware('auth')->group(function () {
+
+    
+    Route::get('/cats', [UserCatController::class, 'index'])->name('user.cats.index');
+    Route::get('/cats/{id}', [UserCatController::class, 'show'])->name('user.cats.show');
+    Route::get('/cats/adopt/{id}', [UserCatController::class, 'adopt'])->name('user.cats.adopt');
+    
+   
+});
+
+//Admin Cat Adoption
 
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::resource('cats', CatController::class);
 });
 
+//Route for Users upon login
+Route::get('userDashboard', [CatController::class, 'index2'])->middleware(['auth'])->name('dashboard');
+
+//Home Route
+Route::get('/', [CatController::class, 'index3'])->name('home');
+
+/*
+Route::get('dashboard',function(){
+    if(!Auth::user()){
+        redirect('/');
+    }
+    return view('dashboard');
+   
+})->middleware(['auth'])->name('dashboard');*/
 
 
 
@@ -65,24 +94,12 @@ Route::get('adminDashboard',function(){
 });
 
 
-//Route for Users upon login
-Route::get('userDashboard',function(){
-    if(!Auth::user()){
-        redirect('/');
-    }
-    return view('dashboard');
-   
-})->middleware(['auth'])->name('dashboard');
+
 
 //About us Route
 Route::get('/aboutus', function () {
     return view('aboutus');
 })->name('aboutus');
-
-//Home Route
-Route::get('/', function () {
-    return view('home');
-})->name('home');
 
 //Events Route
 Route::get('/events' , [NewsEventController::class,'index3'], function () {
@@ -113,13 +130,14 @@ Route::get('Services/report',[CatinfoController::class,'reportpage']);
 Route::post('Services/report',[CatinfoController::class,'report'])->name('admin.report');
 //Route::get('admintest/create',[CatinfoController::class,'viewReportInformation'])->name('reportinfo.view');
 
+/*
 Route::middleware('auth')->group(function () {
 
     
     Route::get('dashboard',[CatinfoController::class,'viewCatInformation'])->name('dashboard');
     
    
-});
+});*/
 
 
 //Testing route
@@ -152,15 +170,15 @@ Route::middleware('auth')->group(function () {
 //})->middleware(['auth', 'verified'])->name('aboutus');
 
 
-//Service Page
+//Adoption page
 Route::middleware('auth')->group(function () {
 
 
-    //Service page routes
+    //Adoption page routes
     Route::get('/AdoptionForm',[adoptionController::class,'showAdoptionForm'])->name('AdoptionForm');
+    Route::get('/AdoptionRequest',[adoptionController::class,'showAdoptionRequest'])->name('AdoptionRequest');
     Route::post('/AdoptionForm',[adoptionController::class,'create'])->name('adoption.request');
  
-   
 });
 
 //News & Events page routes

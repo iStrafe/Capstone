@@ -211,8 +211,7 @@
                     <span aria-hidden="true" class="hover-text">&nbsp;adminpage&nbsp;</span>
                 </a>
                 <!--<a class="navbar-brand px-5 py-3" href="{{url('adminDashboard')}}">adminpage</a>-->
-                 <a class="navbar-brand px-5" href="{{ url('/dashboard') }}">HOME</a>
-    
+                 
                 
             @endif
              <a class="navbar-brand px-5" href="{{ url('/') }}">HOME</a>

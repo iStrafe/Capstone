@@ -1,61 +1,76 @@
-@include('scripts')
-@include('admin.adminNavbar')
-<!DOCTYPE html>
-    <title>Add Cat</title>
-        <body>
-    <h1>Add New Cat</h1>
-
-    @if ($errors->any())
-    <div class="alert alert-danger">
-        <ul>
-            @foreach ($errors->all() as $error)
+<!-- Modal -->
+<div class="modal fade" id="editCatModal" tabindex="-1" aria-labelledby="editCatModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editCatModalLabel">Edit Cat</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        @if ($errors->any())
+          <div class="alert alert-danger">
+            <ul>
+              @foreach ($errors->all() as $error)
                 <li>{{ $error }}</li>
-            @endforeach
-        </ul>
+              @endforeach
+            </ul>
+          </div>
+        @endif
+
+        <form id="editCatForm" action="{{ route('admin.cats.update', $cat->id) }}" method="POST" enctype="multipart/form-data">
+          @csrf
+          @method('PUT')
+
+          <div class="container-sm">
+            <div class="mb-3">
+              <label for="cat_name" class="form-label">Cat Name</label>
+              <input type="text" name="cat_name" class="form-control" value="{{ $cat->cat_name }}" required>
+            </div>
+
+            <div class="mb-3">
+              <label for="cat_image" class="form-label">Cat Image</label>
+              <input type="file" name="cat_image" class="form-control">
+            </div>
+
+            <div class="mb-3">
+              <label for="age" class="form-label">Age</label>
+              <input type="number" name="age" class="form-control" value="{{ $cat->age }}" required>
+            </div>
+
+            <div class="mb-3">
+              <label for="color" class="form-label">Color</label>
+              <input type="text" name="color" class="form-control" value="{{ $cat->color }}" required>
+            </div>
+
+            <div class="mb-3">
+              <label for="breed" class="form-label">Breed</label>
+              <input type="text" name="breed" class="form-control" value="{{ $cat->breed }}" required>
+            </div>
+
+            <div class="mb-3">
+              <label for="sex" class="form-label">Sex</label>
+              <select name="sex" class="form-select" required>
+                <option value="Male" {{ $cat->sex == 'Male' ? 'selected' : '' }}>Male</option>
+                <option value="Female" {{ $cat->sex == 'Female' ? 'selected' : '' }}>Female</option>
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label for="Medical_Record" class="form-label">Medical_Record</label>
+              <input type="text" name="Medical_Record" class="form-control" value="{{ $cat->Medical_Record }}">
+            </div>
+
+            <button type="submit" class="btn btn-primary mb-3">Update Cat</button>
+            <button type="button" class="btn btn-secondary mb-3" onclick="clearForm()">Clear</button>
+          </div>
+        </form>
+      </div>
     </div>
-@endif
+  </div>
+</div>
 
-    <form action="{{ route('admin.cats.update', $cat->id) }}" method="POST" enctype="multipart/form-data">
-        @csrf
-        @method('PUT')
-
-        <label for="name">Name</label>
-        <input type="text" name="name" value="{{ $cat->name }}" required>
-
-        <label for="address">Address</label>
-        <input type="text" name="address" value="{{ $cat->address }}" required>
-
-        <label for="telephone_number">Telephone Number</label>
-        <input type="text" name="telephone_number" value="{{ $cat->telephone_number }}" required>
-
-        <label for="mobile_number">Mobile Number</label>
-        <input type="text" name="mobile_number" value="{{ $cat->mobile_number }}" required>
-
-        <label for="cat_name">Cat Name</label>
-        <input type="text" name="cat_name" value="{{ $cat->cat_name }}" required>
-
-        <label for="cat_image">Cat Image</label>
-        <input type="file" name="cat_image">
-
-        <label for="age">Age</label>
-        <input type="number" name="age" value="{{ $cat->age }}" required>
-
-        <label for="color">Color</label>
-        <input type="text" name="color" value="{{ $cat->color }}" required>
-
-        <label for="breed">Breed</label>
-        <input type="text" name="breed" value="{{ $cat->breed }}" required>
-
-        <label for="sex">Sex</label>
-        <select name="sex" required>
-            <option value="Male" {{ $cat->sex == 'Male' ? 'selected' : '' }}>Male</option>
-            <option value="Female" {{ $cat->sex == 'Female' ? 'selected' : '' }}>Female</option>
-        </select>
-
-        <label for="date_of_adoption">Date of Adoption</label>
-        <input type="date" name="date_of_adoption" value="{{ $cat->date_of_adoption }}" required>
-
-        <button type="submit">Update Cat</button>
-    </form>
-        </body>
-</html>
+<script>
+  function clearForm() {
+    document.getElementById('editCatForm').reset();
+  }
+</script>

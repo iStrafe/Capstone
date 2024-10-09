@@ -54,7 +54,7 @@
 <nav class="navbar navbar-expand-lg border-bottom border-body" data-bs-theme="dark">
     <div class="container-fluid">
              @if(Auth::check() && Auth::user()->role === "admin")
-                <a class="button" data-text="Awesome" href="{{url('dashboard')}}">
+                <a class="button" data-text="Awesome" href="{{url('userDashboard')}}">
                     <span class="actual-text">&nbsp;homepage&nbsp;</span>
                     <span aria-hidden="true" class="hover-text">&nbsp;homepage&nbsp;</span>
                 </a>
@@ -69,7 +69,7 @@
                     <a class="nav-link" href="{{ url('aboutus') }}">ABOUT US</a>
                 </li>
                 <li class="nav-item px-4">
-                    <a class="nav-link" href="{{ url('services') }}">ADOPTION REQUESTS</a>
+                    <a class="nav-link" href="{{ url('AdoptionRequest') }}">ADOPTION REQUESTS</a>
                 </li>
 
                 <li class="nav-item px-4">

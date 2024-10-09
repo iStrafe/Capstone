@@ -34,15 +34,6 @@
         .navbar .dropdown-menu {
             background-color: #003366;
         }
-        .container {
-            background-color: rgba(255, 255, 255, 0.9);
-            padding: 20px;
-            border-radius: 10px;
-            margin: 20px auto;
-            width: 30%;
-            max-width: 1200px;
-            text-align: center; /* Center-align text inside the container */
-        }
         .logo {
             max-width: 150px;
             margin: 0 auto 20px; /* Center the logo and add space below */
@@ -58,8 +49,97 @@
             max-width: 500px; /* Adjust the maximum width of the input group */
         }
 
-        /*
-        */
+           .card {
+        flex-wrap: wrap;
+        position: relative;
+        width: 25em;
+        height: 25em;
+        box-shadow: 0px 1px 13px rgba(0,0,0,0.1);
+        cursor: pointer;
+        transition: all 120ms;
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+        background: #fff;
+        padding: 0.5em;
+        padding-bottom: 3.4em;
+    }
+
+    .card::after {
+        content: "Adopt Me!";
+        padding-top: 1.25em;
+        padding-left: 1.25em;
+        position: absolute;
+        left: 0;
+        bottom: -60px;
+        background: #00AC7C;
+        color: #fff;
+        height: 4em;
+        width: 100%;
+        transition: all 80ms;
+        font-weight: 600;
+        text-transform: uppercase;
+        opacity: 0;
+    }
+
+    .card .title {
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 0.9em;
+        position: absolute;
+        left: 0.625em;
+        bottom: 1.875em;
+        font-weight: 400;
+        color: #000;
+        margin-bottom: 15px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .card .price {
+        font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+        font-size: 0.9em;
+        position: absolute;
+        left: 0.625em;
+        bottom: 0.625em;
+        color: #000;
+    }
+
+    .card:hover::after {
+        bottom: 0;
+        opacity: 1;
+    }
+
+    .card:active {
+        transform: scale(0.98);
+    }
+
+    .card:active::after {
+        content: "Added !";
+        height: 3.125em;
+    }
+
+    .text {
+        max-width: 55px;
+    }
+
+    .image {
+        background: rgb(241, 241, 241);
+        width: 100%;
+        height: 70%; /* Adjust the height as needed */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+    }
+
+    .image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        background: rgb(241, 241, 241);
+        display: grid;
+        place-items: center;
+    }
     </style>
 </head>
 
@@ -139,50 +219,66 @@
             </div>
         </header>
 
-        
+      <section class="bg-blacks">
 
- 
-    <section>
-        <div class="container">
-            <img src="images/logo.png" alt="Logo" class="logo">
-            <div class="center">
-                <h1>SEARCH CAT</h1>
-                <div class="input-group mb-3">
-                    <input type="text" class="form-control" placeholder="Search Cat" aria-label="Recipient's username" aria-describedby="basic-addon2">
-                    <div class="input-group-append">
-                        <button class="btn btn-outline-secondary" type="button">Advanced Search</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+            <section class="bg-blacks">
 
-     <!-- Portfolio Grid-->
-        <section class="page-section bg-light" id="portfolio">
-            <div class="container2">
-                <div class="text-center">
-                    <h2 class="section-heading text-uppercase">OUR CATS</h2>
-                    <h3 class="section-subheading text-muted"></h3>
-                </div>
-
-                <div class="row">
-                    <div class="col-lg-4 col-sm-6 mb-4">
-                        <!-- Portfolio item 1-->
-                        <div class="portfolio-item">
-                            <a class="portfolio-link" data-bs-toggle="modal" href="#portfolioModal1">
-                                <div class="portfolio-hover">
-                                    <div class="portfolio-hover-content"><i class="fas fa-plus fa-3x"></i></div>
-                                </div>
-                                <img class="img-fluid" src="assets/img/portfolio/1.jpg" alt="..." />
-                            </a>
-                            <div class="portfolio-caption">
-                                <div class="portfolio-caption-heading">Threads</div>
-                                <div class="portfolio-caption-subheading text-muted">Illustration</div>
+            <div class="container">
+               
+                    <div class="center">
+                    <h1>CAT GALLERY</h1>
+                        <div class="input-group mb-3">
+                                <input type="text" class="form-control" placeholder="Search Cat" aria-label="Recipient's username" aria-describedby="basic-addon2" id="searchInput">
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-secondary" type="button" id="searchButton">search</button>
                             </div>
                         </div>
                     </div>
+                    <!--Next & previous buttons-->
+                    <div class="pagination-buttons">
+                        <button class="btn btn-outline-secondary" type="button" id="prevBtn" style="display: none;">Previous</button>
+                        <button class="btn btn-outline-secondary" type="button" id="nextBtn" style="display: none;">Next</button>
+                    </div>
+
+                <div class="row" id="catGallery">
+                    @foreach($cats as $cat)
+                        <div class="col-md-4 cat-card" data-bs-toggle="modal" data-bs-target="#modalId2">
+                            <div class="card" data-name="{{ $cat->cat_name }}" data-age="{{ $cat->age }}" data-color="{{ $cat->color }}" data-breed="{{ $cat->breed }}" data-sex="{{ $cat->sex }}">
+                                <div class="image">
+                                    @if($cat->cat_image)
+                                        <img src="{{ asset('images/' . $cat->cat_image) }}" alt="Image of {{ $cat->cat_name }}" style="width: 100%; height: auto;">
+                                    @else
+                                        <span class="text">No image available</span>
+                                    @endif
+                                </div>
+                                <span class="title">{{ $cat->cat_name }}</span>
+                               
+                            </div>
+                        </div>
+                    @endforeach
                 </div>
             </div>
-        </section>
+        </section>  
+
+        <script>
+            document.getElementById('searchInput').addEventListener('input', function() {
+                const searchInput = document.getElementById('searchInput').value.toLowerCase();
+                const catCards = document.querySelectorAll('.cat-card');
+
+                catCards.forEach(function(card) {
+                    const catName = card.querySelector('.title').textContent.toLowerCase();
+                    const catAge = card.querySelector('.card').getAttribute('data-age').toLowerCase();
+                    const catColor = card.querySelector('.card').getAttribute('data-color').toLowerCase();
+                    const catBreed = card.querySelector('.card').getAttribute('data-breed').toLowerCase();
+                    const catSex = card.querySelector('.card').getAttribute('data-sex').toLowerCase();
+
+                    if (catName.includes(searchInput) || catAge.includes(searchInput) || catColor.includes(searchInput) || catBreed.includes(searchInput) || catSex.includes(searchInput)) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+        </script>
 </body>
 </html>
