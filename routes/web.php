@@ -21,9 +21,16 @@ use SebastianBergmann\CodeCoverage\Driver\Driver;
 Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
 
 // User-side routes
-Route::get('/cats', [UserCatController::class, 'index'])->name('user.cats.index');
-Route::get('/cats/{id}', [UserCatController::class, 'show'])->name('user.cats.show');
-Route::get('/cats/adopt/{id}', [UserCatController::class, 'adopt'])->name('user.cats.adopt');
+Route::middleware('auth')->group(function () {
+
+    
+    Route::get('/cats', [UserCatController::class, 'index'])->name('user.cats.index');
+    Route::get('/cats/{id}', [UserCatController::class, 'show'])->name('user.cats.show');
+    Route::get('/cats/adopt/{id}', [UserCatController::class, 'adopt'])->name('user.cats.adopt');
+    
+   
+});
+
 //Admin Cat Adoption
 
 Route::prefix('admin')->name('admin.')->group(function () {
