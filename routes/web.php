@@ -10,6 +10,8 @@ use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\serviceController;
 use App\Http\Controllers\EventsController;
+use App\Http\Controllers\NewsEventController;
+
 use GuzzleHttp\Psr7\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -83,9 +85,9 @@ Route::get('/', function () {
 })->name('home');
 
 //Events Route
-Route::get('/events', function () {
-    return view('events');
-})->name('events');
+Route::get('/events' , [NewsEventController::class,'index3'], function () {
+    return view('news-events.events');
+})->name('news-events.events');
 
 //Contact page route
 Route::get('/ContactUs', function () {
@@ -162,10 +164,11 @@ Route::middleware('auth')->group(function () {
 });
 
 //News & Events page routes
+Route::resource('news-events', NewsEventController::class);
 
-Route::get('/news', function () {
-    return view('adminnews');
-})->name('news');
+Route::get('/news-events/events', [NewsEventController::class, 'index3'])->name('news-events.index3');
+
+
 //Service page
 /*
 Route::group(['prefix' => 'service'],function(){

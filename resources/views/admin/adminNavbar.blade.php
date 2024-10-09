@@ -61,7 +61,8 @@
                 <!--<a class="navbar-brand px-5 py-3" href="{{url('adminDashboard')}}">adminpage</a>-->
             @endif
 
-           
+            
+            
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item px-4">
@@ -76,7 +77,11 @@
                 </li>
 
                 <li class="nav-item px-4">
-                    <a class="nav-link" href="{{ url('events') }}">NEWS / EVENTS</a>
+                @if(Auth::check() && Auth::user()->role === "admin")
+                    <a class="nav-link" href="{{ url('news-events') }}">NEWS / EVENTS</a>
+                 @else   
+                    <a class="nav-link" href="{{ url('events') }}"> NEWS / EVENTS</a>
+                    @endif
                 </li>
                 <li class="nav-item px-4">
                     <a class="nav-link" href="{{ url('ContactUs') }}">CONTACT US</a>
