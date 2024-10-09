@@ -28,7 +28,8 @@ class adoptionController extends Controller
             'approximate_age' => $request->input('approximate_age'),
             'sex' => $request->input('sex'),
             'color' => $request->input('color'),
-            'date_of_adoption' => $request->input('date_of_adoption')
+            'date_of_adoption' => $request->input('date_of_adoption'),
+            'Medical_Record' => $request->input('Medical_Record')
         ];
 
         $result = DB::table('adoption_request')->insert($data);
