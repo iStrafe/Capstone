@@ -234,7 +234,7 @@
                 event.preventDefault();
                 alert("Please read the terms and conditions before proceeding to the adoption page.");
             }else{
-                window.location.href = 'cats';    }
+                window.location.href = 'adoptCat';    }
         });
 
         modalId.addEventListener('show.bs.modal', function (event) {

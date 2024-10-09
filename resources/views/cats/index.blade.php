@@ -54,7 +54,7 @@
                     @endif
                     <div class="card-body">
                         <h5 class="card-title">{{ $cat->cat_name }}</h5>
-                        <a href="{{ route('user.cats.show', $cat->id) }}" class="btn btn-primary">View Details</a>
+                        <a href="{{ route('cats.show', $cat->id) }}" class="btn btn-primary">View Details</a>
                         <a href="#" class="btn btn-adopt" data-toggle="modal" data-target="#adoptionFormModal"
                            data-name="{{ $cat->cat_name }}"
                            data-age="{{ $cat->age }}"

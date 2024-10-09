@@ -34,6 +34,6 @@ class adoptionController extends Controller
         
         $result = DB::table('adoption_request')->insert($data);
 
-        return redirect()->route('user.cats.index');
+        return redirect()->route('cats.index');
     }
 }

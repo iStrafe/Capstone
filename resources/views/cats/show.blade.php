@@ -91,7 +91,7 @@
                         <p><strong>Medical Record:</strong> {{ $cat->Medical_Record }}</p>
                     </div>
 
-                    <a href="{{ route('user.cats.index') }}" class="btn back-button">Back to List</a>
+                    <a href="{{ route('adoptCat') }}" class="btn back-button">Back to List</a>
                 </div>
             </div>
         </div>

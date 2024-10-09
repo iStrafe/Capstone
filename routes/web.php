@@ -26,18 +26,21 @@ Route::post('/contact', [ContactController::class, 'store'])->name('contact.stor
 Route::middleware('auth')->group(function () {
 
     
-    Route::get('/cats', [UserCatController::class, 'index'])->name('user.cats.index');
-    Route::get('/cats/{id}', [UserCatController::class, 'show'])->name('user.cats.show');
-    Route::get('/cats/adopt/{id}', [UserCatController::class, 'adopt'])->name('user.cats.adopt');
-    
+    Route::get('/cat', [CatController::class, 'index'])->name('cats.index');
+    Route::get('/cat/{id}', [CatController::class, 'showUser'])->name('cats.show');
+    Route::get('/cat/adopt/{id}', [CatController::class, 'adopt'])->name('cats.adopt');
+    Route::get('adoptCat', [CatController::class, 'index4'])->name('adoptCat');
+
    
 });
+
 
 //Admin Cat Adoption
 
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::resource('cats', CatController::class);
 });
+
 
 //Route for Users upon login
 Route::get('userDashboard', [CatController::class, 'index2'])->middleware(['auth'])->name('dashboard');
@@ -81,7 +84,7 @@ Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name
 
 //test route
 Route::get('/test', function () {
-    return view('test');
+    return view('index');
 });
 
 //Route for admin upon login

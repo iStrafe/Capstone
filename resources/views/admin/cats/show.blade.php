@@ -21,7 +21,7 @@
         <p><strong>Sex:</strong> {{ $cat->sex }}</p>
         <p><strong>Medical Record:</strong> {{ $cat->Medical_Record }}</p>
 
-        <a href="{{ route('admin.cats.index') }}" class="btn btn-secondary">Back to List</a>
+        <a href="{{ route('cats.index') }}" class="btn btn-secondary">Back to List</a>
       </div>
     </div>
   </div>

@@ -27,6 +27,11 @@ class CatController extends Controller
         $cats = Cat::all();
         return view('home', compact('cats'));
     }
+    public function index4()
+    {
+        $cats = Cat::all();
+        return view('cats.index', compact('cats'));
+    }
 
     /**
      * Show the form for creating a new resource.
@@ -71,6 +76,11 @@ class CatController extends Controller
     {
         $cat = Cat::find($id);
         return view('admin.cats.show', compact('cat'));
+    }
+    public function showUser(string $id)
+    {
+        $cat = Cat::find($id);
+        return view('cats.show', compact('cat'));
     }
 
     /**
