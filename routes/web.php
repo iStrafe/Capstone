@@ -128,13 +128,14 @@ Route::get('Services/report',[CatinfoController::class,'reportpage']);
 Route::post('Services/report',[CatinfoController::class,'report'])->name('admin.report');
 //Route::get('admintest/create',[CatinfoController::class,'viewReportInformation'])->name('reportinfo.view');
 
+/*
 Route::middleware('auth')->group(function () {
 
     
     Route::get('dashboard',[CatinfoController::class,'viewCatInformation'])->name('dashboard');
     
    
-});
+});*/
 
 
 //Testing route

@@ -90,6 +90,9 @@
         bottom: 1.875em;
         font-weight: 400;
         color: #000;
+        margin-bottom: 15px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
     }
 
     .card .price {
@@ -244,7 +247,7 @@
                                     @endif
                                 </div>
                                 <span class="title">{{ $cat->cat_name }}</span>
-                                <span class="price">{{ $cat->age }} years old</span>
+                               
                             </div>
                         </div>
                     @endforeach
@@ -259,7 +262,7 @@
 
                 catCards.forEach(function(card) {
                     const catName = card.querySelector('.title').textContent.toLowerCase();
-                    const catAge = card.querySelector('.price').textContent.toLowerCase();
+                    const catAge = card.querySelector('.card').getAttribute('data-age').toLowerCase();
                     const catColor = card.querySelector('.card').getAttribute('data-color').toLowerCase();
                     const catBreed = card.querySelector('.card').getAttribute('data-breed').toLowerCase();
                     const catSex = card.querySelector('.card').getAttribute('data-sex').toLowerCase();

@@ -185,11 +185,6 @@
                             <span>Breed</span>
                         </label>
 
-                        <label>
-                            <input class="input py-3" type="text" name="Medical_Record" placeholder="" required>
-                            <span>Medical Record</span>
-                        </label>
-
                         <label for="date_of_adoption">Date of Adoption</label>
                         <input type="date" name="date_of_adoption" required>
                     </div>
