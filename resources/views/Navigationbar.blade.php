@@ -237,11 +237,17 @@
                 <li class="nav-item px-4">
                     <a class="nav-link" href="{{ url('ContactUs') }}">CONTACT US</a>
                 </li>
+                <li class="nav-item px-4">
+                    <a class="nav-link" href="{{ url('analyzeImage') }}">Image Analysis</a>
+                </li>
 
                 <!-- Modal trigger button -->
                 <button type="button" class="btn btn-secondary btn-lg" data-bs-toggle="modal" data-bs-target="#modalId">DONATE</button>
                 <!--Paymongo Modal-->
                 @include('payment')
+                <li class="nav-item px-4">
+                    <a class="nav-link" href="{{ url('myRequest') }}">---</a>
+                </li>
             </ul>
 
             <ul class="navbar-nav ms-auto">

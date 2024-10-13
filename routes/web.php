@@ -12,7 +12,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\serviceController;
 use App\Http\Controllers\EventsController;
 use App\Http\Controllers\NewsEventController;
-
+use App\Http\Controllers\OpenAIController;
 use GuzzleHttp\Psr7\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -25,25 +25,30 @@ Route::post('/contact', [ContactController::class, 'store'])->name('contact.stor
 // User-side routes
 Route::middleware('auth')->group(function () {
 
-    
+    Route::get('/adminDashboard', [CatController::class, 'adminDashboard'])->name('admin.dashboard');
     Route::get('/cat', [CatController::class, 'index'])->name('cats.index');
     Route::get('/cat/{id}', [CatController::class, 'showUser'])->name('cats.show');
     Route::get('/cat/adopt/{id}', [CatController::class, 'adopt'])->name('cats.adopt');
     Route::get('adoptCat', [CatController::class, 'index4'])->name('adoptCat');
 
-   
-});
 
+});
+//Route fo OpenAI image analysis
+// Route to show the image upload form
+Route::get('/analyzeImage', [OpenAIController::class, 'showUploadForm']);
+
+// Route to handle the image analysi
+Route::post('/analyzeImage', [OpenAIController::class, 'analyzeImage'])->name('analyze.image');
 
 //Admin Cat Adoption
-
-Route::prefix('admin')->name('admin.')->group(function () {
+Route::prefix('adminDashboard')->name('admin.')->group(function () {
     Route::resource('cats', CatController::class);
 });
 
 
 //Route for Users upon login
 Route::get('userDashboard', [CatController::class, 'index2'])->middleware(['auth'])->name('dashboard');
+
 
 //Home Route
 Route::get('/', [CatController::class, 'index3'])->name('home');
@@ -87,16 +92,12 @@ Route::get('/test', function () {
     return view('index');
 });
 
-//Route for admin upon login
-Route::get('admin',function(){
-    return view('admintest');
-})->middleware(['auth'])->name('admin');
+//Adoption request page
+Route::get('myRequest', function () {
+    return view('myRequest');
+})->middleware(['auth', 'verified']);
 
-Route::get('adminDashboard',function(){
-    return view('admin.admintest');
-});
-
-
+Route::get('myRequest', [AdoptionController::class, 'showMyRequests'])->name('myRequest');
 
 
 //About us Route

@@ -66,14 +66,11 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item px-4">
-                    <a class="nav-link" href="{{ url('aboutus') }}">ABOUT US</a>
-                </li>
-                <li class="nav-item px-4">
                     <a class="nav-link" href="{{ url('AdoptionRequest') }}">ADOPTION REQUESTS</a>
                 </li>
 
                 <li class="nav-item px-4">
-                    <a class="nav-link" href="{{ url('admin/cats') }}">CATS</a>
+                    <a class="nav-link" href="{{ url('adminDashboard') }}">CATS</a>
                 </li>
 
                 <li class="nav-item px-4">
@@ -85,6 +82,9 @@
                 </li>
                 <li class="nav-item px-4">
                     <a class="nav-link" href="{{ url('ContactUs') }}">CONTACT US</a>
+                </li>
+                <li class="nav-item px-4">
+                    <a class="nav-link" href="{{ url('analyzeImage') }}">Image Analysis</a>
                 </li>
 
                 <!-- Modal trigger button -->

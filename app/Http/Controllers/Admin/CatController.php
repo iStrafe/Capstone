@@ -32,6 +32,11 @@ class CatController extends Controller
         $cats = Cat::all();
         return view('cats.index', compact('cats'));
     }
+    public function adminDashboard()
+    {
+        $cats = Cat::all();
+        return view('admin.cats.index', compact('cats'));
+    }
 
     /**
      * Show the form for creating a new resource.
@@ -67,6 +72,10 @@ class CatController extends Controller
         Cat::create($input);
     
         return redirect()->route('admin.cats.index')->with('success', 'Pet created successfully.');
+    }
+
+    public function openAiRoute(){
+        
     }
 
     /**

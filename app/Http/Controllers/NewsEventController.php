@@ -30,17 +30,31 @@ class NewsEventController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'title' => 'required',
+            'title' => 'required|string|max:255',
             'description' => 'required',
-            'event_date' => 'required|date',
-            'eventimage' => 'nullable|image|mimes:jpeg,png,jpg,gif'
+            'eventimage' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048', // Ensure it's an image
         ]);
     
-        NewsEvent::create($request->all());
+        $data = $request->all();
     
-        return redirect()->route('news-events.index')
-                         ->with('success', 'News Event created successfully.');
+        // Handle the file upload
+        if ($request->hasFile('eventimage')) {
+            // Get the file with the extension
+            $image = $request->file('eventimage');
+            // Generate a unique filename
+            $filename = time() . '.' . $image->getClientOriginalExtension();
+            // Move the file to the public/images directory
+            $image->move(public_path('images'), $filename);
+            // Save the filename to the database
+            $data['eventimage'] = $filename;
+        }
+    
+        // Save the event data (including image filename)
+        NewsEvent::create($data);
+    
+        return redirect()->route('news-events.index')->with('success', 'Event created successfully');
     }
+    
     
 
     /**
@@ -78,11 +92,19 @@ public function show($id)
         'catimage' => 'nullable|image|mimes:jpeg,png,jpg,gif'
     ]);
 
-    $newsEvent = NewsEvent::findOrFail($id);
-    $newsEvent->update($request->all());
+    $input = $request->all();
 
-    return redirect()->route('news-events.index')
-                     ->with('success', 'News Event updated successfully.');
+        $renew = NewsEvent::find($id);
+        $renew->fill($request->all());
+
+        if ($request->hasFile('eventimage')) {
+            $fileName = time() . '.' . $request->eventimage->extension();
+            $request->eventimage->move(public_path('images'), $fileName);
+            $renew->eventimage = $fileName;
+        }
+
+        $renew->save();
+        return redirect()->route('news-events.index')->with('success', 'Pet updated successfully.');
 }
 
 
