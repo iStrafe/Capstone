@@ -39,11 +39,11 @@ class OpenAIController extends Controller
                     "content" => [
                         [
                             "type" => "text",
-                            "text" => "What cat breed is this? list down key features of this cat breed."
+                            "text" => "Predict what cat breed is this? list down key features of this cat breed."
                         ],
                         [
                             "type" => "text",
-                            "text" => "Rejecct the image if it is not a cat."
+                            "text" => "Reject the image if it is not a cat."
                         ],
                         [
                             "type" => "image_url",
@@ -54,7 +54,7 @@ class OpenAIController extends Controller
                     ]
                 ]
             ],
-            "max_tokens" => 300
+            "max_tokens" => 500
         ];
 
         // Send the request to OpenAI API
