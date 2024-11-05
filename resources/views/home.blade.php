@@ -181,10 +181,11 @@
                 <button type="button" class="btn btn-secondary btn-lg" data-bs-toggle="modal" data-bs-target="#modalId">DONATE</button>
                 <!--Paymongo Modal-->
                 @include('payment')
-                <li class="nav-item px-4">
+               <!-- <li class="nav-item px-4">
                     <a class="nav-link" href="{{ url('myRequest') }}">---</a>
-                </li>
+                </li>-->
             </ul>
+        </div>
 
             <ul class="navbar-nav ms-auto">
                 @guest
@@ -226,9 +227,6 @@
         </header>
 
       <section class="bg-blacks">
-
-            <section class="bg-blacks">
-
             <div class="container">
                
                     <div class="center">
@@ -264,27 +262,28 @@
                     @endforeach
                 </div>
             </div>
-        </section>  
-
-        <script>
-            document.getElementById('searchInput').addEventListener('input', function() {
-                const searchInput = document.getElementById('searchInput').value.toLowerCase();
-                const catCards = document.querySelectorAll('.cat-card');
-
-                catCards.forEach(function(card) {
-                    const catName = card.querySelector('.title').textContent.toLowerCase();
-                    const catAge = card.querySelector('.card').getAttribute('data-age').toLowerCase();
-                    const catColor = card.querySelector('.card').getAttribute('data-color').toLowerCase();
-                    const catBreed = card.querySelector('.card').getAttribute('data-breed').toLowerCase();
-                    const catSex = card.querySelector('.card').getAttribute('data-sex').toLowerCase();
-
-                    if (catName.includes(searchInput) || catAge.includes(searchInput) || catColor.includes(searchInput) || catBreed.includes(searchInput) || catSex.includes(searchInput)) {
-                        card.style.display = 'block';
-                    } else {
-                        card.style.display = 'none';
-                    }
-                });
-            });
-        </script>
+    </section>  
+        
 </body>
 </html>
+
+    <script>
+        document.getElementById('searchInput').addEventListener('input', function() {
+            const searchInput = document.getElementById('searchInput').value.toLowerCase();
+            const catCards = document.querySelectorAll('.cat-card');
+
+            catCards.forEach(function(card) {
+                const catName = card.querySelector('.title').textContent.toLowerCase();
+                const catAge = card.querySelector('.card').getAttribute('data-age').toLowerCase();
+                const catColor = card.querySelector('.card').getAttribute('data-color').toLowerCase();
+                const catBreed = card.querySelector('.card').getAttribute('data-breed').toLowerCase();
+                const catSex = card.querySelector('.card').getAttribute('data-sex').toLowerCase();
+
+                if (catName.includes(searchInput) || catAge.includes(searchInput) || catColor.includes(searchInput) || catBreed.includes(searchInput) || catSex.includes(searchInput)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+    </script>

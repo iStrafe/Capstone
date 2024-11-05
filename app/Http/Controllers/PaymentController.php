@@ -9,10 +9,11 @@ use Illuminate\Support\Facades\Log;
 
 class PaymentController extends Controller
 {
-    public function paymentView(){
+     public function paymentView(){
         return view('payment');
     }
-     public function createPayment(Request $request)
+
+    public function createPayment(Request $request)
     {
         // Validate the request inputs
         $request->validate([
@@ -31,7 +32,7 @@ class PaymentController extends Controller
         $secretKey = env('PAYMONGO_SECRET_KEY');
 
         // Correctly format the Authorization header with base64 encoding
-        $encodedKey = base64_encode($secretKey . 'sk_test_kp3C6xrx1R3B5FUv4J1MsCUG:');
+        $encodedKey = base64_encode($secretKey);
 
         $client = new Client();
 
@@ -60,7 +61,6 @@ class PaymentController extends Controller
 
             // Redirect to the payment link
             return redirect($paymentUrl);
-            
 
         } catch (RequestException $e) {
             // Handle API errors
