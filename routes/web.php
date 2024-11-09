@@ -26,13 +26,17 @@ Route::post('/contact', [ContactController::class, 'store'])->name('contact.stor
 Route::middleware('auth')->group(function () {
 
     Route::get('/adminDashboard', [CatController::class, 'adminDashboard'])->name('admin.dashboard');
-    Route::get('/cat', [CatController::class, 'index'])->name('cats.index');
-    Route::get('/cat/{id}', [CatController::class, 'showUser'])->name('cats.show');
-    Route::get('/cat/adopt/{id}', [CatController::class, 'adopt'])->name('cats.adopt');
-    Route::get('adoptCat', [CatController::class, 'index4'])->name('adoptCat');
+
 
 
 });
+
+//Route for adoption process
+Route::get('/cat', [CatController::class, 'index'])->name('cats.index');
+Route::get('/cat/{id}', [CatController::class, 'showUser'])->name('cats.show');
+Route::get('/cat/adopt/{id}', [CatController::class, 'adopt'])->name('cats.adopt');
+Route::get('adoptCat', [CatController::class, 'index4'])->name('adoptCat');
+
 //Route fo OpenAI image analysis
 // Route to show the image upload form
 Route::get('/analyzeImage', [OpenAIController::class, 'showUploadForm']);

@@ -54,7 +54,7 @@ class OpenAIController extends Controller
                     ]
                 ]
             ],
-            "max_tokens" => 500
+            "max_tokens" => 2000
         ];
 
         // Send the request to OpenAI API

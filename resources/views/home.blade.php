@@ -266,12 +266,14 @@
         
 </body>
 </html>
+    
+   <script>
+    document.getElementById('searchInput').addEventListener('input', function() {
+        const searchInput = document.getElementById('searchInput').value.toLowerCase();
+        const searchTerms = searchInput.split(/[\s,]+/); // Split by spaces or commas
+        const catCards = document.querySelectorAll('.cat-card');
 
-    <script>
-        document.getElementById('searchInput').addEventListener('input', function() {
-            const searchInput = document.getElementById('searchInput').value.toLowerCase();
-            const catCards = document.querySelectorAll('.cat-card');
-
+        if (searchInput.trim() !== "") {
             catCards.forEach(function(card) {
                 const catName = card.querySelector('.title').textContent.toLowerCase();
                 const catAge = card.querySelector('.card').getAttribute('data-age').toLowerCase();
@@ -279,11 +281,20 @@
                 const catBreed = card.querySelector('.card').getAttribute('data-breed').toLowerCase();
                 const catSex = card.querySelector('.card').getAttribute('data-sex').toLowerCase();
 
-                if (catName.includes(searchInput) || catAge.includes(searchInput) || catColor.includes(searchInput) || catBreed.includes(searchInput) || catSex.includes(searchInput)) {
+                const cardText = `${catName} ${catAge} ${catColor} ${catBreed} ${catSex}`;
+
+                const matches = searchTerms.every(term => cardText.includes(term));
+
+                if (matches) {
                     card.style.display = 'block';
                 } else {
                     card.style.display = 'none';
                 }
             });
-        });
-    </script>
+        } else {
+            catCards.forEach(function(card) {
+                card.style.display = 'block';
+            });
+        }
+    });
+</script>

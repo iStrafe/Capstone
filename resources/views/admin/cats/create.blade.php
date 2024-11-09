@@ -23,7 +23,7 @@
           <div class="container-sm">
             <div class="mb-3">
               <label for="cat_name" class="form-label">Cat Name</label>
-              <input type="text" name="cat_name" class="form-control" required>
+              <input type="text" name="cat_name" class="form-control" required oninput="this.value = this.value.toLowerCase()">
             </div>
 
             <div class="mb-3">
@@ -38,15 +38,13 @@
 
             <div class="mb-3">
               <label for="color" class="form-label">Color</label>
-              <input type="text" name="color" class="form-control" required>
+              <input type="text" name="color" class="form-control" required oninput="this.value = this.value.replace(/[,&]/g, ' ').toLowerCase()">
             </div>
 
             <div class="mb-3">
               <label for="breed" class="form-label">Breed</label>
-              <input type="text" name="breed" class="form-control" required>
+              <input type="text" name="breed" class="form-control" required oninput="this.value = this.value.toLowerCase()">
             </div>
-
-            
 
             <div class="mb-3">
               <label for="sex" class="form-label">Sex</label>
@@ -59,7 +57,7 @@
 
             <div class="mb-3">
               <label for="Medical_Record" class="form-label">Medical_Record</label>
-              <input type="text" name="Medical_Record" class="form-control" required>
+              <input type="text" name="Medical_Record" class="form-control" required oninput="this.value = this.value.toLowerCase()">
             </div>
 
             <button type="submit" class="btn btn-primary mb-3" style="color: black;">Add Cat</button>
