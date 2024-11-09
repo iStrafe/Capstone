@@ -1,6 +1,8 @@
-<style>
-
-       body {
+<head>
+    <!-- Font Awesome for icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
             font-family: 'Figtree', sans-serif;
             background-color: #d0e7ff; /* Light blue background */
             background-size: cover;
@@ -8,33 +10,66 @@
             margin: 0;
             padding: 0;
         }
-        .navbar {
+
+        /* Sidebar styles */
+        .sidebar {
+            height: 100%;
+            width: 250px;
+            position: fixed;
+            top: 0;
+            left: 0;
             background-color: #03045E; /* Adamson blue */
-            padding: 1rem;
+            padding-top: 20px;
+            z-index: 1000;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+            transition: width 0.3s ease;
         }
-        .navbar a {
+
+        .sidebar.collapsed {
+            width: 0;
+        }
+
+        .sidebar a {
+            padding: 10px 15px;
+            text-decoration: none;
+            font-size: 18px;
             color: white;
-            margin-right: 1rem;
-        }
-        .navbar .dropdown-menu {
-            background-color: #003366;
-        }
-       
-        .logo {
-            max-width: 150px;
-            margin: 0 auto 20px; /* Center the logo and add space below */
             display: block;
+            margin: 10px 0;
+            transition: padding 0.3s ease;
         }
-        .center {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+
+        .sidebar.collapsed a {
+            display: none;
         }
-        .input-group {
-            width: 100%;
-            max-width: 500px; /* Adjust the maximum width of the input group */
+
+        .sidebar a:hover {
+            background-color: #0077cc;
         }
-        
+
+        .sidebar .logo {
+            max-width: 150px;
+            margin: 0 auto 20px;
+            display: block;
+            text-align: center;
+        }
+
+        /* Hide the Donate button when sidebar is collapsed */
+        .sidebar.collapsed .donate-btn {
+            display: none;
+        }
+
+        /* Content area */
+        .content {
+            margin-left: 250px; /* Adjust the content to make space for the sidebar */
+            padding: 20px;
+            transition: margin-left 0.3s ease;
+        }
+
+        .content.sidebar-collapsed {
+            margin-left: 0; /* Adjust content when sidebar is collapsed */
+        }
+
         .footer {
             background-color: #03045E;
             color: white;
@@ -42,57 +77,104 @@
             text-align: center;
             position: relative;
         }
-        .footer .fs-1 {
-            font-family: serif;
-        }
+
         .footer p, .footer h2 {
             margin: 0;
         }
+
+        /* Button to toggle sidebar */
+        .sidebar-toggle-btn {
+            background-color: #03045E;
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 2000;
+            transition: left 0.3s ease;
+        }
+
+        /* Mobile responsiveness */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 0;
+                padding-top: 50px;
+                position: absolute;
+                left: -250px;
+            }
+
+            .sidebar.collapsed {
+                width: 0;
+            }
+
+            .sidebar-toggle-btn {
+                display: block;
+                position: fixed;
+                top: 20px;
+                left: 20px;
+            }
+
+            .content {
+                margin-left: 0;
+            }
+
+            .content.sidebar-collapsed {
+                margin-left: 0;
+            }
+        }
+
+        /* For large screens, the sidebar is expanded */
+        @media (min-width: 769px) {
+            .sidebar {
+                width: 250px;
+                position: fixed;
+                left: 0;
+            }
+
+            .sidebar.collapsed {
+                width: 80px;
+            }
+        }
     </style>
+</head>
 
+<body>
 
-<nav class="navbar navbar-expand-lg border-bottom border-body" data-bs-theme="dark">
-    <div class="container-fluid">
-             @if(Auth::check() && Auth::user()->role === "admin")
-                <a class="button" data-text="Awesome" href="{{url('userDashboard')}}">
-                    <span class="actual-text">&nbsp;homepage&nbsp;</span>
-                    <span aria-hidden="true" class="hover-text">&nbsp;homepage&nbsp;</span>
-                </a>
-                <!--<a class="navbar-brand px-5 py-3" href="{{url('adminDashboard')}}">adminpage</a>-->
-            @endif
+<!-- Sidebar -->
+<div class="sidebar" id="sidebar">
+    <div class="logo">
+        <!-- Place your logo here -->
+        <img src="images/adu logo.png" alt="Logo" />
+    </div>
+    @if(Auth::check() && Auth::user()->role === "admin")
+        <a href="{{url('userDashboard')}}">User Page</a>
+    @endif
 
-            
-            
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item px-4">
-                    <a class="nav-link" href="{{ url('AdoptionRequest') }}">ADOPTION REQUESTS</a>
-                </li>
+    <a href="{{ url('AdoptionRequest') }}">Adoption Requests</a>
+    <a href="{{ url('adminDashboard') }}">Cats</a>
 
-                <li class="nav-item px-4">
-                    <a class="nav-link" href="{{ url('adminDashboard') }}">CATS</a>
-                </li>
+    <a href="{{ Auth::check() && Auth::user()->role === 'admin' ? url('news-events') : url('events') }}">News / Events</a>
+    <a href="{{ url('ContactUs') }}">Contact Us</a>
+    <a href="{{ url('analyzeImage') }}">Image Analysis</a>
 
-                <li class="nav-item px-4">
-                @if(Auth::check() && Auth::user()->role === "admin")
-                    <a class="nav-link" href="{{ url('news-events') }}">NEWS / EVENTS</a>
-                 @else   
-                    <a class="nav-link" href="{{ url('events') }}"> NEWS / EVENTS</a>
-                    @endif
-                </li>
-                <li class="nav-item px-4">
-                    <a class="nav-link" href="{{ url('ContactUs') }}">CONTACT US</a>
-                </li>
-                <li class="nav-item px-4">
-                    <a class="nav-link" href="{{ url('analyzeImage') }}">Image Analysis</a>
-                </li>
+    <!-- Donate button with added class -->
+    <button type="button" class="btn btn-primary btn-lg donate-btn" data-bs-toggle="modal" data-bs-target="#modalId">Donate</button>
 
-                <!-- Modal trigger button -->
-                <button type="button" class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#modalId">DONATE</button>
-                <!--Paymongo Modal-->
-                @include('payment')
-            </ul>
+    <!-- Paymongo Modal -->
+    @include('payment')
+</div>
 
+<!-- Toggle button -->
+<button class="sidebar-toggle-btn" id="toggle-btn">
+    &#9776; <!-- Hamburger icon -->
+</button>
+
+<!-- Main content -->
+<div class="content" id="content">
+    <nav class="navbar navbar-expand-lg border-bottom border-body" data-bs-theme="dark">
+        <div class="container-fluid">
             <ul class="navbar-nav ms-auto">
                 @guest
                     <li class="nav-item">
@@ -108,7 +190,7 @@
                         </button>
                         <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
                             <a class="dropdown-item" href="{{ route('profile.edit') }}">{{ __('Profile') }}</a>
-                            <a class="dropdown-item" href="{{ route('logout') }}"
+                            <a class="dropdown-item" href="{{ route('logout') }} "
                                onclick="event.preventDefault();
                                document.getElementById('logout-form').submit();">
                                 {{ __('Log Out') }}
@@ -121,5 +203,19 @@
                 @endguest
             </ul>
         </div>
-    </div>
-</nav>
+    </nav>
+</div>
+
+<script>
+    const sidebar = document.getElementById('sidebar');
+    const content = document.getElementById('content');
+    const toggleButton = document.getElementById('toggle-btn');
+
+    toggleButton.addEventListener('click', function() {
+        sidebar.classList.toggle('collapsed');
+        content.classList.toggle('sidebar-collapsed');
+        toggleButton.classList.toggle('sidebar-collapsed');
+    });
+</script>
+
+</body>
