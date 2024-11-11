@@ -166,7 +166,7 @@
                     <a class="nav-link" href="{{ url('aboutus') }}">ABOUT US</a>
                 </li>
                 <li class="nav-item px-4">
-                    <a class="nav-link" data-bs-toggle="modal" data-bs-target="#modalId2">ADOPT</a>@include('Services.adoptContract')
+                    <a class="nav-link" data-bs-toggle="modal" data-bs-target="#modalId2">ADOPT</a>
                 </li>
                 <li class="nav-item px-4">
                     <a class="nav-link" href="{{ url('events') }}">NEWS / EVENTS</a>
@@ -182,6 +182,7 @@
                 <button type="button" class="btn btn-secondary btn-lg" data-bs-toggle="modal" data-bs-target="#modalId">DONATE</button>
                 <!--Paymongo Modal-->
                 @include('payment')
+                @include('Services.adoptContract')
                <!-- <li class="nav-item px-4">
                     <a class="nav-link" href="{{ url('myRequest') }}">---</a>
                 </li>-->
@@ -189,6 +190,7 @@
         </div>
 
             <ul class="navbar-nav ms-auto">
+
                 @guest
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>

@@ -2,7 +2,8 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
         <!-- Scripts -->
         <script src="https://kit.fontawesome.com/c32adfdcda.js" crossorigin="anonymous"></script>
-        @vite(['resources/sass/app.scss', 'resources/js/app.js'])
+        @vite('resources/sass/app.scss')
+        @vite('resources/js/app.js')
     <style>
                 section {
         position: relative;

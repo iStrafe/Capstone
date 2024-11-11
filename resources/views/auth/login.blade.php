@@ -1,193 +1,171 @@
-
 <style>
-            .form {
-          display: flex;
-          flex-direction: column;
-          gap: 10px;
-          background-color: #ffffff;
-          padding: 30px;
-          width: 450px;
-          border-radius: 20px;
-          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-        }
+    body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background-color: #121212;
+        margin: 0;
+    }
 
-        ::placeholder {
-          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-        }
+    .form {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        background-color: #ffffff;
+        padding: 30px;
+        width: 450px;
+        border-radius: 20px;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    }
 
-        .form button {
-          align-self: flex-end;
-        }
+    ::placeholder {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    }
 
-        .flex-column > label {
-          color: #151717;
-          font-weight: 600;
-        }
+    .form button {
+        align-self: flex-end;
+    }
 
-        .inputForm {
-          border: 1.5px solid #ecedec;
-          border-radius: 10px;
-          height: 50px;
-          display: flex;
-          align-items: center;
-          padding-left: 10px;
-          transition: 0.2s ease-in-out;
-        }
+    .flex-column > label {
+        color: #151717;
+        font-weight: 600;
+    }
 
-        .input {
-          margin-left: 10px;
-          border-radius: 10px;
-          border: none;
-          width: 100%;
-          height: 100%;
-        }
+    .inputForm {
+        border: 1.5px solid #ecedec;
+        border-radius: 10px;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        padding-left: 10px;
+        transition: 0.2s ease-in-out;
+    }
 
-        .input:focus {
-          outline: none;
-        }
+    .input {
+        margin-left: 10px;
+        border-radius: 10px;
+        border: none;
+        width: 85%;
+        height: 100%;
+    }
 
-        .inputForm:focus-within {
-          border: 1.5px solid #2d79f3;
-        }
+    .input:focus {
+        outline: none;
+    }
 
-        .flex-row {
-          display: flex;
-          flex-direction: row;
-          align-items: center;
-          gap: 10px;
-          justify-content: space-between;
-        }
+    .inputForm:focus-within {
+        border: 1.5px solid #2d79f3;
+    }
 
-        .flex-row > div > label {
-          font-size: 14px;
-          color: black;
-          font-weight: 400;
-        }
+    .flex-row {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 10px;
+        justify-content: space-between;
+    }
 
-        .span {
-          font-size: 14px;
-          margin-left: 5px;
-          color: #2d79f3;
-          font-weight: 500;
-          cursor: pointer;
-        }
+    .flex-row > div > label {
+        font-size: 14px;
+        color: black;
+        font-weight: 400;
+    }
 
-        .button-submit {
-          margin: 20px 0 10px 0;
-          background-color: #151717;
-          border: none;
-          color: white;
-          font-size: 15px;
-          font-weight: 500;
-          border-radius: 10px;
-          height: 50px;
-          width: 100%;
-          cursor: pointer;
-        }
+    .span {
+        font-size: 14px;
+        margin-left: 5px;
+        color: #2d79f3;
+        font-weight: 500;
+        cursor: pointer;
+    }
 
-        .p {
-          text-align: center;
-          color: black;
-          font-size: 14px;
-          margin: 5px 0;
-        }
+    .button-submit {
+        margin: 20px 0 10px 0;
+        background-color: #151717;
+        border: none;
+        color: white;
+        font-size: 15px;
+        font-weight: 500;
+        border-radius: 10px;
+        height: 50px;
+        width: 100%;
+        cursor: pointer;
+    }
 
-        .btn {
-          margin-top: 10px;
-          width: 100%;
-          height: 50px;
-          border-radius: 10px;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          font-weight: 500;
-          gap: 10px;
-          border: 1px solid #ededef;
-          background-color: white;
-          cursor: pointer;
-          transition: 0.2s ease-in-out;
-        }
+    .button-submit:hover {
+        background-color: #252727;
+    }
 
-        .btn:hover {
-          border: 1px solid #2d79f3;
-          ;
-        }
+    .p {
+        text-align: center;
+        color: black;
+        font-size: 14px;
+        margin: 5px 0;
+    }
 
-            
+    .btn {
+        margin-top: 10px;
+        width: 100%;
+        height: 50px;
+        border-radius: 10px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-weight: 500;
+        gap: 10px;
+        border: 1px solid #ededef;
+        background-color: white;
+        cursor: pointer;
+        transition: 0.2s ease-in-out;
+    }
+
+    .btn:hover {
+        border: 1px solid #2d79f3;
+    }
 </style>
 
-<x-guest-layout>
-    <style>
-        body {
-            background-image: url('public\images\loginbg.jpg');
-            background-size: cover;
-            background-repeat: no-repeat;
-            background-position: center;
-            min-height: 100vh;
-            margin: 0;
-            padding: 0;
-        }
-    </style>
-
-    <!-- Session Status -->
-    <x-auth-session-status class="mb-4" :status="session('status')" />
-
-    <form method="POST" action="{{ route('login') }}">
+<div class="mb-4" :status="session('status')">
+    <form class="form" method="POST" action="{{ route('login') }}">
         @csrf
-
-        <!-- Email Address -->
-        <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
+        <!--Email-->
+        <div class="flex-column">
+            <label>Email </label>
         </div>
-
-        <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
-
-            <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="current-password" />
-
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
+        <div class="inputForm">
+            <svg height="20" viewBox="0 0 32 32" width="20" xmlns="http://www.w3.org/2000/svg">
+                <g id="Layer_3" data-name="Layer 3">
+                    <path d="m30.853 13.87a15 15 0 0 0 -29.729 4.082 15.1 15.1 0 0 0 12.876 12.918 15.6 15.6 0 0 0 2.016.13 14.85 14.85 0 0 0 7.715-2.145 1 1 0 1 0 -1.031-1.711 13.007 13.007 0 1 1 5.458-6.529 2.149 2.149 0 0 1 -4.158-.759v-10.856a1 1 0 0 0 -2 0v1.726a8 8 0 1 0 .2 10.325 4.135 4.135 0 0 0 7.83.274 15.2 15.2 0 0 0 .823-7.455zm-14.853 8.13a6 6 0 1 1 6-6 6.006 6.006 0 0 1 -6 6z"></path>
+                </g>
+            </svg>
+            <input id="email" class="input" type="email" name="email" :value="old('email')" required autofocus autocomplete="username">
         </div>
-
-        <!-- Remember Me -->
-        <div class="block mt-4">
-            <label for="remember_me" class="inline-flex items-center">
-                <input id="remember_me" type="checkbox" class="rounded dark:bg-gray-900 border-gray-300 dark:border-gray-700 text-indigo-600 shadow-sm focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:focus:ring-offset-gray-800" name="remember">
-                <span class="ms-2 text-sm text-gray-600 dark:text-gray-400">{{ __('Remember me') }}</span>
-            </label>
+        <!--Password-->
+        <div class="flex-column">
+            <label>Password </label>
         </div>
-
-        <div class="flex items-center justify-end mt-4">
-            @if (Route::has('password.request'))
-                <a class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800" href="{{ route('password.request') }}">
-                    {{ __('Forgot your password?') }}
-                </a>
-            @endif
-            @if (Route::has('register'))
-            <a
-                href="{{ route('register') }}"
-                class="rounded-md px-3 py-2 text-black ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20] dark:text-white dark:hover:text-white/80 dark:focus-visible:ring-white"
-            >
-                Register
-            </a>
-        @endif
-
-            <x-primary-button class="ms-3">
-                {{ __('Log in') }}
-            </x-primary-button>
+        <div class="inputForm">
+            <svg height="20" viewBox="-64 0 512 512" width="20" xmlns="http://www.w3.org/2000/svg">
+                <path d="m336 512h-288c-26.453125 0-48-21.523438-48-48v-224c0-26.476562 21.546875-48 48-48h288c26.453125 0 48 21.523438 48 48v224c0 26.476562-21.546875 48-48 48zm-288-288c-8.8125 0-16 7.167969-16 16v224c0 8.832031 7.1875 16 16 16h288c8.8125 0 16-7.167969 16-16v-224c0-8.832031-7.1875-16-16-16zm0 0"></path>
+                <path d="m304 224c-8.832031 0-16-7.167969-16-16v-80c0-52.929688-43.070312-96-96-96s-96 43.070312-96 96v80c0 8.832031-7.167969-16-16-16s-16 7.167969-16-16v-80c0-70.59375 57.40625-128 128-128s128 57.40625 128 128v80c0 8.832031-7.167969 16-16 16zm0 0"></path>
+            </svg>
+            <input id="password" class="input" type="password" name="password" required autocomplete="current-password">
         </div>
-    </form>
-
-     <!--Google Button-->
-       <div class="flex items-center justify-center text-sm text-gray-600 dark:text-gray-400 ">
-            {{__('Login with')}}
-       </div>
+        <!--Remember me-->
         <div class="flex-row">
+            <!-- Your remember me code here -->
+        </div>
+        <!--Submit button-->
+        <button type="submit" class="button-submit">Login</button>
+
+        @if (Route::has('register'))
+            <p class="p">Don't have an account? <a class="span" href="{{ route('register') }}">Register</a>
+        @endif
+    
+
+    </p><p class="p line">Or With</p>
+
+    <div class="flex-row">
              <a class="btn google" href="{{ route('google-auth')}}">
                 <svg xml:space="preserve" style="enable-background:new 0 0 512 512;" viewBox="0 0 512 512" y="0px" x="0px" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" id="Layer_1" width="20" version="1.1">
                     <path d="M113.47,309.408L95.648,375.94l-65.139,1.378C11.042,341.211,0,299.9,0,256
@@ -207,5 +185,6 @@
                 Google 
              </a>
         </div>
-        <!--Google Button End-->
-</x-guest-layout>
+
+    </form>
+</div>
