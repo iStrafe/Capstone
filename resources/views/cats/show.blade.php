@@ -1,5 +1,5 @@
 @include('scripts')
-@include('Navigationbar')
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ $cat->cat_name }} Details</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    @include('Navigationbar')
     <style>
         body {
             background-color: #f8f9fa;

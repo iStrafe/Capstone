@@ -1,116 +1,26 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-        <!-- Scripts -->
-        <script src="https://kit.fontawesome.com/c32adfdcda.js" crossorigin="anonymous"></script>
-        @vite(['resources/sass/app.scss', 'resources/js/app.js'])
+<head>
+    <script src="https://kit.fontawesome.com/c32adfdcda.js" crossorigin="anonymous"></script>
+    @vite(['resources/sass/app.scss', 'resources/js/app.js'])
     <style>
-                section {
-        position: relative;
-        z-index: 3;
-        padding-top: 10px;
-        padding-bottom: 0px;
-      }
+        section {
+            position: relative;
+            z-index: 3;
+            padding-top: 10px;
+        }
 
-      .container {
-        max-width: 100px;
-        margin-left: auto;
-        margin-right: auto;
-        padding-left: 20px;
-        padding-right: 20px;
-      }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
 
-      .section-header {
-        margin-bottom: 20px;
-        text-align: center;
-      }
-
-      .section-header h2 {
-        color: black;
-        font-weight: bold;
-        font-size: 3em;
-        margin-bottom: 20px;
-      }
-
-      .row  {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: center;
-        justify-content: space-between;
-      }
-
-      .contact-form {
-        background-color: #fff;
-        padding: 40px;
-        width: 45%;
-        padding-bottom: 20px;
-        padding-top: 20px;
-      }
-
-      .contact-form h2 {
-        font-weight: bold;
-        font-size: 2em;
-        margin-bottom: 10px;
-        color: #333;
-      }
-
-      .contact-form .input-box {
-        position: relative;
-        width: 100%;
-        margin-top: 10px;
-      }
-
-      .contact-form .input-box input,
-      .contact-form .input-box textarea{
-        width: 100%;
-        padding: 2px 0;
-        font-size: 16px;
-        margin: 10px 0;
-        border: none;
-        border-bottom: 2px solid #333;
-        outline: none;
-        resize: none;
-      }
-
-      .contact-form .input-box span {
-        position: absolute;
-        left: 0;
-        padding: 5px 0;
-        font-size: 16px;
-        margin: 5px 0;
-        pointer-events: none;
-        transition: 0.5s;
-        color: #666;
-      }
-
-      .contact-form .input-box input:focus ~ span,
-      .contact-form .input-box textarea:focus ~ span{
-        color: #e91e63;
-        font-size: 12px;
-        transform: translateY(-20px);
-      }
-
-      .contact-form .input-box input[type="submit"]
-      {
-        width: 100%;
-        background: #00bcd4;
-        color: #FFF;
-        border: none;
-        cursor: pointer;
-        padding: 10px;
-        font-size: 18px;
-        border: 1px solid #00bcd4;
-        transition: 0.5s;
-        margin-top: 0;
-      }
-
-      .contact-form .input-box input[type="submit"]:hover
-      {
-        background: #FFF;
-        color: #00bcd4;
-      }
-
-      .row {
-          flex-direction: column;
+        .section-header h2 {
+            text-align: center;
+            font-size: 2em;
+            color: #333;
+            margin-bottom: 20px;
         }
 
         /* From Uiverse.io by Javierrocadev */ 
@@ -373,119 +283,148 @@
     font-weight:600
   }
 }
+        /* Contact Form Styling */
+        .contact-form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+
+        .contact-form h2 {
+            font-size: 1.5em;
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .contact-form .input-box {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .contact-form .input-box input,
+        .contact-form .input-box textarea {
+            width: 100%;
+            padding: 10px;
+            font-size: 1em;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .contact-form .input-box span {
+            position: absolute;
+            top: 50%;
+            left: 10px;
+            font-size: 0.9em;
+            color: #666;
+            transform: translateY(-50%);
+            pointer-events: none;
+            transition: 0.3s;
+        }
+
+        .contact-form .input-box input:focus ~ span,
+        .contact-form .input-box textarea:focus ~ span,
+        .contact-form .input-box input:valid ~ span,
+        .contact-form .input-box textarea:valid ~ span {
+            top: 5px;
+            font-size: 0.8em;
+            color: #007bff;
+        }
+
+        .contact-form input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: #fff;
+            font-size: 1em;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .contact-form input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
     </style>
     @include('Navigationbar')
-    <head>
+</head>
 
-    </head>
-    <body class="..">
-       <div class="font-sans antialiased dark:bg-black dark:text-white/50">
-  
-      <div class="container" style="margin-top: 20px; margin-bottom: 20px;">
+<body class="font-sans antialiased dark:bg-black dark:text-white/50">
+    <div class="container" style="margin-top: 20px; margin-bottom: 20px;">
         <div class="section-header">
-          <h2 style="color: white; font-size: 4em;">Our Team</h2>
-        <div class="row" style="justify-content: center;">
-          <div class="card">
-            <div class="image"></div>
-            <div class="card-info">
-          <span>Name</span>
-          <p>Role Here</p>
+            <h2 style="color: white; font-size: 4em;">Our Team</h2>
+            <div class="row">
+                <!-- Team Member Cards -->
+                <div class="card">
+                    <div class="image"></div>
+                    <div class="card-info">
+                        <span>Name</span>
+                        <p>Role Here</p>
+                    </div>
+                    <a class="button" href="#">Follow</a>
+                </div>
+
+                <div class="card">
+                    <div class="image"></div>
+                    <div class="card-info">
+                        <span>Name</span>
+                        <p>Role Here</p>
+                    </div>
+                    <a class="button" href="#">Follow</a>
+                </div>
+
+                <div class="card">
+                    <div class="image"></div>
+                    <div class="card-info">
+                        <span>Name</span>
+                        <p>Role Here</p>
+                    </div>
+                    <a class="button" href="#">Follow</a>
+                </div>
+                <!-- Repeat other team member cards here -->
             </div>
-            <a class="button" href="#">Follow</a>
-          </div>
-          <div class="card">
-            <div class="image"></div>
-            <div class="card-info">
-          <span>Name</span>
-          <p>Role Here</p>
-            </div>
-            <a class="button" href="#">Follow</a>
-          </div>
-          <div class="card">
-            <div class="image"></div>
-            <div class="card-info">
-          <span>Name</span>
-          <p>Role Here</p>
-            </div>
-            <a class="button" href="#">Follow</a>
-          </div>
-          <div class="card">
-            <div class="image"></div>
-            <div class="card-info">
-          <span>Name</span>
-          <p>Role Here</p>
-            </div>
-            <a class="button" href="#">Follow</a>
-          </div>
-          <div class="card">
-            <div class="image"></div>
-            <div class="card-info">
-          <span>Name</span>
-          <p>Role Here</p>
-            </div>
-            <a class="button" href="#">Follow</a>
-          </div>
-          <div class="card">
-            <div class="image"></div>
-            <div class="card-info">
-          <span>Name</span>
-          <p>Role Here</p>
-            </div>
-            <a class="button" href="#">Follow</a>
-          </div>
         </div>
-      </div>
-      
-      
+
+        <!-- Contact Section -->
+        <section>
+            <div class="section-header">
+                <h2>Contact Us</h2>
+            </div>
+            <div class="contact-form">
+                <form action="{{ route('contact.store') }}" method="POST" id="contact-form">
+                    @csrf
+                    <h2>Send Message</h2>
+
+                    @if(session('success'))
+                        <div class="alert alert-success">{{ session('success') }}</div>
+                    @endif
+
+                    <div class="input-box">
+                        <input type="text" name="full_name" required>
+                        <span>Full Name</span>
+                    </div>
+
+                    <div class="input-box">
+                        <input type="text" name="mobile_number" required>
+                        <span>Mobile Number</span>
+                    </div>
+
+                    <div class="input-box">
+                        <textarea name="message" required></textarea>
+                        <span>Type your Message...</span>
+                    </div>
+
+                    <div class="input-box">
+                        <input type="submit" value="Send">
+                    </div>
+                </form>
+            </div>
+        </section>
     </div>
-
-  </div>  
-<section><br><br><br><br><br>
-    
-    <div class="section-header">
-        <h2>Contact Us</h2>
-    </div>
-    
-    <div class="container">
-      <div class="row">
-        
-        <div class="contact-form">
-          <form action="{{ route('contact.store') }}" method="POST" id="contact-form">
-            @csrf
-            <h2>Send Message</h2>
-
-            @if(session('success'))
-             <div class="alert alert-success">
-                      {{ session ('success')}}
-             </div> 
-            @endif
-
-            <div class="input-box">
-              <input type="text" required="true" name="full_name">
-              <span>Full Name</span>
-            </div>
-            
-            <div class="input-box">
-              <input type="type" required="true" name="mobile_number">
-              <span>Mobile Number</span>
-            </div>
-            
-            <div class="input-box">
-              <textarea required="true" name="message"></textarea>
-              <span>Type your Message...</span>
-            </div>
-            
-            <div class="input-box">
-              <input type="submit" value="Send">
-            </div>
-          </form>
-        </div>
-        
-      </div>
-    </div>
-  </section>
-
-
-
 </body>
 </html>

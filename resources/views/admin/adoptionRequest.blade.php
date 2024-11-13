@@ -2,6 +2,7 @@
 @include('admin.adminNavbar')
 
 <div class="container-fluid">
+<h2>Adoption Requests</h2>
     <table class="table table-bordered table-striped table-responsive">
         <thead>
             <tr>
@@ -52,73 +53,106 @@
 
             // Change color based on new status
             statusCell.style.color = newStatus === 'Approved' ? 'green' : 'red';
-
-            // Optional: Send an AJAX request to update status in the database
-            // AJAX logic can be added here
         });
     });
 </script>
 
 <style>
-    /* Ensure table is responsive */
-    .table-responsive {
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-    }
-
-    /* Button Styles */
-    .btn-info {
-        background-color: #03045E;
-        border: none;
-        color: white;
-        font-size: 14px;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-    }
-
-    .btn-info:hover {
-        background-color: #0077cc;
-        color: white;
-        transform: translateY(-2px); /* Subtle hover animation */
-    }
-
-    .btn-link {
-        color: #0077cc;
-        text-decoration: none;
-    }
-
-    .btn-link:hover {
-        text-decoration: underline;
-    }
-
-    /* Table hover effects for better UX */
-    .table-striped tbody tr:hover {
-        background-color: #f1f1f1;
-        transition: background-color 0.3s;
-    }
-
-    /* Padding and borders for clarity */
-    .table th, .table td {
-        padding: 12px;
+    h2 {
+        font-size: 2em;
+        font-weight: bold;
+        color: #03045E; /* Dark blue color for professionalism */
         text-align: center;
-        font-size: 14px;
+        position: relative;
+        padding-bottom: 5px;
+    }
+
+    /* Add a subtle underline effect */
+    h2::after {
+        content: "";
+        display: block;
+        width: 200px;
+        height: 3px;
+        background-color: #0077cc; /* Slightly lighter blue for contrast */
+        margin: 2px auto 0; /* Center align underline */
+        border-radius: 5px;
+    }
+    /* Container styling */
+    .container-fluid {
+        padding: 20px;
+        background-color: #f8f9fa;
+    }
+
+    /* Table Styling */
+    .table {
+        background-color: white;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
 
     .table th {
-        background-color: #03045E;
-        color: white;
+        background-color: #004080;
+        color: #ffffff;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 14px;
     }
 
     .table td {
-        border: 1px solid #ddd;
+        font-size: 13px;
+        color: #333;
+        padding: 12px;
+        text-align: left;
+        border-top: 1px solid #e9ecef;
     }
 
+    /* Link Button Styling */
+    .btn-link {
+        color: #004080;
+        font-weight: 500;
+    }
+
+    .btn-link:hover {
+        color: #0066cc;
+        text-decoration: underline;
+    }
+
+    /* Status Cell Styling */
     .status {
         font-weight: bold;
     }
 
-    /* For small screens, adjust the table's layout */
+    /* Conditional Status Colors */
+    .status[data-status="Approved"] {
+        color: green;
+    }
+
+    .status[data-status="Not Approved"] {
+        color: red;
+    }
+
+    /* Hover Effect */
+    .table-striped tbody tr:hover {
+        background-color: #f1f1f1;
+    }
+
+    /* Button Styling */
+    .btn-info {
+        background-color: #004080;
+        color: white;
+        border: none;
+        padding: 6px 12px;
+        font-size: 12px;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .btn-info:hover {
+        background-color: #0056b3;
+    }
+
+    /* Responsive Table */
     @media (max-width: 768px) {
         .table thead {
             display: none;
@@ -131,27 +165,24 @@
 
         .table td {
             text-align: left;
-            padding: 8px;
             position: relative;
-            border: 1px solid #ddd;
+            padding: 8px;
+            border: none;
+            border-bottom: 1px solid #ddd;
         }
 
         .table td:before {
             content: attr(data-label);
-            font-weight: bold;
+            font-weight: 600;
+            color: #555;
             position: absolute;
-            left: 0;
-            top: 0;
-            padding-left: 10px;
+            left: 10px;
+            top: 8px;
             font-size: 12px;
         }
 
-        .table td:last-child {
-            border-bottom: 0;
-        }
-
-        .btn-link {
-            font-size: 14px;
+        .btn-info {
+            font-size: 12px;
         }
     }
 </style>

@@ -144,7 +144,7 @@
 </head>
 
 <body class="font-sans antialiased">
-    <nav class="navbar navbar-expand-lg border-bottom border-body" data-bs-theme="dark">
+<nav class="navbar navbar-expand-lg border-bottom border-body" data-bs-theme="dark">
     <div class="container-fluid">
              @if(Auth::check() && Auth::user()->role === "admin")
                 <a class="button" data-text="Awesome" href="{{url('adminDashboard')}}">
@@ -154,38 +154,23 @@
                 <!--<a class="navbar-brand px-5 py-3" href="{{url('adminDashboard')}}">adminpage</a>-->
             @endif
 
-        <a class="navbar-brand px-5" href="{{ url('/') }}">HOME</a>
+        
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
            
         <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item px-4">
-                    <a class="nav-link" href="{{ url('aboutus') }}">ABOUT US</a>
-                </li>
-                <li class="nav-item px-4">
-                    <a class="nav-link" data-bs-toggle="modal" data-bs-target="#modalId2">ADOPT</a>@include('Services.adoptContract')
-                </li>
-                <li class="nav-item px-4">
-                    <a class="nav-link" href="{{ url('events') }}">NEWS / EVENTS</a>
-                </li>
-                <li class="nav-item px-4">
-                    <a class="nav-link" href="{{ url('ContactUs') }}">CONTACT US</a>
-                </li>
-                <li class="nav-item px-4">
-                    <a class="nav-link" href="{{ url('analyzeImage') }}">Image Analysis</a>
-                </li>
-
-                <!-- Modal trigger button -->
+            <div class="navbar-nav">
+                <a class="nav-link" href="{{ url('/') }}">HOME</a>
+                <a class="nav-link" href="{{ url('aboutus') }}">ABOUT US</a>
+                <a class="nav-link" data-bs-toggle="modal" data-bs-target="#modalId2">ADOPT</a>
+                @include('Services.adoptContract')
+                <a class="nav-link" href="{{ url('events') }}">NEWS / EVENTS</a>
+                <a class="nav-link" href="{{ url('ContactUs') }}">CONTACT US</a>
+                <a class="nav-link" href="{{ url('analyzeImage') }}">IMAGE ANALYSIS</a>
                 <button type="button" class="btn btn-secondary btn-lg" data-bs-toggle="modal" data-bs-target="#modalId">DONATE</button>
-                <!--Paymongo Modal-->
                 @include('payment')
-               <!-- <li class="nav-item px-4">
-                    <a class="nav-link" href="{{ url('myRequest') }}">---</a>
-                </li>-->
-            </ul>
-        </div>
+            </div>
 
             <ul class="navbar-nav ms-auto">
                 @guest

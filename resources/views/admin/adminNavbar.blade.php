@@ -4,8 +4,7 @@
     <style>
         body {
             font-family: 'Figtree', sans-serif;
-            background-color: #d0e7ff; /* Light blue background */
-            background-size: cover;
+            background-color: #d0e7ff;
             color: #333;
             margin: 0;
             padding: 0;
@@ -17,16 +16,16 @@
             width: 250px;
             position: fixed;
             top: 0;
-            left: 0;
-            background-color: #03045E; /* Adamson blue */
+            left: -250px; /* Hide sidebar off-screen by default */
+            background-color: #03045E;
             padding-top: 20px;
             z-index: 1000;
             box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
-            transition: width 0.3s ease;
+            transition: left 0.3s ease;
         }
 
-        .sidebar.collapsed {
-            width: 0;
+        .sidebar.active {
+            left: 0; /* Slide sidebar in when active */
         }
 
         .sidebar a {
@@ -36,11 +35,6 @@
             color: white;
             display: block;
             margin: 10px 0;
-            transition: padding 0.3s ease;
-        }
-
-        .sidebar.collapsed a {
-            display: none;
         }
 
         .sidebar a:hover {
@@ -48,41 +42,20 @@
         }
 
         .sidebar .logo {
-            max-width: 150px;
+            max-width: 100px;
             margin: 0 auto 20px;
             display: block;
             text-align: center;
         }
 
-        /* Hide the Donate button when sidebar is collapsed */
-        .sidebar.collapsed .donate-btn {
-            display: none;
-        }
-
         /* Content area */
         .content {
-            margin-left: 250px; /* Adjust the content to make space for the sidebar */
             padding: 20px;
+            margin-left: 0;
             transition: margin-left 0.3s ease;
         }
 
-        .content.sidebar-collapsed {
-            margin-left: 0; /* Adjust content when sidebar is collapsed */
-        }
-
-        .footer {
-            background-color: #03045E;
-            color: white;
-            padding: 20px 0;
-            text-align: center;
-            position: relative;
-        }
-
-        .footer p, .footer h2 {
-            margin: 0;
-        }
-
-        /* Button to toggle sidebar */
+        /* Sidebar toggle button */
         .sidebar-toggle-btn {
             background-color: #03045E;
             color: white;
@@ -93,48 +66,32 @@
             top: 20px;
             left: 20px;
             z-index: 2000;
-            transition: left 0.3s ease;
         }
 
-        /* Mobile responsiveness */
-        @media (max-width: 768px) {
-            .sidebar {
-                width: 0;
-                padding-top: 50px;
-                position: absolute;
-                left: -250px;
-            }
-
-            .sidebar.collapsed {
-                width: 0;
-            }
-
-            .sidebar-toggle-btn {
-                display: block;
-                position: fixed;
-                top: 20px;
-                left: 20px;
-            }
-
-            .content {
-                margin-left: 0;
-            }
-
-            .content.sidebar-collapsed {
-                margin-left: 0;
-            }
+        /* Set text color to black for the navbar links and dropdown */
+        #content .navbar-nav .nav-link,
+        #content .navbar-nav .dropdown-toggle,
+        #content .dropdown-menu .dropdown-item {
+            color: #000 !important; /* Force black text */
         }
 
-        /* For large screens, the sidebar is expanded */
+        /* Optional: Customize background and hover effects if needed */
+        #content .dropdown-menu {
+            background-color: #ffffff; /* White background */
+        }
+
+        #content .dropdown-menu .dropdown-item:hover {
+            background-color: #f0f0f0; /* Light gray on hover */
+        }
+
+        
+
+
+
+        /* Responsive adjustments */
         @media (min-width: 769px) {
-            .sidebar {
-                width: 250px;
-                position: fixed;
-                left: 0;
-            }
-
-            .sidebar.collapsed {
-                width: 80px;
+            .content {
+                margin-left: 0; /* Content does not shift when sidebar is hidden */
             }
         }
     </style>
@@ -145,24 +102,19 @@
 <!-- Sidebar -->
 <div class="sidebar" id="sidebar">
     <div class="logo">
-        <!-- Place your logo here -->
         <img src="images/adu logo.png" alt="Logo" />
     </div>
     @if(Auth::check() && Auth::user()->role === "admin")
-        <a href="{{url('userDashboard')}}">User Page</a>
+        <a href="{{ url('userDashboard') }}">User Page</a>
     @endif
 
     <a href="{{ url('AdoptionRequest') }}">Adoption Requests</a>
     <a href="{{ url('adminDashboard') }}">Cats</a>
-
     <a href="{{ Auth::check() && Auth::user()->role === 'admin' ? url('news-events') : url('events') }}">News / Events</a>
     <a href="{{ url('ContactUs') }}">Contact Us</a>
     <a href="{{ url('analyzeImage') }}">Image Analysis</a>
 
-    <!-- Donate button with added class -->
     <button type="button" class="btn btn-primary btn-lg donate-btn" data-bs-toggle="modal" data-bs-target="#modalId">Donate</button>
-
-    <!-- Paymongo Modal -->
     @include('payment')
 </div>
 
@@ -175,6 +127,7 @@
 <div class="content" id="content">
     <nav class="navbar navbar-expand-lg border-bottom border-body" data-bs-theme="dark">
         <div class="container-fluid">
+            
             <ul class="navbar-nav ms-auto">
                 @guest
                     <li class="nav-item">
@@ -190,7 +143,7 @@
                         </button>
                         <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
                             <a class="dropdown-item" href="{{ route('profile.edit') }}">{{ __('Profile') }}</a>
-                            <a class="dropdown-item" href="{{ route('logout') }} "
+                            <a class="dropdown-item" href="{{ route('logout') }}"
                                onclick="event.preventDefault();
                                document.getElementById('logout-form').submit();">
                                 {{ __('Log Out') }}
@@ -208,13 +161,10 @@
 
 <script>
     const sidebar = document.getElementById('sidebar');
-    const content = document.getElementById('content');
     const toggleButton = document.getElementById('toggle-btn');
 
     toggleButton.addEventListener('click', function() {
-        sidebar.classList.toggle('collapsed');
-        content.classList.toggle('sidebar-collapsed');
-        toggleButton.classList.toggle('sidebar-collapsed');
+        sidebar.classList.toggle('active'); // Toggle sidebar visibility on all screen sizes
     });
 </script>
 
