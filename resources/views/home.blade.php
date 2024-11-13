@@ -10,7 +10,8 @@
     <link href="https://fonts.bunny.net/css?family=figtree:400,600&display=swap" rel="stylesheet">
     
     <!-- Styles -->
-    @vite(['resources/sass/app.scss', 'resources/js/app.js'])
+    @vite('resources/sass/app.scss')
+    @vite('resources/js/app.js')
     @include('scripts')
     <!--@include('scripts2')-->
    
@@ -170,9 +171,15 @@
                 <a class="nav-link" href="{{ url('analyzeImage') }}">IMAGE ANALYSIS</a>
                 <button type="button" class="btn btn-secondary btn-lg" data-bs-toggle="modal" data-bs-target="#modalId">DONATE</button>
                 @include('payment')
-            </div>
+                @include('Services.adoptContract')
+               <!-- <li class="nav-item px-4">
+                    <a class="nav-link" href="{{ url('myRequest') }}">---</a>
+                </li>-->
+            </ul>
+        </div>
 
             <ul class="navbar-nav ms-auto">
+
                 @guest
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
