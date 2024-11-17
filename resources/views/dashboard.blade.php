@@ -121,7 +121,7 @@
                     <div class="center">
                     <h1>CAT GALLERY</h1>
                         <div class="input-group mb-3">
-                                <input type="text" class="form-control" placeholder="Search Cat" aria-label="Recipient's username" aria-describedby="basic-addon2" id="searchInput">
+                                <input class="form-control" type="text" id="searchInput" placeholder="Search for cats..." aria-label="Recipient's username" aria-describedby="basic-addon2">
                             <div class="input-group-append">
                                 <button class="btn btn-outline-secondary" type="button" id="searchButton">search</button>
                             </div>
@@ -145,33 +145,41 @@
                                     @endif
                                 </div>
                                 <span class="title">{{ $cat->cat_name }}</span>
-                               
                             </div>
                         </div>
                     @endforeach
                 </div>
-            </div>
-        </section> 
 
         <script>
-            document.getElementById('searchInput').addEventListener('input', function() {
-                const searchInput = document.getElementById('searchInput').value.toLowerCase();
-                const catCards = document.querySelectorAll('.cat-card');
+        document.querySelector('#searchInput').addEventListener('input', function() {
+            const searchInput = this.value.trim().toLowerCase();
+            const searchTerms = searchInput.split(/[\s,]+/); // Split by spaces or commas
+            const catCards = document.querySelectorAll('.cat-card');
 
+            if (searchInput !== "") {
                 catCards.forEach(function(card) {
-                    const catName = card.querySelector('.title').textContent.toLowerCase();
-                    const catAge = card.querySelector('.card').getAttribute('data-age').toLowerCase();
-                    const catColor = card.querySelector('.card').getAttribute('data-color').toLowerCase();
-                    const catBreed = card.querySelector('.card').getAttribute('data-breed').toLowerCase();
-                    const catSex = card.querySelector('.card').getAttribute('data-sex').toLowerCase();
+                    const catName = card.querySelector('.title').textContent.toLowerCase().trim();
+                    const catAge = card.querySelector('.card').getAttribute('data-age').toLowerCase().trim();
+                    const catColor = card.querySelector('.card').getAttribute('data-color').toLowerCase().trim();
+                    const catBreed = card.querySelector('.card').getAttribute('data-breed').toLowerCase().trim();
+                    const catSex = card.querySelector('.card').getAttribute('data-sex').toLowerCase().trim();
 
-                    if (catName.includes(searchInput) || catAge.includes(searchInput) || catColor.includes(searchInput) || catBreed.includes(searchInput) || catSex.includes(searchInput)) {
+                    const cardText = `${catName} ${catAge} ${catColor} ${catBreed} ${catSex}`.replace(/\s+/g, ' ');
+
+                    const matches = searchTerms.every(term => cardText.includes(term));
+
+                    if (matches) {
                         card.style.display = 'block';
                     } else {
                         card.style.display = 'none';
                     }
                 });
-            });
+            } else {
+                catCards.forEach(function(card) {
+                    card.style.display = 'block';
+                });
+            }
+        });
         </script>
 </body>
 </html>

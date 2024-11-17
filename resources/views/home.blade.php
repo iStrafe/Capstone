@@ -164,12 +164,12 @@
             <div class="navbar-nav">
                 <a class="nav-link" href="{{ url('/') }}">HOME</a>
                 <a class="nav-link" href="{{ url('aboutus') }}">ABOUT US</a>
-                <a class="nav-link" data-bs-toggle="modal" data-bs-target="#modalId2">ADOPT</a>
-                @include('Services.adoptContract')
                 <a class="nav-link" href="{{ url('events') }}">NEWS / EVENTS</a>
                 <a class="nav-link" href="{{ url('ContactUs') }}">CONTACT US</a>
                 <a class="nav-link" href="{{ url('analyzeImage') }}">IMAGE ANALYSIS</a>
-                <button type="button" class="btn btn-secondary btn-lg" data-bs-toggle="modal" data-bs-target="#modalId">DONATE</button>
+                <a class="nav-link" data-bs-toggle="modal" data-bs-target="#modalId2">ADOPT</a>
+                @include('Services.adoptContract')
+                <a class="nav-link" data-bs-toggle="modal" data-bs-target="#modalId">DONATE</a>
                 @include('payment')
                 @include('Services.adoptContract')
                <!-- <li class="nav-item px-4">
@@ -224,7 +224,7 @@
                     <div class="center">
                     <h1>CAT GALLERY</h1>
                         <div class="input-group mb-3">
-                                <input type="text" class="form-control" placeholder="Search Cat" aria-label="Recipient's username" aria-describedby="basic-addon2" id="searchInput">
+                                <input class="form-control" type="text" id="searchInput" placeholder="Search for cats..." aria-label="Recipient's username" aria-describedby="basic-addon2">
                             <div class="input-group-append">
                                 <button class="btn btn-outline-secondary" type="button" id="searchButton">search</button>
                             </div>
@@ -248,45 +248,41 @@
                                     @endif
                                 </div>
                                 <span class="title">{{ $cat->cat_name }}</span>
-                               
                             </div>
                         </div>
                     @endforeach
                 </div>
-            </div>
-    </section>  
-        
-</body>
-</html>
-    
-   <script>
-    document.getElementById('searchInput').addEventListener('input', function() {
-        const searchInput = document.getElementById('searchInput').value.toLowerCase();
-        const searchTerms = searchInput.split(/[\s,]+/); // Split by spaces or commas
-        const catCards = document.querySelectorAll('.cat-card');
 
-        if (searchInput.trim() !== "") {
-            catCards.forEach(function(card) {
-                const catName = card.querySelector('.title').textContent.toLowerCase();
-                const catAge = card.querySelector('.card').getAttribute('data-age').toLowerCase();
-                const catColor = card.querySelector('.card').getAttribute('data-color').toLowerCase();
-                const catBreed = card.querySelector('.card').getAttribute('data-breed').toLowerCase();
-                const catSex = card.querySelector('.card').getAttribute('data-sex').toLowerCase();
+        <script>
+        document.querySelector('#searchInput').addEventListener('input', function() {
+            const searchInput = this.value.trim().toLowerCase();
+            const searchTerms = searchInput.split(/[\s,]+/); // Split by spaces or commas
+            const catCards = document.querySelectorAll('.cat-card');
 
-                const cardText = `${catName} ${catAge} ${catColor} ${catBreed} ${catSex}`;
+            if (searchInput !== "") {
+                catCards.forEach(function(card) {
+                    const catName = card.querySelector('.title').textContent.toLowerCase().trim();
+                    const catAge = card.querySelector('.card').getAttribute('data-age').toLowerCase().trim();
+                    const catColor = card.querySelector('.card').getAttribute('data-color').toLowerCase().trim();
+                    const catBreed = card.querySelector('.card').getAttribute('data-breed').toLowerCase().trim();
+                    const catSex = card.querySelector('.card').getAttribute('data-sex').toLowerCase().trim();
 
-                const matches = searchTerms.every(term => cardText.includes(term));
+                    const cardText = `${catName} ${catAge} ${catColor} ${catBreed} ${catSex}`.replace(/\s+/g, ' ');
 
-                if (matches) {
+                    const matches = searchTerms.every(term => cardText.includes(term));
+
+                    if (matches) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            } else {
+                catCards.forEach(function(card) {
                     card.style.display = 'block';
-                } else {
-                    card.style.display = 'none';
-                }
-            });
-        } else {
-            catCards.forEach(function(card) {
-                card.style.display = 'block';
-            });
-        }
-    });
-</script>
+                });
+            }
+        });
+        </script>
+    </body>
+</html>

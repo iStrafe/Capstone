@@ -149,7 +149,7 @@
         <button type="button" class="btn btn-secondary text-black" data-bs-toggle="modal" data-bs-target="#addCatModal">Add New Cat</button>
     </div>
 
-    <div class="container-md">
+    <div class="container">
         <div class="card-grid">
             @foreach($cats as $cat)
                 <div class="card" data-bs-toggle="modal" data-bs-target="#showCatModal" data-cat-id="{{ $cat->id }}">

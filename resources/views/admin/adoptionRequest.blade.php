@@ -3,56 +3,94 @@
 
 <div class="container-fluid">
 <h2>Adoption Requests</h2>
-    <table class="table table-bordered table-striped table-responsive">
-        <thead>
+<table class="table table-bordered table-striped table-responsive">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Address</th>
+            <th>Mobile Phone</th>
+            <th>Valid ID</th>
+            <th>Name of Cat</th>
+            <th>Status</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach($adoption_request as $request)
             <tr>
-                <th>Name</th>
-                <th>Address</th>
-                <th>Mobile Phone</th>
-                <th>Valid ID</th>
-                <th>Name of Cat</th>
-                <th>Status</th>
-                <th>Action</th>
+                <td><input type="text" class="form-control" name="name" value="{{ $request->name }}" disabled></td>
+                <td><input type="text" class="form-control" name="address" value="{{ $request->address }}" disabled></td>
+                <td><input type="text" class="form-control" name="mobile_phone" value="{{ $request->mobile_phone }}" disabled></td>
+                <td>
+                    <a href="{{ asset('storage/valid_id/' . $request->valid_id) }}" target="_blank" class="btn btn-link">
+                        View ID
+                    </a>
+                </td>
+                <td><input type="text" class="form-control" name="name_of_cat" value="{{ $request->name_of_cat }}" disabled></td>
+                <td>
+                    <select class="form-control status-dropdown" name="status" data-id="{{ $request->id }}" disabled>
+                        <option value="Pending" {{ $request->status == 'Pending' ? 'selected' : '' }}>Pending</option>
+                        <option value="Approved" {{ $request->status == 'Approved' ? 'selected' : '' }}>Approved</option>
+                        <option value="Not approved" {{ $request->status == 'Not approved' ? 'selected' : '' }}>Not approved</option>
+                    </select>
+                </td>
+                <td>
+                    <button class="btn btn-sm btn-primary edit-entry" data-id="{{ $request->id }}">
+                        <i class="fas fa-edit"></i> Edit
+                    </button>
+                    <button class="btn btn-sm btn-success save-status" data-id="{{ $request->id }}" style="display:none;">
+                        <i class="fas fa-save"></i> Save
+                    </button>
+                </td>
             </tr>
-        </thead>
-        <tbody>
-            @foreach($adoption_request as $request)
-                <tr>
-                    <td>{{ $request->name }}</td>
-                    <td>{{ $request->address }}</td>
-                    <td>{{ $request->mobile_phone }}</td>
-                    <td>
-                        <a href="{{ asset('storage/valid_id/' . $request->valid_id) }}" target="_blank" class="btn btn-link">
-                            View ID
-                        </a>
-                    </td>
-                    <td>{{ $request->name_of_cat }}</td>
-                    <td class="status">{{ $request->status }}</td>
-                    <td>
-                        <button class="btn btn-sm btn-info toggle-status" data-id="{{ $request->id }}">
-                            <i class="fas fa-sync-alt"></i> Toggle Status
-                        </button>
-                    </td>
-                </tr>
-            @endforeach
-        </tbody>
-    </table>
+        @endforeach
+    </tbody>
+</table>
 </div>
 
 <script>
-    document.querySelectorAll('.toggle-status').forEach(button => {
+    document.querySelectorAll('.edit-entry').forEach(button => {
         button.addEventListener('click', function() {
             const row = this.closest('tr');
-            const statusCell = row.querySelector('.status');
-            const currentStatus = statusCell.textContent.trim();
-            const newStatus = currentStatus === 'Approved' ? 'Not Approved' : 'Approved';
+            row.querySelectorAll('input, select').forEach(input => input.disabled = false);
+            row.querySelector('.save-status').style.display = 'inline-block';
+            this.style.display = 'none';
+        });
+    });
 
-            // Smooth transition for status change
-            statusCell.style.transition = "color 0.3s";
-            statusCell.textContent = newStatus;
+    document.querySelectorAll('.save-status').forEach(button => {
+        button.addEventListener('click', function() {
+            const row = this.closest('tr');
+            const requestId = this.getAttribute('data-id');
+            const name = row.querySelector('input[name="name"]').value;
+            const address = row.querySelector('input[name="address"]').value;
+            const mobile_phone = row.querySelector('input[name="mobile_phone"]').value;
+            const name_of_cat = row.querySelector('input[name="name_of_cat"]').value;
+            const status = row.querySelector('select[name="status"]').value;
 
-            // Change color based on new status
-            statusCell.style.color = newStatus === 'Approved' ? 'green' : 'red';
+            fetch(`/update-status/${requestId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({ name, address, mobile_phone, name_of_cat, status })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Entry updated successfully');
+                    row.querySelectorAll('input, select').forEach(input => input.disabled = true);
+                    row.querySelector('.edit-entry').style.display = 'inline-block';
+                    this.style.display = 'none';
+                } else {
+                    alert('Failed to update entry');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while updating the entry');
+            });
         });
     });
 </script>

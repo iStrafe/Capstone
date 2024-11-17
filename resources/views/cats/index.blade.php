@@ -41,9 +41,6 @@
 <body>
     <div class="container mt-5">
         <h1 class="text-center">Meet Our Cats Available for Adoption</h1>
-                       <!-- <div class="input-group mb-3 px-5">
-                            <input type="text" class="form-control" placeholder="Search Cat" aria-label="Recipient's username" aria-describedby="basic-addon2" id="searchInput">
-                        </div>-->
         <div class="card-container">
             @foreach($cats as $cat)
                 <div class="card cat-card">
@@ -54,7 +51,14 @@
                     @endif
                     <div class="card-body">
                         <h5 class="card-title">{{ $cat->cat_name }}</h5>
-                        <a href="{{ route('cats.show', $cat->id) }}" class="btn btn-primary">View Details</a>
+                        <button class="btn btn-primary btn-view-details" data-toggle="modal" data-target="#catDetailsModal"
+                                data-name="{{ $cat->cat_name }}"
+                                data-age="{{ $cat->age }}"
+                                data-sex="{{ $cat->sex }}"
+                                data-color="{{ $cat->color }}"
+                                data-breed="{{ $cat->breed }}"
+                                data-description="{{ $cat->description }}"
+                                data-image="{{ $cat->cat_image ? asset('images/' . $cat->cat_image) : asset('images/default_cat.png') }}">View Details</button>
                         <a href="#" class="btn btn-adopt" data-toggle="modal" data-target="#adoptionFormModal"
                            data-name="{{ $cat->cat_name }}"
                            data-age="{{ $cat->age }}"
@@ -67,7 +71,55 @@
         </div>
     </div>
 
+    <!-- Cat Details Modal -->
+    <div class="modal fade" id="catDetailsModal" tabindex="-1" aria-labelledby="catDetailsModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="catDetailsModalLabel">Cat Details</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <img id="catImage" src="" alt="Cat Image" class="img-fluid mb-3">
+                    <h5 id="catName"></h5>
+                    <p id="catDescription"></p>
+                    <ul>
+                        <li>Age: <span id="catAge"></span></li>
+                        <li>Sex: <span id="catSex"></span></li>
+                        <li>Color: <span id="catColor"></span></li>
+                        <li>Breed: <span id="catBreed"></span></li>
+                    </ul>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
+        document.querySelectorAll('.btn-view-details').forEach(button => {
+            button.addEventListener('click', function() {
+                const name = this.getAttribute('data-name');
+                const age = this.getAttribute('data-age');
+                const sex = this.getAttribute('data-sex');
+                const color = this.getAttribute('data-color');
+                const breed = this.getAttribute('data-breed');
+                const description = this.getAttribute('data-description');
+                const image = this.getAttribute('data-image');
+
+                document.getElementById('catName').innerText = name;
+                document.getElementById('catAge').innerText = age;
+                document.getElementById('catSex').innerText = sex;
+                document.getElementById('catColor').innerText = color;
+                document.getElementById('catBreed').innerText = breed;
+                document.getElementById('catDescription').innerText = description;
+                document.getElementById('catImage').src = image;
+            });
+        });
+
         document.querySelectorAll('.btn-adopt').forEach(button => {
             button.addEventListener('click', function() {
                 const name = this.getAttribute('data-name');

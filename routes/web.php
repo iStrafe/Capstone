@@ -187,6 +187,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/AdoptionForm',[adoptionController::class,'showAdoptionForm'])->name('AdoptionForm');
     Route::get('/AdoptionRequest',[adoptionController::class,'showAdoptionRequest'])->name('AdoptionRequest');
     Route::post('/AdoptionForm',[adoptionController::class,'create'])->name('adoption.request');
+    Route::post('/update-status/{id}', [AdoptionController::class, 'updateStatus']);
  
 });
 

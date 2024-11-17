@@ -140,6 +140,7 @@
             </svg>
             <input id="email" class="input" type="email" name="email" :value="old('email')" required autofocus autocomplete="username">
         </div>
+        
         <!--Password-->
         <div class="flex-column">
             <label>Password </label>

@@ -39,7 +39,11 @@ class OpenAIController extends Controller
                     "content" => [
                         [
                             "type" => "text",
-                            "text" => "Predict what cat breed is this? list down key features of this cat breed."
+                            "text" => "Predict what cat breed is this. List down aleast 5 characteristics why you think so."
+                        ],
+                        [
+                            "type" => "text",
+                            "text" => "Describe tha cat's color based on the uploaded image"
                         ],
                         [
                             "type" => "text",

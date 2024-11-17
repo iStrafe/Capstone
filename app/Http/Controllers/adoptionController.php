@@ -41,4 +41,24 @@ class adoptionController extends Controller
 
         return redirect()->route('cats.index');
     }
+
+    public function updateStatus($id, Request $request){
+        $data = [
+            'name' => $request->input('name'),
+            'address' => $request->input('address'),
+            'mobile_phone' => $request->input('mobile_phone'),
+            'name_of_cat' => $request->input('name_of_cat'),
+            'status' => $request->input('status')
+        ];
+
+        $result = DB::table('adoption_request')
+                    ->where('id', $id)
+                    ->update($data);
+
+        if ($result) {
+            return response()->json(['success' => true]);
+        } else {
+            return response()->json(['success' => false, 'message' => 'Failed to update entry']);
+        }
+    }
 }
