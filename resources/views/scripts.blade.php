@@ -43,7 +43,7 @@
                 margin: 0;
                 padding: 0;
                 box-sizing: border-box;
-                font-family: 'poppins', san-serif;
+                font-family: Arial, Helvetica, sans-serif;
             }
 
             .container{
@@ -57,8 +57,7 @@
             .container h1{
                 font-size: 40px;
                 text-align: center;
-                padding-top: 10%;
-                margin-bottom: 60px;
+                padding-top: 5%;
                 font-weight: 600;
                 position: relative;
             }

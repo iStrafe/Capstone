@@ -16,6 +16,12 @@ class adoptionController extends Controller
         return view('admin.adoptionRequest', ['adoption_request' => $adoption_request]);
     }
 
+
+    public function showApprovedReqest(){
+        $approved_requests = DB::table('adoption_request')->where('status', 'Approved')->get();
+        return view('admin.adoptionRequest', ['approved_requests' => $approved_requests]);
+    }
+
     public function showMyRequests() {
     $adoption_request = DB::table('adoption_request')->get();
     return view('myRequest', ['adoption_request' => $adoption_request]);

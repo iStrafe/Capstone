@@ -144,12 +144,13 @@
 <title>Cats list</title>
 <body>
 
-    <div class="header-container py-5">
-        <h1>Cat Gallery</h1>
-        <button type="button" class="btn btn-secondary text-black" data-bs-toggle="modal" data-bs-target="#addCatModal">Add New Cat</button>
-    </div>
+    
 
     <div class="container">
+        <div class="header-container">
+            <h1>CAT GALLERY</h1>
+            <button type="button" class="btn btn-secondary text-black" data-bs-toggle="modal" data-bs-target="#addCatModal">Add New Cat</button>
+        </div>
         <div class="card-grid">
             @foreach($cats as $cat)
                 <div class="card" data-bs-toggle="modal" data-bs-target="#showCatModal" data-cat-id="{{ $cat->id }}">

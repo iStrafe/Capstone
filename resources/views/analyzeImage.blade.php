@@ -1,4 +1,4 @@
-@include('NavigationBar')
+@include('Navigationbar')
 <style>
     /* From Uiverse.io by akshat-patel28 */ 
         .input-div {

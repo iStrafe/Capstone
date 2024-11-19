@@ -185,10 +185,13 @@ Route::middleware('auth')->group(function () {
 
     //Adoption page routes
     Route::get('/AdoptionForm',[adoptionController::class,'showAdoptionForm'])->name('AdoptionForm');
-    Route::get('/AdoptionRequest',[adoptionController::class,'showAdoptionRequest'])->name('AdoptionRequest');
+
+    Route::get('/AdoptionRequest', [adoptionController::class, 'showAdoptionRequest'])->name('AdoptionRequest');
+    Route::get('/ApprovedRequest', [adoptionController::class, 'showApprovedRequest'])->name('ApprovedRequest');
+    
+
     Route::post('/AdoptionForm',[adoptionController::class,'create'])->name('adoption.request');
     Route::post('/update-status/{id}', [AdoptionController::class, 'updateStatus']);
- 
 });
 
 //News & Events page routes

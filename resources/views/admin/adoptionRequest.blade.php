@@ -1,6 +1,10 @@
 @include('scripts')
 @include('admin.adminNavbar')
 
+<style>
+
+</style>
+
 <div class="container-fluid">
 <h2>Adoption Requests</h2>
 <table class="table table-bordered table-striped table-responsive">
