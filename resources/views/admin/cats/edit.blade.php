@@ -34,7 +34,7 @@
 
             <div class="mb-3">
               <label for="age" class="form-label">Age</label>
-              <input type="number" name="age" class="form-control" value="{{ $cat->age }}" required>
+              <input type="text" name="age" class="form-control" value="{{ $cat->age }}" required>
             </div>
 
             <div class="mb-3">
@@ -54,6 +54,14 @@
                 <option value="Female" {{ $cat->sex == 'Female' ? 'selected' : '' }}>Female</option>
               </select>
             </div>
+
+            <div class="mb-3">
+            <label for="status" class="form-label">Status</label>
+            <select name="status" class="form-control" required>
+                <option value="Active" {{ $cat->status == 'Active' ? 'selected' : '' }}>Active</option>
+                <option value="Inactive" {{ $cat->status == 'Inactive' ? 'selected' : '' }}>Inactive</option>
+            </select>
+        </div>
 
             <div class="mb-3">
               <label for="Medical_Record" class="form-label">Medical_Record</label>

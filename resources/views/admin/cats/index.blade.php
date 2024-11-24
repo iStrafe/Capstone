@@ -1,6 +1,40 @@
 @include('scripts')
 @include('admin.adminNavbar')
 <style>
+    .container{
+                width: 100%;
+                height: 5vh;
+                padding: 0 10%;
+                height: 60vh;
+                padding: 0 8%;
+            }
+
+            .container h1{
+                font-size: 40px;
+                text-align: center;
+                padding-top: 5%;
+                font-weight: 600;
+                position: relative;
+            }
+
+    /* Inactive card overlay */
+    .card.inactive::before {
+        content: "Inactive";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5em;
+        font-weight: bold;
+        border-radius: 12px;
+        z-index: 1;
+    }
     /* Basic card styles */
     .card {
         display: flex;
@@ -153,7 +187,7 @@
         </div>
         <div class="card-grid">
             @foreach($cats as $cat)
-                <div class="card" data-bs-toggle="modal" data-bs-target="#showCatModal" data-cat-id="{{ $cat->id }}">
+                <div class="card {{ $cat->status == 'Inactive' ? 'inactive' : '' }}" data-bs-toggle="modal" data-bs-target="#showCatModal" data-cat-id="{{ $cat->id }}">
                     <div class="card-image">
                         @if($cat->cat_image)
                             <img src="{{ asset('images/' . $cat->cat_image) }}" alt="Image of {{ $cat->cat_name }}" class="card-img">
@@ -166,7 +200,18 @@
                         <div class="heading">{{ $cat->cat_name }}</div>
                         
                         <div class="actions">
-                            <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#editCatModal" data-cat-id="{{ $cat->id }}">Edit</button>
+                            <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#editCatModal" 
+                                data-cat-id="{{ $cat->id }}" 
+                                data-cat-name="{{ $cat->cat_name }}" 
+                                data-cat-image="{{ $cat->cat_image }}" 
+                                data-cat-age="{{ $cat->age }}" 
+                                data-cat-color="{{ $cat->color }}" 
+                                data-cat-breed="{{ $cat->breed }}" 
+                                data-cat-sex="{{ $cat->sex }}" 
+                                data-cat-status="{{ $cat->status }}" 
+                                data-cat-medical-record="{{ $cat->Medical_Record }}">
+                                Edit
+                            </button>
                             <form action="{{ route('admin.cats.destroy', $cat->id) }}" method="POST" style="display:inline">
                                 @csrf
                                 @method('DELETE')
@@ -185,3 +230,31 @@
 
 </body>
 </html>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    var editCatModal = document.getElementById('editCatModal');
+    editCatModal.addEventListener('show.bs.modal', function (event) {
+      var button = event.relatedTarget;
+      var catId = button.getAttribute('data-cat-id');
+      var catName = button.getAttribute('data-cat-name');
+      var catImage = button.getAttribute('data-cat-image');
+      var catAge = button.getAttribute('data-cat-age');
+      var catColor = button.getAttribute('data-cat-color');
+      var catBreed = button.getAttribute('data-cat-breed');
+      var catSex = button.getAttribute('data-cat-sex');
+      var catStatus = button.getAttribute('data-cat-status');
+      var catMedicalRecord = button.getAttribute('data-cat-medical-record');
+
+      var modal = this;
+      modal.querySelector('form').action = '/admin/cats/' + catId;
+      modal.querySelector('input[name="cat_name"]').value = catName;
+      modal.querySelector('input[name="age"]').value = catAge;
+      modal.querySelector('input[name="color"]').value = catColor;
+      modal.querySelector('input[name="breed"]').value = catBreed;
+      modal.querySelector('select[name="sex"]').value = catSex;
+      modal.querySelector('select[name="status"]').value = catStatus;
+      modal.querySelector('input[name="Medical_Record"]').value = catMedicalRecord;
+    });
+  });
+</script>
