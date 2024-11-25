@@ -316,13 +316,9 @@
                 <a class="nav-link" data-bs-toggle="modal" data-bs-target="#modalId2">ADOPT</a>
                 <a class="nav-link" data-bs-toggle="modal" data-bs-target="#modalId">DONATE</a>
                 @include('payment')
-<<<<<<< HEAD
-                @include('Services.adoptContract')
-=======
                <!-- <li class="nav-item px-4">
                     <a class="nav-link" href="{{ url('myRequest') }}">---</a>
                 </li>-->
->>>>>>> 4df66255c26ee9a2f9edfc67e6c55703432c930e
             </ul>
         </div>
 
@@ -356,56 +352,6 @@
     </div>
 </nav>
 
-<<<<<<< HEAD
-<!-- Masthead-->
-<header class="masthead">
-    <div class="container2"><br><br>
-        <div class="masthead-subheading">Welcome To Our AduCats Website!</div>
-        <div class="masthead-heading text-uppercase">It's Nice To Meet You</div>
-    </div>
-</header>
-
-<section class="bg-blacks">
-    <div class="container">
-        <div class="center">
-            <h1>CAT GALLERY</h1>
-            <div class="input-group mb-3">
-                <input type="text" class="form-control" placeholder="Search Cat" aria-label="Recipient's username" aria-describedby="basic-addon2" id="searchInput">
-                <div class="input-group-append">
-                    <button class="btn btn-outline-secondary" type="button" id="searchButton">search</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Next & previous buttons -->
-        <div class="pagination-buttons">
-            <button class="btn btn-outline-secondary" type="button" id="prevBtn" style="display: none;">Previous</button>
-            <button class="btn btn-outline-secondary" type="button" id="nextBtn" style="display: none;">Next</button>
-        </div>
-
-        <!-- Card container -->
-        <div class="card-container" id="catGallery">
-            @foreach($cats as $cat)
-                <div class="col-md-3 cat-card" data-bs-toggle="modal" data-bs-target="#modalId2">
-                    <div class="card" data-name="{{ $cat->cat_name }}" data-age="{{ $cat->age }}" data-color="{{ $cat->color }}" data-breed="{{ $cat->breed }}" data-sex="{{ $cat->sex }}">
-                        <div class="image">
-                            @if($cat->cat_image)
-                                <img src="{{ asset('images/' . $cat->cat_image) }}" alt="Image of {{ $cat->cat_name }}" style="width: 100%; height: auto;">
-                            @else
-                                <span class="text">No image available</span>
-                            @endif
-                        </div>
-                        <span class="title">{{ $cat->cat_name }}</span>
-                    </div>
-                </div>
-            @endforeach
-        </div>
-    </div>
-</section>
-
-</body>
-</html>
-=======
         <!-- Adoption contract modal-->
         <div data-bs-theme="dark">
             @include('Services.adoptContract')
@@ -557,4 +503,3 @@
         </script>
     </body>
 </html>
->>>>>>> 4df66255c26ee9a2f9edfc67e6c55703432c930e
