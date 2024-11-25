@@ -123,12 +123,10 @@
             <div class="navbar-nav">
                 <a class="nav-link" href="{{ url('/') }}">HOME</a>
                 <a class="nav-link" href="{{ url('aboutus') }}">ABOUT US</a>
-                <a class="nav-link" data-bs-toggle="modal" data-bs-target="#modalId2">ADOPT</a>
-                @include('Services.adoptContract')
                 <a class="nav-link" href="{{ url('events') }}">NEWS / EVENTS</a>
                 <a class="nav-link" href="{{ url('ContactUs') }}">CONTACT US</a>
-                <a class="nav-link" href="{{ url('analyzeImage') }}">IMAGE ANALYSIS</a>
-                <button type="button" class="btn btn-secondary btn-lg" data-bs-toggle="modal" data-bs-target="#modalId">DONATE</button>
+                <a class="nav-link" data-bs-toggle="modal" data-bs-target="#modalId2">ADOPT</a>
+                <a class="nav-link" data-bs-toggle="modal" data-bs-target="#modalId">DONATE</a>
                 @include('payment')
             </div>
 
@@ -162,4 +160,8 @@
         </div>
     </div>
 </nav>
+
+        <div data-bs-theme="dark">
+            @include('Services.adoptContract')
+        </div>
 

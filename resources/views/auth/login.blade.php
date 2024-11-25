@@ -4,7 +4,7 @@
         justify-content: center;
         align-items: center;
         height: 100vh;
-        background-color: #121212;
+        background-color: #03045e;
         margin: 0;
     }
 
@@ -82,7 +82,7 @@
 
     .button-submit {
         margin: 20px 0 10px 0;
-        background-color: #151717;
+        background-color: #00b4d8;
         border: none;
         color: white;
         font-size: 15px;
@@ -94,7 +94,7 @@
     }
 
     .button-submit:hover {
-        background-color: #252727;
+        background-color: #0077b6;
     }
 
     .p {
@@ -140,6 +140,7 @@
             </svg>
             <input id="email" class="input" type="email" name="email" :value="old('email')" required autofocus autocomplete="username">
         </div>
+        
         <!--Password-->
         <div class="flex-column">
             <label>Password </label>

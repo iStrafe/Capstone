@@ -54,13 +54,16 @@ class CatController extends Controller
         $request->validate([
             'cat_name' => 'required|string|max:255',
             'cat_image' => 'nullable|image|mimes:jpeg,png,jpg,gif',
-            'age' => 'required|integer|min:0|max:25',
+            'age' => 'nullable|string|min:0|max:25',
             'color' => 'nullable|string|max:50',
             'breed' => 'nullable|string|max:100',
             'sex' => 'required|in:Male,Female',
         ]);
     
         $input = $request->all();
+
+        // Set default value for age if not provided
+        $input['age'] = $input['age'] ?? 'Unknown';
     
         // Handle image upload
         if ($request->hasFile('cat_image')) {
@@ -105,30 +108,36 @@ class CatController extends Controller
      * Update the specified resource in storage.
      */
     public function update(Request $request, string $id)
-    {
-        $request->validate([
-            'cat_name' => 'required|string|max:255',
-            'cat_image' => 'nullable|image|mimes:jpeg,png,jpg,gif',
-            'age' => 'required|integer|min:0|max:25',
-            'color' => 'nullable|string|max:50',
-            'breed' => 'nullable|string|max:100',
-            'sex' => 'required|in:Male,Female',
-        ]);
+        {
+            $request->validate([
+                'cat_name' => 'required|string|max:255',
+                'cat_image' => 'nullable|image|mimes:jpeg,png,jpg,gif',
+                'age' => 'nullable|string|min:0|max:25',
+                'color' => 'nullable|string|max:50',
+                'breed' => 'nullable|string|max:100',
+                'sex' => 'required|in:Male,Female',
+                'status' => 'required|in:Active,Inactive',
+            ]);
 
-        $input = $request->all();
+                $cat = Cat::findOrFail($id);
+                $cat->cat_name = $request->input('cat_name');
+                $cat->age = $request->input('age', 'Unknown');
+                $cat->color = $request->input('color');
+                $cat->breed = $request->input('breed');
+                $cat->sex = $request->input('sex');
+                $cat->status = $request->input('status');
+                $cat->Medical_Record = $request->input('Medical_Record');
 
-        $cat = Cat::find($id);
-        $cat->fill($request->all());
+                if ($request->hasFile('cat_image')) {
+                    $fileName = time() . '.' . $request->cat_image->extension();
+                    $request->cat_image->move(public_path('images'), $fileName);
+                    $cat->cat_image = $fileName;
+                }
 
-        if ($request->hasFile('cat_image')) {
-            $fileName = time() . '.' . $request->cat_image->extension();
-            $request->cat_image->move(public_path('images'), $fileName);
-            $cat->cat_image = $fileName;
+                $cat->save();
+
+                return redirect()->route('admin.cats.index')->with('success', 'Cat updated successfully');
         }
-
-        $cat->save();
-        return redirect()->route('admin.cats.index')->with('success', 'Pet updated successfully.');
-    }
 
     /**
      * Remove the specified resource from storage.

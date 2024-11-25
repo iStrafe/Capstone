@@ -33,7 +33,7 @@
 
             <div class="mb-3">
               <label for="age" class="form-label">Age</label>
-              <input type="number" name="age" class="form-control" required>
+              <input type="text" name="age" class="form-control">
             </div>
 
             <div class="mb-3">

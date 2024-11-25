@@ -1,230 +1,296 @@
-<!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-
-<head>
+@include('Navigationbar')
     <style>
-        * {
-            box-sizing: border-box;
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+        *{
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
         }
 
-        .text1 {
-            margin: auto;
+        .section{
+            
+            width: 100%;
+            min-height: 60vh;
+            background-color: #CAF0F8;
+        }
+
+        .section2{
+            
+            width: 100%;
+            min-height: 60vh;
+            background-color: #00509d;
+        }
+       
+        .containter{
+            width: 80%;
+            display:block;
+            margin:auto;
+            padding-top: 100px;
+        }
+
+        .containter2{
+            width: 80%;
+            display:block;
+            margin:auto;
+            padding-top: 100px;
+        }
+
+        .content-section{
+            float: Left;
+            width: 55%;
+        }
+
+        .content-section2{
+            float: right;
+            width: 55%;
+        }
+
+        .image-section{
+            float: right;
+            width: 40%;
+        }
+
+         .image-section2{
+            float: left;
+            width: 45%;
+        }
+
+
+        .image-section img{
+            width: 100%;
+            height: auto;
+        }
+
+        .image-section2 img{
             width: 70%;
-            border: 3px solid transparent;
-            padding: 10px;
-            font-size: 20px;
-            font-family: Verdana, sans-serif;
-            text-align: center;
-            box-shadow: 0 15px 10px 0 rgba(0, 0, 0, 0.2);
-            background-color: #f9f9f9;
-            margin-bottom: 20px;
-        }
-
-        .text1 p {
-            color: #662200;
-        }
-
-        .container {
-            width: 100%;
-            background: lightgray;
-            padding: 20px;
-            box-shadow: 0 15px 12px 0 rgba(0, 0, 0, 0.2);
-        }
-
-        .about-section img {
-            width: 100%;
             height: auto;
         }
-
-        .footer {
-            background-color: #002366;
+        .content-section .title{
+            text-transform:uppercase;
+            font-size: 28px;
+        }
+        .content-section2 .title{
+            text-transform:uppercase;
             color: #ffffff;
-            text-align: center;
-            padding: 20px;
-            font-size: 18px;
+            font-size: 28px;
         }
-
-        .footer h2 {
-            margin: 10px 0;
-            font-size: 24px;
+        .content-section .content h3{
+            margin-top: 20px;
+            color:#5d5d5d;
         }
-
-        .footer p {
-            font-size: 16px;
+        .content-section2 .content h3{
+            margin-top: 20px;
+            color:#caf0f8;
         }
-
-        .text-center {
-            text-align: center;
+        .content-section .content p{
+            margin-top: 10px;
+            font-family: sans-serif;
+            font-size: 17px;
+            line-height: 1.5;
         }
-
-        /* Responsive Styling */
-        @media (max-width: 768px) {
-            .text1 {
-                width: 90%;
-                font-size: 16px;
-            }
-
-            .text1 h2 {
-                font-size: 1.2em;
-            }
-
-            .container img {
-                height: auto;
-            }
-
-            .footer p, .footer h2 {
-                font-size: 16px;
-                text-align: center;
-            }
-
-            .text-center p {
-                font-size: 1.5em;
-            }
-        }
-
-        .gallery-container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            padding: 20px;
-            gap: 10px;
-        }
-
-        .gallery-item {
-            flex: 1 1 calc(33.333% - 20px);
-            max-width: calc(33.333% - 20px);
-            position: relative;
-        }
-
-        .gallery-item img {
-            width: 100%;
-            height: auto;
-            border-radius: 8px;
-        }
-
-        /* Responsive styling */
-        @media (max-width: 768px) {
-            .gallery-item {
-                flex: 1 1 calc(50% - 20px);
-                max-width: calc(50% - 20px);
-            }
-        }
-
-        @media (max-width: 576px) {
-            .gallery-item {
-                flex: 1 1 100%;
-                max-width: 100%;
-            }
-        }
-
-        .gallery-item .caption {
-            position: absolute;
-            bottom: 8px;
-            left: 8px;
-            background-color: rgba(0, 0, 0, 0.6);
+        .content-section2 .content p{
+            margin-top: 10px;
+            font-family: sans-serif;
             color: #ffffff;
-            padding: 5px;
-            border-radius: 4px;
-            font-size: 14px;
+            font-size: 17px;
+            line-height: 1.5;
+        }
+        .content-section .content .button{
+            margin-top: 20px;
+        }
+        .content-section2 .content .button{
+            margin-top: 20px;
+        }
+        .content-section .content .button a{
+            background-color: #3d3d3d;
+            padding: 1px 30px;
+            text-decoration: none;
+            color: #fff;
+            font-size: 25px;
+            letter-spacing: 1.5px;
+        }
+        .content-section2 .content .button a{
+            background-color: #3d3d3d;
+            padding: 1px 30px;
+            text-decoration: none;
+            color: #fff;
+            font-size: 25px;
+            letter-spacing: 1.5px;
+        }
+    
+        .content-section .content .button a:hover{
+            background-color: #0077B6 !important;
+            color: #fff;
+        }
+        .content-section2 .content .button a:hover{
+            background-color: #006400 !important;
+            color: #fff;
         }
 
-        @media (max-width: 576px) {
-            .text1 {
+        .content-section .social{
+            margin-top: 20px;
+        }
+         .content-section2 .social{
+            margin-top: 20px;
+        }
+        .content-section .social i{
+            color: #3d3d3d;
+            font-size: 30px;
+            padding: 0px 10px;
+        }
+        .content-section2 .social i{
+            color: #3d3d3d;
+            font-size: 30px;
+            padding: 0px 10px;
+        }
+
+            @media screen and (max-width: 768px){
+            .containter{
+                width: 80%;
+                display:block;
+                margin:auto;
+                padding-top: 50px;
+            }
+
+            .content-section{
+                float: none;
                 width: 100%;
-                font-size: 14px;
-                padding: 10px;
+                display: block;
+                margin:auto;
             }
 
-            .container {
-                padding: 10px;
+             .content-section2{
+                float: none;
+                width: 100%;
+                display: block;
+                margin:auto;
             }
 
-            .footer p, .footer h2 {
-                font-size: 14px;
+             .image-section{
+                float: none;
+                width: 100%;
+            }
+
+            .image-section2{
+                float: none;
+                width: 100%;
+            }
+
+             .image-section img{
+                float: none;
+                width: 100%;
+                display: block;
+                margin:auto;
+            }
+
+             .content-section .title{
+                text-align: center;
+                font-size: 19px;
+            }
+
+            .content-section .content .button{
                 text-align: center;
             }
 
-            .text-center p {
-                font-size: 1.2em;
+            .content-section2 .content .button{
+                text-align: center;
             }
+
+            .content-section .content .button a{
+                padding: 9px 30px;
+            }
+
+            .content-section2 .content .button a{
+                padding: 9px 30px;
+            }
+            .content-section .social{
+                text-align: center;
+            }
+
+            .content-section2 .social{
+                text-align: center;
+            }
+
         }
+
     </style>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css">
+    
+    <title>Document</title>
 </head>
+<body>
+    <body class="">
 
-<body class="..">
-    <div class="font-sans antialiased dark:bg-black dark:text-white/50">
-        @include('Navigationbar')
-    </div>
-
-    <div class="about-section">
-        <img src="images/Cat2.jpg" alt="Jane">
-    </div>
-
-    <br>
-
-    <div class="text-center">
-        <p class="fs-6 fw-light" style="font-family: Verdana, sans-serif;">
-            AdUCats advocate peaceful co-existence between the humans and furry friends
-        </p>
-    </div>
-
-    <br><br>
-
-    <div class="text1">
-        <h2><p>Being around cats helps in boosting one’s immune system through improving immune functions, allowing the prevention or disposal of various sicknesses.</p></h2>
-    </div>
-
-    <div class="text1">
-        <h2><p>Cats play a major role in improving students’ psychology by decreasing depression and anxiety and creating a positive mood.</p></h2>
-    </div>
-
-    <div class="text1">
-        <h2><p>On students’ health level, cats play a major role in healing and preventing various illnesses.</p></h2>
-    </div>
-
-    <div class="text1">
-        <h2><p>Being around cats helps in boosting one’s immune system through improving immune functions, allowing the prevention or disposal of various sicknesses.</p></h2>
-    </div>
-
-    <br><br>
-
-    <div class="text-center">
-        <p class="fs-2">Meet Our Cats</p>
-    </div>
-
-        <div class="gallery-container">
-        <div class="gallery-item">
-            <img src="images/aducat1.jpg" alt="Event Image 1">
-            <div class="caption">Adamson University</div>
-        </div>
-        <div class="gallery-item">
-            <img src="images/aducat2.jpg" alt="Event Image 1">
-            <div class="caption">Adamson University</div>
-        </div>
-        <div class="gallery-item">
-            <img src="images/aducat3.jpg" alt="Event Image 2">
-            <div class="caption">Adamson University</div>
-        </div>
-        <div class="gallery-item">
-            <img src="images/aducat4.jpg" alt="Event Image 3">
-            <div class="caption">Adamson University</div>
-        </div>
-        <div class="gallery-item">
-            <img src="images/aducat1.jpg" alt="Event Image 3">
-            <div class="caption">Adamson University</div>
+    <div class="section py-5">
+        <div class="container">
+            <div class="content-section">
+                <div class="title">
+                    <h1>ABOUT US</h1>
+                </div>
+                <div class="content">
+                    <h3>AdUCats advocate peaceful co-existence between the humans and furry friends...</h3>
+                    <p>Cats play a major role in improving both students’ health and their psychological well-being through decreasing anxiety. According to Dabbos, “Animals reduce anxiety and stress because they release a chemical that actually works on reducing the stress.”</p>
+                    <p>Cats play a major role in improving students’ psychology through decreasing depression, anxiety and creating a positive mood.</p>
+                    <p>On students’ health level, cats play a major role in healing and preventing various illnesses.</p>
+                    <p>Being around cats, helps in boosting one’s immune system through improving immune functions. Thus, allowing the prevention or the disposal of various sicknesses.</p>
+                    <div class="button">
+                        <a href="https://www.facebook.com/groups/946027585595117" style="background-color: #00B4D8;">Facebook</a>
+                        
+                    </div>
+                </div>
+            </div>
+            <div class="image-section py-5">
+                <img src="images/aducat1.jpg" alt="">
+            </div>
         </div>
     </div>
-    </div>
 
-    <br><br>
+     <div class="section2 py-5 px-5">
+        <div class="container2">
+            <div class="content-section2">
+                <div class="title">
+                    <h1>disclaimer</h1>
+                </div>
+                <div class="content">
+                    <p>Aducats is not a shelter. We are a non-profit organization run by dedicated volunteers from Adamson University, working to connect cats in need with loving adopters. While we do not house cats directly, we ensure that every cat we assist is cared for until they find their forever home.</p>
+                    <h3>Leaving your pets or cats here is strongly discouraged.</h3>
+                    <p>
+                        The university is not an animal
+                        shelter. RA 10631, Section 7
+                        of the Animal Welfare Act
+                        states that, "it shall be unlawful
+                        for any person who has custody
+                        of an animal to abandon the said
+                        animal."
+                        We will only be responsible
+                        for all accounted cats in the
+                        campus and will facilitate their
+                        adoption later on.</p>
+                        <p>Thank you for supporting our mission to promote responsible pet adoption and animal welfare!</p>
+                    <div class="button">
+                        <a href="https://www.officialgazette.gov.ph/2013/10/03/republic-act-no-10631/" style="background-color: lightgreen;">RA 10631 SECTION-7</a>
+                    </div>
+                </div>
+            </div>
+            <div class="image-section2 py-5">
+                <img src="images/Disclaimer.jpg" alt="">
+            </div>
+        </div>
+    </div>
 
     <div class="footer fw-light">
         <p class="fs-1" style="font-family: serif;">ABOUT US</p>
         <h2>COME VISIT US</h2>
         <p>900 San Marcelino St. Ermita, Manila, 1000 Metro Manila</p>
     </div>
-
+       
 </body>
+
+    
 </html>

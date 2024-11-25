@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 
@@ -39,7 +40,14 @@ class OpenAIController extends Controller
                     "content" => [
                         [
                             "type" => "text",
-                            "text" => "Predict what cat breed is this? list down key features of this cat breed."
+                            "text" => "Predict what cat breed is this. List down aleast 5 characteristics why you think so."
+                        ],
+                        [
+                            "type" => "text",
+                            "text" => "Use this format: 
+                                    Color:
+                                    Breed:
+                                    List of 5 characteristics(In bullet form):"
                         ],
                         [
                             "type" => "text",

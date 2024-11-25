@@ -43,66 +43,28 @@
                 margin: 0;
                 padding: 0;
                 box-sizing: border-box;
-                font-family: 'poppins', san-serif;
-            }
-
-            .container{
-                width: 100%;
-                height: 5vh;
-                padding: 0 10%;
-                height: 60vh;
-                padding: 0 8%;
+                font-family: Arial, Helvetica, sans-serif;
             }
 
             .container h1{
                 font-size: 40px;
                 text-align: center;
-                padding-top: 10%;
-                margin-bottom: 60px;
+                padding-top: 5%;
                 font-weight: 600;
                 position: relative;
             }
 
-            .container h1::after{
-                content: '';
-                background: #303ef7;
-                width: 100px;
-                height: 5px;
-                position: absolute;
-                bottom: -5px;
-                left: 50%;
-                transform: translatex(-50%);
-            }
 
-            .container h2{
-                font-size: 25px; 
-                font-weight: 500;   
-                margin-bottom: 8px;
-                text-decoration: underline;
-            }
 
+
+            /*=======Card row ==========*/
             .row{
                 display: grid;
                 grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
                 grid-gap: 30px;
             }
 
-            .service{
-                text-align: center;
-                padding: 25px 10px;
-                border-radius: 5px;
-                font-size: 14px;
-                cursor: pointer;
-                background: lightgray;
-                transition: transform 0.5s, background 0.5s;
-                box-shadow: 0 10px 8px 0 rgba(0, 0, 0, 0.2);
-            }
-
-            .service:hover{
-                background: #ff9933;
-                color: black;
-                transform: scale(1.05);
-            }
+           
 
                                 /* === removing default button style ===*/
                     .button {

@@ -36,6 +36,7 @@ Route::get('/cat', [CatController::class, 'index'])->name('cats.index');
 Route::get('/cat/{id}', [CatController::class, 'showUser'])->name('cats.show');
 Route::get('/cat/adopt/{id}', [CatController::class, 'adopt'])->name('cats.adopt');
 Route::get('adoptCat', [CatController::class, 'index4'])->name('adoptCat');
+Route::put('/admin/cats/{cat}', [CatController::class, 'update'])->name('admin.cats.update');
 
 
 //Route fo OpenAI image analysis
@@ -98,11 +99,11 @@ Route::get('/test', function () {
 });
 
 //Adoption request page
-Route::get('myRequest', function () {
-    return view('myRequest');
-})->middleware(['auth', 'verified']);
+//Route::get('myRequest', function () {
+   // return view('myRequest');
+//})->middleware(['auth', 'verified']);
 
-Route::get('myRequest', [AdoptionController::class, 'showMyRequests'])->name('myRequest');
+//Route::get('myRequest', [AdoptionController::class, 'showMyRequests'])->name('myRequest');
 
 
 //About us Route
@@ -179,16 +180,40 @@ Route::middleware('auth')->group(function () {
 //})->middleware(['auth', 'verified'])->name('aboutus');
 
 
-//Adoption page
+//Adoption page admin view
 Route::middleware('auth')->group(function () {
-
-
-    //Adoption page routes
-    Route::get('/AdoptionForm',[adoptionController::class,'showAdoptionForm'])->name('AdoptionForm');
-    Route::get('/AdoptionRequest',[adoptionController::class,'showAdoptionRequest'])->name('AdoptionRequest');
-    Route::post('/AdoptionForm',[adoptionController::class,'create'])->name('adoption.request');
- 
+    Route::get('/RejectedRequest', [adoptionController::class, 'showRejected'])->name('RejectedRequest');
+    Route::get('/AdoptionRequest', [adoptionController::class, 'showAdoptionRequest'])->name('AdoptionRequest');
+    Route::post('/update-status/{id}', [AdoptionController::class, 'updateStatus']);
+    
+    
 });
+
+//Admin
+Route::middleware(['auth', 'admin'])->group(function () {
+    Route::get('/analyzeImage', [OpenAIController::class, 'showUploadForm']);
+    Route::post('/analyzeImage', [OpenAIController::class, 'analyzeImage'])->name('analyze.image');
+
+    Route::get('/AdoptionRequest', [AdoptionController::class, 'showAdoptionRequest'])->name('AdoptionRequest');
+    Route::get('/RejectedRequest', [AdoptionController::class, 'showRejected'])->name('RejectedRequest');
+    Route::get('/ReleasedRequest', [AdoptionController::class, 'showReleased'])->name('ReleasedRequest');
+    Route::resource('/adminDashboard', CatController::class);
+    Route::resource('/news-events', NewsEventController::class);
+});
+
+Route::get('/view-valid-ids/{id}', [AdoptionController::class, 'viewValidIds'])->name('viewValidIds');
+
+
+//Route for PDF generation
+Route::get('/adoption-request/pdf/{id}', [AdoptionController::class, 'generatePDF'])->name('adoption-request.pdf');
+Route::get('/adoption-requests/pdf', [AdoptionController::class, 'generateAllPDF'])->name('adoption-requests.pdf');
+    
+
+    //Adoption page routes non-admin
+    Route::get('/AdoptionForm',[adoptionController::class,'showAdoptionForm'])->name('AdoptionForm');
+    Route::post('/AdoptionForm',[adoptionController::class,'create'])->name('adoption.request');
+
+
 
 //News & Events page routes
 Route::resource('news-events', NewsEventController::class);

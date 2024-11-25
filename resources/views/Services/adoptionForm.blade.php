@@ -137,7 +137,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-body">
-                <form class="form" action="{{ route('adoption.request') }}" method="post">
+                <form class="form" action="{{ route('adoption.request') }}" method="post" enctype="multipart/form-data">
                     @csrf
                     @method('POST')
                     <p class="title">ADOPTION REQUEST FORM</p>
@@ -153,16 +153,27 @@
                             <span>Address</span>
                         </label>
                     </div>  
+
+                    <div class="">
+                        <label>
+                            <input class="input" type="email" name="email" placeholder="" required>
+                            <span>Email</span>
+                        </label>
+                    </div>
                     
                     <label>
                         <input class="input" type="text" name="phone" placeholder="" required>
-                        <span>Phone Number</span>
+                        <span>Phone Number (Optional)</span>
                     </label>
 
-                    <label>
-                        <label for="cat_image" class="form-label">Valid_Id / E-Signature</label>
-                        <input type="file" name="valid_id" class="form-control">
-                    <label>
+
+                    <div id="valid-id-container">
+                        <div class="valid-id-field">
+                            <label for="valid_id">Valid ID (Upto 2 only):</label>
+                            <input type="file" name="valid_id[]" class="form-control">
+                        </div>
+                    </div>
+                    <button type="button" id="add-valid-id" class="btn btn-secondary">Add Another ID</button>
 
                     <div class="py-3">
                         <label>
@@ -190,14 +201,41 @@
                             <span>Breed</span>
                         </label>
 
-                        <label for="date_of_adoption">Date of Adoption</label>
-                        <input type="date" name="date_of_adoption" required>
+                        <label>
+                            <label for="date_of_adoption">Date of Adoption</label>
+                            <input class="input py-3" type="date" name="date_of_adoption" placeholder="" required>
+                        </label>
+                    
                     </div>
 
-                    <button href="{{ route('dashboard') }}" class="submit" value="Save new info">Submit</button>
+                    <button href="{{ url('/') }}" class="submit" value="Save new info">Submit</button>
                   
                 </form>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+    document.getElementById('add-valid-id').addEventListener('click', function() {
+        var container = document.getElementById('valid-id-container');
+        var validIdFields = container.getElementsByClassName('valid-id-field');
+        if (validIdFields.length < 2) {
+            var newField = document.createElement('div');
+            newField.classList.add('valid-id-field');
+            newField.innerHTML = `
+                <label for="valid_id">Valid ID:</label>
+                <input type="file" name="valid_id[]" class="form-control">
+            `;
+            container.appendChild(newField);
+        } else {
+            alert('You can only add up to 2 valid IDs.');
+        }
+    });
+
+    document.getElementById('valid-id-container').addEventListener('click', function(event) {
+        if (event.target.classList.contains('remove-valid-id')) {
+            event.target.parentElement.remove();
+        }
+    });
+</script>
