@@ -4,6 +4,148 @@
     <script src="https://kit.fontawesome.com/c32adfdcda.js" crossorigin="anonymous"></script>
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
     <style>
+       * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: #cbc9e8;
+}
+
+.wrapper .title {
+    text-align: center;
+}
+
+.title h4 {
+    display: inline-block;
+    padding: 15px; /* Reduced padding */
+    color: #585757;
+    font-size: 24px; /* Smaller font size */
+    font-weight: 500;
+    letter-spacing: 1px;
+    word-spacing: 3px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px; /* Reduced border radius */
+    text-transform: uppercase;
+    backdrop-filter: blur(10px); /* Slightly less blur */
+    box-shadow: 0 8px 8px rgba(0, 0, 0, 0.1);
+    word-wrap: break-word;
+}
+
+.wrapper .card_Container {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    margin: 30px 0; /* Smaller margin */
+}
+
+.card_Container .card {
+    position: relative;
+    width: 250px; /* Reduced card width */
+    height: 330px; /* Reduced card height */
+    margin: 15px; /* Reduced margin */
+    overflow: hidden;
+    box-shadow: 0 20px 20px -15px rgba(0, 0, 0, 1),
+                inset 0 0 0 800px rgba(67, 52, 109, 0.6); /* Adjusted shadow */
+    border-radius: 12px; /* Reduced border radius */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.card .imbBx, .imbBx img {
+    width: 100%;
+    height: 100%;
+}
+
+.card .content {
+    position: absolute;
+    bottom: -120px; /* Adjusted height */
+    width: 100%;
+    height: 120px; /* Smaller content box */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    backdrop-filter: blur(10px); /* Slightly less blur */
+    box-shadow: 0 -8px 8px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px; /* Reduced border radius */
+    transition: bottom 0.5s;
+    transition-delay: 0.65s;
+}
+
+.card:hover .content {
+    bottom: 0;
+    transition-delay: 0s;
+}
+
+.content .contentBx h3 {
+    text-transform: uppercase;
+    color: #fff;
+    letter-spacing: 1.5px; /* Reduced spacing */
+    font-weight: 500;
+    font-size: 14px; /* Smaller font size */
+    text-align: center;
+    margin: 15px 0 10px; /* Adjusted margins */
+    line-height: 1.1em;
+    transition: 0.5s;
+    transition-delay: 0.6s;
+    opacity: 0;
+    transform: translateY(-20px);
+}
+
+.card:hover .content .contentBx h3 {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.content .contentBx h3 span {
+    font-size: 10px; /* Smaller subtitle font size */
+    font-weight: 300;
+    text-transform: initial;
+}
+
+.content .sci {
+    position: relative;
+    bottom: 8px; /* Adjusted position */
+    display: flex;
+}
+
+.content .sci li {
+    list-style: none;
+    margin: 0 8px; /* Reduced spacing */
+    transform: translateY(40px);
+    transition: 0.5s;
+    opacity: 0;
+    transition-delay: calc(0.2s * var(--i));
+}
+
+.card:hover .content .sci li {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.content .sci li a {
+    color: #fff;
+    font-size: 20px; /* Smaller icon size */
+}
+        /* Responsive Design for smaller screens */
+        @media (max-width: 768px) {
+            .row {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+
         section {
             position: relative;
             z-index: 3;
@@ -11,420 +153,292 @@
         }
 
         .container {
-            max-width: 800px;
+            max-width: 1300px; /* Increased container width */
             margin: 0 auto;
             padding: 20px;
         }
 
         .section-header h2 {
             text-align: center;
-            font-size: 2em;
+            font-size: 2.5em;
             color: #333;
             margin-bottom: 20px;
         }
 
-        /* From Uiverse.io by Javierrocadev */ 
-        .card {
-          width: 350px;
-          height: 300px;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          text-align: center;
-          gap: 10px;
-          background-color: #fffffe;
-          border-radius: 15px;
-          position: relative;
-          overflow: hidden;
-          transition: all 0.5s ease;
-        }
+/* Contact Section Styling */
+.contact-section {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    flex-wrap: wrap; /* Ensures responsiveness on smaller screens */
+    gap: 20px;
+    padding: 20px;
+}
 
-        .card::before {
-          content: "";
-          width: 350px;
-          height: 100px;
-          position: absolute;
-          top: 0;
-          border-top-left-radius: 15px;
-          border-top-right-radius: 15px;
-          border-bottom: 3px solid #fefefe;
-          background: linear-gradient(40deg, rgba(131,58,180,1) 0%, rgba(253,29,29,1) 50%, rgba(252,176,69,1) 100%);
-          transition: all 0.3s ease;
-        }
+.contact-content {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+    max-width: 1000px; /* Container width */
+    width: 100%;
+}
 
-        .card * {
-          z-index: 1;
-        }
+.contact-text {
+    flex: 1; /* Left side takes up equal space */
+    max-width: 400px; /* Limit the paragraph width */
+    padding: 20px;
+}
 
-        .image {
-          width: 90px;
-          height: 90px;
-          background-color: #1468BF;
-          border-radius: 50%;
-          border: 4px solid #fefefe;
-          margin-top: 30px;
-          transition: all 0.5s ease;
-        }
+.contact-text h2 {
+    font-size: 1.8em;
+    color: #333;
+    margin-bottom: 15px;
+}
 
-        .card-info {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          gap: 15px;
-          transition: all 0.5s ease;
-        }
+.contact-text p {
+    font-size: 1em;
+    color: #555;
+    line-height: 1.6;
+}
 
-        .card-info span {
-          font-weight: 600;
-          font-size: 24px;
-          color: #161A42;
-          margin-top: 15px;
-          line-height: 5px;
-        }
+.contact-form {
+    flex: 1; /* Form takes up equal space */
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-width: 500px;
+    width: 100%;
+}
 
-        .card-info p {
-          color: rgba(0, 0, 0, 0.5);
-        }
+.contact-form h2 {
+    font-size: 1.6em;
+    color: #333;
+    margin-bottom: 20px;
+    text-align: center;
+}
 
-        .button {
-          text-decoration: none;
-          background-color: #1468BF;
-          color: white;
-          padding: 5px 20px;
-          border-radius: 5px;
-          border: 1px solid white;
-          transition: all 0.5s ease;
-        }
+.contact-form .input-box {
+    position: relative;
+    margin-bottom: 18px;
+}
 
-        .card:hover {
-          width: 300px;
-          border-radius: 250px;
-        }
+.contact-form .input-box input,
+.contact-form .input-box textarea {
+    width: 100%;
+    padding: 12px;
+    font-size: 1em;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    outline: none;
+    transition: border-color 0.3s;
+}
 
-        .card:hover::before {
-          width: 300px;
-          height: 240px;
-          border-radius: 50%;
-          border-bottom: none;
-          transform: scale(0.95);
-        }
+.contact-form .input-box span {
+    position: absolute;
+    top: 50%;
+    left: 12px;
+    font-size: 0.9em;
+    color: #666;
+    transform: translateY(-50%);
+    pointer-events: none;
+    transition: 0.3s;
+}
 
-        .card:hover .card-info {
-          transform: translate(0%,-20%);
-        }
+.contact-form .input-box input:focus ~ span,
+.contact-form .input-box textarea:focus ~ span,
+.contact-form .input-box input:valid ~ span,
+.contact-form .input-box textarea:valid ~ span {
+    top: 5px;
+    font-size: 0.8em;
+    color: #007bff;
+}
 
-        .button:hover {
-          background-color: #FF6844;
-          transform: scale(1.1);
-        }
+.contact-form input[type="submit"] {
+    width: 100%;
+    padding: 12px;
+    background-color: #007bff;
+    color: #fff;
+    font-size: 1.1em;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
 
+.contact-form input[type="submit"]:hover {
+    background-color: #0056b3;
+}
 
-        .site-footer
-{
-  background-color:#26272b;
-  padding:45px 0 20px;
-  font-size:15px;
-  line-height:24px;
-  color:#737373;
-}
-.site-footer hr
-{
-  border-top-color:#bbb;
-  opacity:0.5
-}
-.site-footer hr.small
-{
-  margin:20px 0
-}
-.site-footer h6
-{
-  color:#fff;
-  font-size:16px;
-  text-transform:uppercase;
-  margin-top:5px;
-  letter-spacing:2px
-}
-.site-footer a
-{
-  color:#737373;
-}
-.site-footer a:hover
-{
-  color:#3366cc;
-  text-decoration:none;
-}
-.footer-links
-{
-  padding-left:0;
-  list-style:none
-}
-.footer-links li
-{
-  display:block
-}
-.footer-links a
-{
-  color:#737373
-}
-.footer-links a:active,.footer-links a:focus,.footer-links a:hover
-{
-  color:#3366cc;
-  text-decoration:none;
-}
-.footer-links.inline li
-{
-  display:inline-block
-}
-.site-footer .social-icons
-{
-  text-align:right
-}
-.site-footer .social-icons a
-{
-  width:40px;
-  height:40px;
-  line-height:40px;
-  margin-left:6px;
-  margin-right:0;
-  border-radius:100%;
-  background-color:#33353d
-}
-.copyright-text
-{
-  margin:0
-}
-@media (max-width:991px)
-{
-  .site-footer [class^=col-]
-  {
-    margin-bottom:30px
-  }
-}
-@media (max-width:767px)
-{
-  .site-footer
-  {
-    padding-bottom:0
-  }
-  .site-footer .copyright-text,.site-footer .social-icons
-  {
-    text-align:center
-  }
-}
-.social-icons
-{
-  padding-left:0;
-  margin-bottom:0;
-  list-style:none
-}
-.social-icons li
-{
-  display:inline-block;
-  margin-bottom:4px
-}
-.social-icons li.title
-{
-  margin-right:15px;
-  text-transform:uppercase;
-  color:#96a2b2;
-  font-weight:700;
-  font-size:13px
-}
-.social-icons a{
-  background-color:#eceeef;
-  color:#818a91;
-  font-size:16px;
-  display:inline-block;
-  line-height:44px;
-  width:44px;
-  height:44px;
-  text-align:center;
-  margin-right:8px;
-  border-radius:100%;
-  -webkit-transition:all .2s linear;
-  -o-transition:all .2s linear;
-  transition:all .2s linear
-}
-.social-icons a:active,.social-icons a:focus,.social-icons a:hover
-{
-  color:#fff;
-  background-color:#29aafe
-}
-.social-icons.size-sm a
-{
-  line-height:34px;
-  height:34px;
-  width:34px;
-  font-size:14px
-}
-.social-icons a.facebook:hover
-{
-  background-color:#3b5998
-}
-.social-icons a.twitter:hover
-{
-  background-color:#00aced
-}
-.social-icons a.linkedin:hover
-{
-  background-color:#007bb6
-}
-.social-icons a.dribbble:hover
-{
-  background-color:#ea4c89
-}
-@media (max-width:767px)
-{
-  .social-icons li.title
-  {
-    display:block;
-    margin-right:0;
-    font-weight:600
-  }
-}
-        /* Contact Form Styling */
-        .contact-form {
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            margin-top: 20px;
-        }
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .contact-content {
+        flex-direction: column;
+    }
 
-        .contact-form h2 {
-            font-size: 1.5em;
-            color: #333;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-
-        .contact-form .input-box {
-            position: relative;
-            margin-bottom: 20px;
-        }
-
-        .contact-form .input-box input,
-        .contact-form .input-box textarea {
-            width: 100%;
-            padding: 10px;
-            font-size: 1em;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            outline: none;
-            transition: border-color 0.3s;
-        }
-
-        .contact-form .input-box span {
-            position: absolute;
-            top: 50%;
-            left: 10px;
-            font-size: 0.9em;
-            color: #666;
-            transform: translateY(-50%);
-            pointer-events: none;
-            transition: 0.3s;
-        }
-
-        .contact-form .input-box input:focus ~ span,
-        .contact-form .input-box textarea:focus ~ span,
-        .contact-form .input-box input:valid ~ span,
-        .contact-form .input-box textarea:valid ~ span {
-            top: 5px;
-            font-size: 0.8em;
-            color: #007bff;
-        }
-
-        .contact-form input[type="submit"] {
-            width: 100%;
-            padding: 10px;
-            background-color: #007bff;
-            color: #fff;
-            font-size: 1em;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        .contact-form input[type="submit"]:hover {
-            background-color: #0056b3;
-        }
+    .contact-text, .contact-form {
+        max-width: 100%;
+    }
+}
+        
     </style>
     @include('Navigationbar')
 </head>
 
-<body class="font-sans antialiased dark:bg-black dark:text-white/50">
-    <div class="container" style="margin-top: 20px; margin-bottom: 20px;">
-        <div class="section-header">
-            <h2 style="color: white; font-size: 4em;">Our Team</h2>
-            <div class="row">
-                <!-- Team Member Cards -->
-                <div class="card">
-                    <div class="image"></div>
-                    <div class="card-info">
-                        <span>Name</span>
-                        <p>Role Here</p>
-                    </div>
-                    <a class="button" href="#">Follow</a>
-                </div>
+<body>
+    <div class="wrapper">
 
-                <div class="card">
-                    <div class="image"></div>
-                    <div class="card-info">
-                        <span>Name</span>
-                        <p>Role Here</p>
-                    </div>
-                    <a class="button" href="#">Follow</a>
-                </div>
-
-                <div class="card">
-                    <div class="image"></div>
-                    <div class="card-info">
-                        <span>Name</span>
-                        <p>Role Here</p>
-                    </div>
-                    <a class="button" href="#">Follow</a>
-                </div>
-                <!-- Repeat other team member cards here -->
-            </div>
+        <div class="title">
+            <h4>Our Team Section</h4>
         </div>
 
-        <!-- Contact Section -->
-        <section>
-            <div class="section-header">
-                <h2>Contact Us</h2>
+        <div class="card_Container">
+
+            <div class="card">
+
+                <div class="imbBx">
+                    <img src="images\413-4139803_unknown-profile-profile-picture-unknown.png" alt="">
+                </div>
+
+                <div class="content">
+                    <div class="contentBx">
+                        <h3>NAME<br><span>ROLE</span></h3>
+                    </div>
+                    <ul class="sci">
+                        <li style="--i: 1">
+                            <a href="#"><i class="fa-brands fa-instagram"></i></a>
+                        </li>
+                        <li style="--i: 2">
+                            <a href="#"><i class="fa-brands fa-github"></i></a>
+                        </li>
+                        <li style="--i: 3">
+                            <a href="#"><i class="fa-brands fa-linkedin-in"></i></a>
+                        </li>
+                    </ul>
+                </div>
             </div>
-            <div class="contact-form">
-                <form action="{{ route('contact.store') }}" method="POST" id="contact-form">
-                    @csrf
-                    <h2>Send Message</h2>
 
-                    @if(session('success'))
-                        <div class="alert alert-success">{{ session('success') }}</div>
-                    @endif
+            <div class="card">
 
-                    <div class="input-box">
-                        <input type="text" name="full_name" required>
-                        <span>Full Name</span>
+                <div class="imbBx">
+                    <img src="images\413-4139803_unknown-profile-profile-picture-unknown.png" alt="">
+                </div>
+
+                <div class="content">
+                    <div class="contentBx">
+                        <h3>NAME <br><span>ROLE</span></h3>
                     </div>
-
-                    <div class="input-box">
-                        <input type="text" name="mobile_number" required>
-                        <span>Mobile Number</span>
-                    </div>
-
-                    <div class="input-box">
-                        <textarea name="message" required></textarea>
-                        <span>Type your Message...</span>
-                    </div>
-
-                    <div class="input-box">
-                        <input type="submit" value="Send">
-                    </div>
-                </form>
+                    <ul class="sci">
+                        <li style="--i: 1">
+                            <a href="#"><i class="fa-brands fa-instagram"></i></a>
+                        </li>
+                        <li style="--i: 2">
+                            <a href="#"><i class="fa-brands fa-github"></i></a>
+                        </li>
+                        <li style="--i: 3">
+                            <a href="#"><i class="fa-brands fa-linkedin-in"></i></a>
+                        </li>
+                    </ul>
+                </div>
             </div>
-        </section>
+
+            <div class="card">
+
+                <div class="imbBx">
+                    <img src="images\413-4139803_unknown-profile-profile-picture-unknown.png" alt="">
+                </div>
+
+                <div class="content">
+                    <div class="contentBx">
+                        <h3>NAME <br><span>ROLE</span></h3>
+                    </div>
+                    <ul class="sci">
+                        <li style="--i: 1">
+                            <a href="#"><i class="fa-brands fa-instagram"></i></a>
+                        </li>
+                        <li style="--i: 2">
+                            <a href="#"><i class="fa-brands fa-github"></i></a>
+                        </li>
+                        <li style="--i: 3">
+                            <a href="#"><i class="fa-brands fa-linkedin-in"></i></a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card">
+
+                <div class="imbBx">
+                    <img src="images\413-4139803_unknown-profile-profile-picture-unknown.png" alt="">
+                </div>
+
+                <div class="content">
+                    <div class="contentBx">
+                        <h3>NAME <br><span>ROLE</span></h3>
+                    </div>
+                    <ul class="sci">
+                        <li style="--i: 1">
+                            <a href="#"><i class="fa-brands fa-instagram"></i></a>
+                        </li>
+                        <li style="--i: 2">
+                            <a href="#"><i class="fa-brands fa-github"></i></a>
+                        </li>
+                        <li style="--i: 3">
+                            <a href="#"><i class="fa-brands fa-linkedin-in"></i></a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
     </div>
+
+        <!-- Contact Section -->
+        <section class="contact-section">
+    <div class="contact-content">
+        <div class="contact-text">
+            <h2>Contact Us</h2>
+            <p>
+                Have questions or need assistance? Feel free to reach out to us! 
+                We’re here to help with all your inquiries and provide support as 
+                quickly as possible. Fill out the form on the right, and we'll 
+                get back to you soon.
+            </p>
+        </div>
+        <div class="contact-form">
+            <form action="{{ route('contact.store') }}" method="POST" id="contact-form">
+                @csrf
+                <h2>Send Message</h2>
+
+                @if(session('success'))
+                    <div class="alert alert-success">{{ session('success') }}</div>
+                @endif
+
+                <div class="input-box">
+                    <input type="text" name="full_name" required>
+                    <span>Full Name</span>
+                </div>
+
+                <div class="input-box">
+                    <input type="text" name="mobile_number" required>
+                    <span>Mobile Number</span>
+                </div>
+
+                <div class="input-box">
+                    <textarea name="message" required></textarea>
+                    <span>Type your Message...</span>
+                </div>
+
+                <div class="input-box">
+                    <input type="submit" value="Send">
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+
+    
+
+    
 </body>
 </html>
