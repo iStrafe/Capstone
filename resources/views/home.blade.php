@@ -14,6 +14,7 @@
     @vite('resources/sass/app.scss')
     @vite('resources/js/app.js')
     @include('scripts')
+    <!--@include('scripts2')-->
    
     <style>
                 body {
@@ -295,13 +296,15 @@
 <body class="font-sans antialiased">
 <nav class="navbar navbar-expand-lg border-bottom border-body" data-bs-theme="dark">
     <div class="container-fluid">
-        @if(Auth::check() && Auth::user()->role === "admin")
-            <a class="button" data-text="Awesome" href="{{url('adminDashboard')}}">
-                <span class="actual-text">&nbsp;adminpage&nbsp;</span>
-                <span aria-hidden="true" class="hover-text">&nbsp;adminpage&nbsp;</span>
-            </a>
-        @endif
+             @if(Auth::check() && Auth::user()->role === "admin")
+                <a class="button" data-text="Awesome" href="{{url('adminDashboard')}}">
+                    <span class="actual-text">&nbsp;adminpage&nbsp;</span>
+                    <span aria-hidden="true" class="hover-text">&nbsp;adminpage&nbsp;</span>
+                </a>
+                <!--<a class="navbar-brand px-5 py-3" href="{{url('adminDashboard')}}">adminpage</a>-->
+            @endif
 
+        
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -322,33 +325,35 @@
             </ul>
         </div>
 
-        <ul class="navbar-nav ms-auto">
-            @guest
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
-                </li>
-            @else
-                <li class="nav-item dropdown">
-                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <div>{{ Auth::user()->name }}</div>
-                    </button>
-                    <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
-                        <a class="dropdown-item" href="{{ route('profile.edit') }}">{{ __('Profile') }}</a>
-                        <a class="dropdown-item" href="{{ route('logout') }}"
-                           onclick="event.preventDefault();
-                           document.getElementById('logout-form').submit();">
-                            {{ __('Log Out') }}
-                        </a>
-                        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                            @csrf
-                        </form>
-                    </div>
-                </li>
-            @endguest
-        </ul>
+            <ul class="navbar-nav ms-auto">
+
+                @guest
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
+                    </li>
+                @else
+                    <li class="nav-item dropdown">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <div>{{ Auth::user()->name }}</div>
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
+                            <a class="dropdown-item" href="{{ route('profile.edit') }}">{{ __('Profile') }}</a>
+                            <a class="dropdown-item" href="{{ route('logout') }}"
+                               onclick="event.preventDefault();
+                               document.getElementById('logout-form').submit();">
+                                {{ __('Log Out') }}
+                            </a>
+                            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                                @csrf
+                            </form>
+                        </div>
+                    </li>
+                @endguest
+            </ul>
+        </div>
     </div>
 </nav>
 
@@ -409,7 +414,7 @@
                 </div>
 
                 <div class="image-preview">
-                    <img src="images/1732147692.png" alt="Support our mission">
+                    <img src="https://aducats.online/images/1732147692.png" alt="Support our mission">
                     <video loop muted playsinline>
                         <source src="https://media3.giphy.com/media/t4ujDuOYqa1OoJkwyU/giphy.webm" type="video/webm">
                     </video>
@@ -421,7 +426,7 @@
                 </div>
 
                 <div class="image-preview">
-                    <img src="https://aducats.online/images/1731848858.png" alt="Nice to meet you">
+                    <img src="https://aducats.online/images/1731818343.png" alt="Nice to meet you">
                     <video loop muted playsinline>
                         <source src="https://media2.giphy.com/media/WXB88TeARFVvi/200w.webm" type="video/webm">
                     </video>
