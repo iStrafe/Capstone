@@ -109,8 +109,8 @@
     @endif
 
     <a href="{{ url('AdoptionRequest') }}">Adoption Requests</a>
-    <a href="{{ url('RejectedRequest') }}">Rejected Requests</a>
-    <a href="{{ url('ReleasedRequest') }}">Released Requests</a>
+    <!--<a href="{{ url('RejectedRequest') }}">Rejected Requests</a>-->
+    <a href="{{ url('ReleasedRequest') }}">Released Cats</a>
     <a href="{{ url('adminDashboard') }}">Cats</a>
     <a href="{{ Auth::check() && Auth::user()->role === 'admin' ? url('news-events') : url('events') }}">News / Events</a>
     <a href="{{ url('ContactUs') }}">Contact Us</a>

@@ -26,9 +26,7 @@
                     <td><input type="text" class="form-control" name="mobile_phone" value="{{ $request->mobile_phone }}" disabled></td>
                     <td>
                         @if($request->valid_id)
-                            <a href="{{ route('viewValidIds', ['id' => $request->id]) }}" target="_blank" class="btn btn-link">
-                                View IDs
-                            </a>
+                            <a href="{{ route('viewValidIds', ['id' => $request->id]) }}" target="_blank" class="btn btn-link">View IDs</a>
                         @else
                             <span>No ID Provided</span>
                         @endif
@@ -52,65 +50,117 @@
                 </tr>
             @endforeach
         </tbody>
-        <div class="d-flex justify-content-center">
-            {{ $adoption_request->links() }}
+    </table>
+
+    <div class="row mt-5">
+        <!-- Approved Requests Column -->
+        <div class="col-md-6 scrollable-section">
+            <h2>Approved Requests</h2>
+            <table class="table table-bordered table-striped table-responsive">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Address</th>
+                        <th>Email</th>
+                        <th>Mobile Phone</th>
+                        <th>Valid ID</th>
+                        <th>Name of Cat</th>
+                        <th>Status</th>
+                        <th>Approval Date</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($approved_requests as $request)
+                        <tr>
+                            <td><input type="text" class="form-control" name="name" value="{{ $request->name }}" disabled></td>
+                            <td><input type="text" class="form-control" name="address" value="{{ $request->address }}" disabled></td>
+                            <td><input type="text" class="form-control" name="email" value="{{ $request->email }}" disabled></td>
+                            <td><input type="text" class="form-control" name="mobile_phone" value="{{ $request->mobile_phone }}" disabled></td>
+                            <td>
+                                @if($request->valid_id)
+                                    <a href="{{ route('viewValidIds', ['id' => $request->id]) }}" target="_blank" class="btn btn-link">View IDs</a>
+                                @else
+                                    <span>No ID Provided</span>
+                                @endif
+                            </td>
+                            <td><input type="text" class="form-control" name="name_of_cat" value="{{ $request->name_of_cat }}" disabled></td>
+                            <td>
+                                <select class="form-control status-dropdown" name="status" data-id="{{ $request->id }}" disabled>
+                                    <option value="Pending" {{ $request->status == 'Pending' ? 'selected' : '' }}>Pending</option>
+                                    <option value="Approved" {{ $request->status == 'Approved' ? 'selected' : '' }}>Approved</option>
+                                    <option value="Not approved" {{ $request->status == 'Not approved' ? 'selected' : '' }}>Not approved</option>
+                                    <option value="Released" {{ $request->status == 'Released' ? 'selected' : '' }}>Released</option>
+                                </select>
+                            </td>
+                            <td><input type="date" class="form-control" name="approval_date" value="{{ $request->approval_date }}" disabled></td>
+                            <td>
+                                <button class="btn btn-sm btn-primary edit-entry" data-id="{{ $request->id }}">
+                                    <i class="fas fa-edit"></i> Edit
+                                </button>
+                                <button class="btn btn-sm btn-success save-status" data-id="{{ $request->id }}" style="display:none;">
+                                    <i class="fas fa-save"></i> Save
+                                </button>
+                                <a href="{{ route('adoption-request.pdf', $request->id) }}" class="btn btn-sm btn-info">Download PDF</a>
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
         </div>
-    </table>
 
-    <h2>Approved Requests</h2>
-    <table class="table table-bordered table-striped table-responsive">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Address</th>
-                <th>Email</th>
-                <th>Mobile Phone</th>
-                <th>Valid ID</th>
-                <th>Name of Cat</th>
-                <th>Status</th>
-                <th>Approval Date</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach($approved_requests as $request)
-                <tr>
-                    <td><input type="text" class="form-control" name="name" value="{{ $request->name }}" disabled></td>
-                    <td><input type="text" class="form-control" name="address" value="{{ $request->address }}" disabled></td>
-                    <td><input type="text" class="form-control" name="email" value="{{ $request->email }}" disabled></td>
-                    <td><input type="text" class="form-control" name="mobile_phone" value="{{ $request->mobile_phone }}" disabled></td>
-                    <td>
-                        @if($request->valid_id)
-                            <a href="{{ route('viewValidIds', ['id' => $request->id]) }}" target="_blank" class="btn btn-link">
-                                View IDs
-                            </a>
-                        @else
-                            <span>No ID Provided</span>
-                        @endif
-                    </td>
-                    <td><input type="text" class="form-control" name="name_of_cat" value="{{ $request->name_of_cat }}" disabled></td>
-                    <td>
-                        <select class="form-control status-dropdown" name="status" data-id="{{ $request->id }}" disabled>
-                            <option value="Pending" {{ $request->status == 'Pending' ? 'selected' : '' }}>Pending</option>
-                            <option value="Approved" {{ $request->status == 'Approved' ? 'selected' : '' }}>Approved</option>
-                            <option value="Not approved" {{ $request->status == 'Not approved' ? 'selected' : '' }}>Not approved</option>
-                            <option value="Released" {{ $request->status == 'Released' ? 'selected' : '' }}>Released</option>
-                        </select>
-                    </td>
-                    <td><input type="date" class="form-control" name="approval_date" value="{{ $request->approval_date }}" disabled></td>
-                    <td>
-                        <button class="btn btn-sm btn-primary edit-entry" data-id="{{ $request->id }}">
-                            <i class="fas fa-edit"></i> Edit
-                        </button>
-                        <button class="btn btn-sm btn-success save-status" data-id="{{ $request->id }}" style="display:none;">
-                            <i class="fas fa-save"></i> Save
-                        </button>
-                        <a href="{{ route('adoption-request.pdf', $request->id) }}" class="btn btn-sm btn-info">Download PDF</a>
-                    </td>
-                </tr>
-            @endforeach
-        </tbody>
-    </table>
+        <!-- Rejected Requests Column -->
+        <div class="col-md-6 scrollable-section">
+            <h2>Rejected Requests</h2>
+            <table class="table table-bordered table-striped table-responsive">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Address</th>
+                        <th>Email</th>
+                        <th>Mobile Phone</th>
+                        <th>Valid ID</th>
+                        <th>Name of Cat</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($rejected_request as $request)
+                        <tr>
+                            <td><input type="text" class="form-control" name="name" value="{{ $request->name }}" disabled></td>
+                            <td><input type="text" class="form-control" name="address" value="{{ $request->address }}" disabled></td>
+                            <td><input type="text" class="form-control" name="email" value="{{ $request->email }}" disabled></td>
+                            <td><input type="text" class="form-control" name="mobile_phone" value="{{ $request->mobile_phone }}" disabled></td>
+                            <td>
+                                @if($request->valid_id)
+                                    <img src="{{ asset('images/' . $request->valid_id) }}" alt="Valid ID" style="max-width: 100px;">
+                                @else
+                                    <a href="{{ asset('images/' . $request->valid_id) }}" target="_blank" class="btn btn-link">Empty</a>
+                                @endif
+                            </td>
+                            <td><input type="text" class="form-control" name="name_of_cat" value="{{ $request->name_of_cat }}" disabled></td>
+                            <td>
+                                <select class="form-control status-dropdown" name="status" data-id="{{ $request->id }}" disabled>
+                                    <option value="Pending" {{ $request->status == 'Pending' ? 'selected' : '' }}>Pending</option>
+                                    <option value="Approved" {{ $request->status == 'Approved' ? 'selected' : '' }}>Approved</option>
+                                    <option value="Not approved" {{ $request->status == 'Not approved' ? 'selected' : '' }}>Not approved</option>
+                                </select>
+                            </td>
+                            <td>
+                                <button class="btn btn-sm btn-primary edit-entry" data-id="{{ $request->id }}">
+                                    <i class="fas fa-edit"></i> Edit
+                                </button>
+                                <button class="btn btn-sm btn-success save-status" data-id="{{ $request->id }}" style="display:none;">
+                                    <i class="fas fa-save"></i> Save
+                                </button>
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 
 <script>
@@ -162,6 +212,46 @@
 </script>
 
 <style>
+
+.row {
+        display: flex;
+        gap: 20px; /* Add spacing between the columns */
+    }
+
+    .col-md-6 {
+        flex: 1; /* Distribute space equally */
+        max-height: 400px; /* Set a height limit */
+        overflow-y: auto; /* Make the content scrollable */
+        background: #ffffff; /* Optional: background color for clarity */
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .scrollable-section h2 {
+        font-size: 1.5em;
+        text-align: center;
+        margin-bottom: 15px;
+        color: #004080;
+    }
+
+    .scrollable-section::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .scrollable-section::-webkit-scrollbar-thumb {
+        background: #004080;
+        border-radius: 4px;
+    }
+
+    .scrollable-section::-webkit-scrollbar-track {
+        background: #f1f1f1;
+    }
+
+    .table {
+        margin-bottom: 0; /* Remove extra space between tables */
+    }
     h2 {
         font-size: 2em;
         font-weight: bold;

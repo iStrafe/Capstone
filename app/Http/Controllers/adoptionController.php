@@ -17,9 +17,11 @@ class adoptionController extends Controller
     public function showAdoptionRequest(){
         $adoption_request = DB::table('adoption_request')->where('status', 'Pending')->paginate(5);
         $approved_requests = DB::table('adoption_request')->where('status', 'Approved')->paginate(5);
+        $rejected_request = DB::table('adoption_request')->where('status', 'Not Approved')->paginate(5);
         return view('admin.adoptionRequest', [
             'adoption_request' => $adoption_request,
-            'approved_requests' => $approved_requests
+            'approved_requests' => $approved_requests,
+            'rejected_request' => $rejected_request
         ]);
     }
     public function showReleased(){
@@ -28,10 +30,10 @@ class adoptionController extends Controller
     }
 
     //Show only rejected requests
-    public function showRejected(){
-        $rejected_request = DB::table('adoption_request')->where('status', 'Not Approved')->paginate(5);
-        return view('admin.rejectedRequest',['rejected_request' => $rejected_request]);
-    }
+    //public function showRejected(){
+       // $rejected_request = DB::table('adoption_request')->where('status', 'Not Approved')->paginate(5);
+        //return view('admin.rejectedRequest',['rejected_request' => $rejected_request]);
+    //}
 
     //Show all data
     public function showMyRequests() {
