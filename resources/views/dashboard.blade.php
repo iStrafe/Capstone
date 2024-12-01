@@ -309,7 +309,7 @@
                 </div>
 
                 <div class="image-preview">
-                    <img src="https://aducats.online/images/1731848759.png" alt="Support our mission">
+                    <img src="https://aducats.online/images/1732147692.png" alt="Support our mission">
                     <video loop muted playsinline>
                         <source src="https://media3.giphy.com/media/t4ujDuOYqa1OoJkwyU/giphy.webm" type="video/webm">
                     </video>
@@ -321,7 +321,7 @@
                 </div>
 
                 <div class="image-preview">
-                    <img src="https://aducats.online/images/1731848858.png" alt="Nice to meet you">
+                    <img src="https://aducats.online/images/1731818343.png" alt="Nice to meet you">
                     <video loop muted playsinline>
                         <source src="https://media2.giphy.com/media/WXB88TeARFVvi/200w.webm" type="video/webm">
                     </video>
