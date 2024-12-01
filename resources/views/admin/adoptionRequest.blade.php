@@ -3,7 +3,7 @@
 @include('admin.adminNavbar')
 
 <div class="container-fluid">
-    <h2>Requests</h2>
+    <h2> Pending Requests</h2>
     <table class="table table-bordered table-striped table-responsive">
         <thead>
             <tr>
@@ -56,7 +56,7 @@
         <!-- Approved Requests Column -->
         <div class="col-md-6 scrollable-section">
             <h2>Approved Requests</h2>
-            <table class="table table-bordered table-striped table-responsive">
+            <table class="table table-bordered table-striped table-responsive gray-header">
                 <thead>
                     <tr>
                         <th>Name</th>
@@ -112,7 +112,7 @@
         <!-- Rejected Requests Column -->
         <div class="col-md-6 scrollable-section">
             <h2>Rejected Requests</h2>
-            <table class="table table-bordered table-striped table-responsive">
+            <table class="table table-bordered table-striped table-responsive gray-header">
                 <thead>
                     <tr>
                         <th>Name</th>
@@ -212,6 +212,12 @@
 </script>
 
 <style>
+
+.table.gray-header th {
+    background-color: #e0f7fa; /* Example: Light blue */
+    color: #006064; /* Example: Dark teal */
+    font-weight: bold;
+}
 
 .row {
         display: flex;
