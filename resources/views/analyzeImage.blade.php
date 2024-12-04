@@ -1,4 +1,5 @@
 @include('Navigationbar')
+@include('admin.cats.create') 
 <style>
     /* From Uiverse.io by akshat-patel28 */ 
         .input-div {
@@ -112,7 +113,9 @@
                     </div><br>
                     <div style="text-align: center;">
                         <button type="submit" class="btn btn-primary" style="color: black;">Analyze Cat</button>
+                        <button type="button" class="btn btn-secondary text-black" data-bs-toggle="modal" data-bs-target="#addCatModal" onclick="fillCatDetails()">Add this cat to Gallery?</button>
                     </div>
+                    
             </form><br>
 
             <div class="container" style="overflow-x: hidden; border: 2px solid rgb(1, 235, 252); padding: 10px; border-radius: 10px; background-color: rgba(0, 0, 0, 0.8); color: white;">
@@ -122,12 +125,13 @@
                     <h2 class="result-title">Analysis Result:</h2>
                     <pre class="result-content">{{ $response['choices'][0]['message']['content'] }}</pre>
                 </div>
+                <input type="hidden" id="aiResponse" value="{{ $response['choices'][0]['message']['content'] }}">
                 @endif
             </div>
 
             
 
-                <!-- Alert upon uplod -->
+                <!-- Alert upon upload -->
             <div style="text-align: center;">
                 <img id="uploadedImage" src="#" alt="Uploaded Image" style="max-width: 100%; height: auto; display: none;">
             </div>
@@ -144,7 +148,29 @@
                 };
                 reader.readAsDataURL(event.target.files[0]);
             }
+
+            function fillCatDetails() {
+                const aiResponse = document.getElementById('aiResponse').value;
+                const colorMatch = aiResponse.match(/Color:\s*(\w+)/i);
+                const breedMatch = aiResponse.match(/Breed:\s*(\w+)/i);
+                const color = colorMatch ? colorMatch[1] : '';
+                const breed = breedMatch ? breedMatch[1] : '';
+
+                document.querySelector('#addCatModal input[name="color"]').value = color.toLowerCase();
+                document.querySelector('#addCatModal input[name="breed"]').value = breed.toLowerCase();
+
+                const uploadedImageSrc = document.getElementById('uploadedImage').src;
+                document.querySelector('#addCatModal img#uploadedImage').src = uploadedImageSrc;
+                document.querySelector('#addCatModal img#uploadedImage').style.display = 'block';
+            }
         </script>
+
+        @if(isset($response))
+            <input type="hidden" id="aiResponse" value="{{ $response['choices'][0]['message']['content'] }}">
+        @endif
+    </div>
+
+</body>
 
 </body>
 </html>

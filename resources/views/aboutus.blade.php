@@ -245,7 +245,7 @@
                     </div>
                 </div>
             </div>
-            <div class="image-section py-5">
+            <div class="imageSection py-5">
                 <img src="images/aducat1.jpg" alt="">
             </div>
         </div>

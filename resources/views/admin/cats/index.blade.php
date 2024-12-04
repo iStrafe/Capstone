@@ -1,12 +1,18 @@
 @include('scripts')
 @include('admin.adminNavbar')
 <style>
+        .section{
+            width: 100%;
+            min-height: 60vh;
+        }
+
     .container{
                 width: 100%;
                 height: 5vh;
                 padding: 0 10%;
                 height: 60vh;
                 padding: 0 8%;
+                padding-top: 1px;
             }
 
             .container h1{
@@ -178,9 +184,9 @@
 <title>Cats list</title>
 <body>
 
-    
 
-    <div class="container">
+    <div class="section">
+        <div class="container">
         <div class="header-container">
             <h1>CAT GALLERY</h1>
             <button type="button" class="btn btn-secondary text-black" data-bs-toggle="modal" data-bs-target="#addCatModal">Add New Cat</button>
@@ -222,6 +228,7 @@
                 </div>
             @endforeach
         </div>
+    </div>
     </div>
 
 @include('admin.cats.create') 
