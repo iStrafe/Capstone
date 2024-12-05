@@ -33,6 +33,11 @@
             </div>
 
             <div class="mb-3">
+              <label for="cat_clip" class="form-label">Cat Video: Below 25MB</label>
+             <input type="file" name="cat_clip" class="form-control" >
+            </div>
+
+            <div class="mb-3">
               <label for="age" class="form-label">Age</label>
               <input type="text" name="age" class="form-control" value="{{ $cat->age }}" required>
             </div>

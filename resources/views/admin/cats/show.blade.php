@@ -7,6 +7,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
+        <!-- Display Cat Image -->
         @if($cat->cat_image)
           <div>
             <img src="{{ asset('images/' . $cat->cat_image) }}" alt="Image of {{ $cat->cat_name }}" style="width: 300px; height: auto;">
@@ -15,6 +16,20 @@
           <p>No image available for {{ $cat->cat_name }}</p>
         @endif
 
+        <!-- Display Cat Video -->
+        @if($cat->cat_clip)
+  <div class="text-center mb-3">
+    <video controls style="width: 100%; max-width: 500px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+      <source src="{{ asset('images/' . $cat->cat_clip) }}" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
+  </div>
+@else
+  <p class="text-center text-muted">No video available for {{ $cat->cat_name }}</p>
+@endif
+
+
+        <!-- Additional Details -->
         <p><strong>Age:</strong> {{ $cat->age }} years</p>
         <p><strong>Color:</strong> {{ $cat->color }}</p>
         <p><strong>Breed:</strong> {{ $cat->breed }}</p>

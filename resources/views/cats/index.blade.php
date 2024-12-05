@@ -83,6 +83,16 @@
                 </div>
                 <div class="modal-body">
                     <img id="catImage" src="" alt="Cat Image" class="img-fluid mb-3">
+                    @if($cat->cat_clip)
+  <div class="text-center mb-3">
+    <video controls style="width: 100%; max-width: 500px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+      <source src="{{ asset('images/' . $cat->cat_clip) }}" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
+  </div>
+@else
+  <p class="text-center text-muted">No video available for {{ $cat->cat_name }}</p>
+@endif
                     <h5 id="catName"></h5>
                     <p id="catDescription"></p>
                     <ul>

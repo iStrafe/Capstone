@@ -41,6 +41,7 @@ class CatinfoController extends Controller
                     'fur_color' => $request->input('fur_color'),
                     'description' => $request->input('description'),
                     'cat_image' => $request->input('cat_image'),
+                    'cat_clip' => $request->input('cat_clip'),
                     'status' => $request->input('status')
                 ];
 

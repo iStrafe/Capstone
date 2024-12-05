@@ -1,6 +1,10 @@
 @include('Navigationbar')
 @include('admin.cats.create') 
 <style>
+        .content .title{
+                    text-transform:uppercase;
+                    font-size: 28px;
+        }
     /* From Uiverse.io by akshat-patel28 */ 
         .input-div {
         position: relative;
@@ -100,7 +104,11 @@
 <body>
 
      <div class="container">
-                <h1 class="title">Upload a Cat Image to Verify</h1>
+        <div class="content">   
+            <div class="title">
+                <h1 class="title">UPLOAD A CAT IMAGE FOR ANALYSIS</h1>
+            </div>
+                
             <form action="{{ route('analyze.image') }}" method="POST" enctype="multipart/form-data" class="form">
                     @csrf
                     <!--<div class="form-group">
@@ -112,58 +120,58 @@
                         <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" stroke-linejoin="round" stroke-linecap="round" viewBox="0 0 24 24" stroke-width="2" fill="none" stroke="currentColor" class="icon"><polyline points="16 16 12 12 8 16"></polyline><line y2="21" x2="12" y1="12" x1="12"></line><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"></path><polyline points="16 16 12 12 8 16"></polyline></svg>
                     </div><br>
                     <div style="text-align: center;">
-                        <button type="submit" class="btn btn-primary" style="color: black;">Analyze Cat</button>
-                        <button type="button" class="btn btn-secondary text-black" data-bs-toggle="modal" data-bs-target="#addCatModal" onclick="fillCatDetails()">Add this cat to Gallery?</button>
-                    </div>
+    <button type="submit" class="btn btn-primary" style="color: black;">Analyze Cat</button>
+    <button type="button" class="btn btn-secondary text-black" data-bs-toggle="modal" data-bs-target="#addCatModal" onclick="fillCatDetails()">Add New Cat</button>
+</div>
                     
-            </form><br>
+</form><br>
 
-            <div class="container" style="overflow-x: hidden; border: 2px solid rgb(1, 235, 252); padding: 10px; border-radius: 10px; background-color: rgba(0, 0, 0, 0.8); color: white;">
-                <h1 class="title py-1">Response</h1>
-                @if(isset($response))
-                <div class="result">
-                    <h2 class="result-title">Analysis Result:</h2>
-                    <pre class="result-content">{{ $response['choices'][0]['message']['content'] }}</pre>
-                </div>
-                <input type="hidden" id="aiResponse" value="{{ $response['choices'][0]['message']['content'] }}">
-                @endif
-            </div>
+<div class="container" style="overflow-x: hidden; border: 2px solid rgb(1, 235, 252); padding: 10px; border-radius: 10px; background-color: rgba(0, 0, 0, 0.8); color: white;">
+    <h1 class="title py-1">Response</h1>
+    @if(isset($response))
+    <div class="result">
+        <h2 class="result-title">Analysis Result:</h2>
+        <pre class="result-content">{{ $response['choices'][0]['message']['content'] }}</pre>
+    </div>
+    <input type="hidden" id="aiResponse" value="{{ $response['choices'][0]['message']['content'] }}">
+    @endif
+</div>
 
-            
+<!-- Alert upon upload -->
+<div style="text-align: center;">
+    <img id="uploadedImage" src="#" alt="Uploaded Image" style="max-width: 50%; height: auto; display: none;">
+    <input type="hidden" id="uploadedImageData">
+</div>
+</div>
 
-                <!-- Alert upon upload -->
-            <div style="text-align: center;">
-                <img id="uploadedImage" src="#" alt="Uploaded Image" style="max-width: 100%; height: auto; display: none;">
-            </div>
-        </div>
-        
-        <script>
-            function previewImage(event) {
-                var reader = new FileReader();
-                reader.onload = function(){
-                    var output = document.getElementById('uploadedImage');
-                    output.src = reader.result;
-                    output.style.display = 'block';
-                    alert('Image uploaded successfully!');
-                };
-                reader.readAsDataURL(event.target.files[0]);
-            }
+<script>
+    function previewImage(event) {
+        var reader = new FileReader();
+        reader.onload = function(){
+            var output = document.getElementById('uploadedImage');
+            output.src = reader.result;
+            output.style.display = 'block';
+            document.getElementById('uploadedImageData').value = reader.result;
+            alert('Image uploaded successfully!');
+        };
+        reader.readAsDataURL(event.target.files[0]);
+    }
 
-            function fillCatDetails() {
-                const aiResponse = document.getElementById('aiResponse').value;
-                const colorMatch = aiResponse.match(/Color:\s*(\w+)/i);
-                const breedMatch = aiResponse.match(/Breed:\s*(\w+)/i);
-                const color = colorMatch ? colorMatch[1] : '';
-                const breed = breedMatch ? breedMatch[1] : '';
+    function fillCatDetails() {
+        const aiResponse = document.getElementById('aiResponse').value;
+        const colorMatch = aiResponse.match(/Color:\s*(\w+)/i);
+        const breedMatch = aiResponse.match(/Breed:\s*(\w+)/i);
+        const color = colorMatch ? colorMatch[1] : '';
+        const breed = breedMatch ? breedMatch[1] : '';
 
-                document.querySelector('#addCatModal input[name="color"]').value = color.toLowerCase();
-                document.querySelector('#addCatModal input[name="breed"]').value = breed.toLowerCase();
+        document.querySelector('#addCatModal input[name="color"]').value = color.toLowerCase();
+        document.querySelector('#addCatModal input[name="breed"]').value = breed.toLowerCase();
 
-                const uploadedImageSrc = document.getElementById('uploadedImage').src;
-                document.querySelector('#addCatModal img#uploadedImage').src = uploadedImageSrc;
-                document.querySelector('#addCatModal img#uploadedImage').style.display = 'block';
-            }
-        </script>
+        const uploadedImageData = document.getElementById('uploadedImageData').value;
+        document.querySelector('#addCatModal img#modalUploadedImage').src = uploadedImageData;
+        document.querySelector('#addCatModal img#modalUploadedImage').style.display = 'block';
+    }
+</script>
 
         @if(isset($response))
             <input type="hidden" id="aiResponse" value="{{ $response['choices'][0]['message']['content'] }}">

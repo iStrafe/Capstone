@@ -15,7 +15,7 @@ class adoptionController extends Controller
 
     //Show Pending and approved requests
     public function showAdoptionRequest(){
-        $adoption_request = DB::table('adoption_request')->where('status', 'Pending')->paginate(5);
+        $adoption_request = DB::table('adoption_request')->paginate(5);
         $approved_requests = DB::table('adoption_request')->where('status', 'Approved')->paginate(5);
         $rejected_request = DB::table('adoption_request')->where('status', 'Not Approved')->paginate(5);
         return view('admin.adoptionRequest', [
