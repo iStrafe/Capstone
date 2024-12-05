@@ -54,7 +54,7 @@ class CatController extends Controller
         $request->validate([
             'cat_name' => 'required|string|max:255',
             'cat_image' => 'nullable|image|mimes:jpeg,png,jpg,gif',
-            'cat_clip' => 'nullable|file|mimes:mp4,mov,avi,wmv,flv|max:10240|',
+            'cat_clip' => 'nullable|file|mimes:mp4,mov,avi,wmv,flv|max:25600|',
             'age' => 'nullable|string|min:0|max:25',
             'color' => 'nullable|string|max:50',
             'breed' => 'nullable|string|max:100',
@@ -78,6 +78,7 @@ class CatController extends Controller
            $videoName = time() . '.' . $request->cat_clip->extension();
            $request->cat_clip->move(public_path('images'), $videoName);
            $input['cat_clip'] = $videoName;
+
         }
 
     
