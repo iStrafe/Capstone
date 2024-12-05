@@ -200,7 +200,19 @@
                         @else
                             <span>No image</span>
                         @endif
+
+                        @if($cat->cat_clip)
+                         <div>
+                         <video controls width="300">
+                          <source src="{{ asset('public\images' . $cat->cat_clip) }}" type="video/mp4">
+                          Your browser does not support the video tag.
+                            </video>
+                           </div>
+                         @else
+                         <p>No video available for {{ $cat->cat_name }}</p>
+                           @endif
                     </div>
+                  
                     <div class="card-content">
                     
                         <div class="heading">{{ $cat->cat_name }}</div>
@@ -209,7 +221,8 @@
                             <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#editCatModal" 
                                 data-cat-id="{{ $cat->id }}" 
                                 data-cat-name="{{ $cat->cat_name }}" 
-                                data-cat-image="{{ $cat->cat_image }}" 
+                                data-cat-image="{{ $cat->cat_image }}"
+                                data-cat-clip="{{ $cat->cat_clip }}"
                                 data-cat-age="{{ $cat->age }}" 
                                 data-cat-color="{{ $cat->color }}" 
                                 data-cat-breed="{{ $cat->breed }}" 
@@ -246,6 +259,7 @@
       var catId = button.getAttribute('data-cat-id');
       var catName = button.getAttribute('data-cat-name');
       var catImage = button.getAttribute('data-cat-image');
+      var cat_clip = button.getAttribute('data-cat-clip');
       var catAge = button.getAttribute('data-cat-age');
       var catColor = button.getAttribute('data-cat-color');
       var catBreed = button.getAttribute('data-cat-breed');
