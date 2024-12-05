@@ -13,28 +13,42 @@ class CatController extends Controller
      */
     public function index()
     {
-        $cats = Cat::all();
+        
+
+        $cats = Cat::whereNull('archived_at')->get();
         return view('admin.cats.index', compact('cats'));
     }
 
     public function index2()
     {
-        $cats = Cat::all();
+        //$cats = Cat::all();
+        //return view('dashboard', compact('cats'));
+
+        $cats = Cat::whereNull('archived_at')->get();
         return view('dashboard', compact('cats'));
     }
     public function index3()
     {
-        $cats = Cat::all();
+        //$cats = Cat::all();
+        //return view('home', compact('cats'));
+
+        $cats = Cat::whereNull('archived_at')->get();
         return view('home', compact('cats'));
     }
     public function index4()
     {
-        $cats = Cat::all();
+        //$cats = Cat::all();
+        //return view('cats.index', compact('cats'));
+
+        $cats = Cat::whereNull('archived_at')->get();
         return view('cats.index', compact('cats'));
     }
     public function adminDashboard()
     {
-        $cats = Cat::all();
+        //$cats = Cat::all();
+       // return view('admin.cats.index', compact('cats'));
+
+        $cats = Cat::whereNull('archived_at')->get();
         return view('admin.cats.index', compact('cats'));
     }
 
@@ -149,5 +163,22 @@ class CatController extends Controller
         return redirect()->route('admin.cats.index');
     }
 
+    //archive
 
+    public function archive(Request $request, Cat $cat)
+    {
+        $cat->archived_at = now();
+        $cat->status = 'ARCHIVED';
+        $cat->save();
+    
+        return redirect()->route('admin.cats.index')->with('success', 'Cat archived successfully.');
+    }
+    
+    public function archived()
+    {
+        $archivedCats = Cat::whereNotNull('archived_at')->get();
+    
+        return view('admin.cats.archived', compact('archivedCats'));
+    }
+    
 }

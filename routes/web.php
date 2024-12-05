@@ -19,6 +19,12 @@ use Illuminate\Support\Facades\Route;
 use Laravel\Socialite\Facades\Socialite;
 use SebastianBergmann\CodeCoverage\Driver\Driver;
 
+//Archived route
+
+Route::patch('/admin/cats/{cat}/archive', [CatController::class, 'archive'])->name('admin.cats.archive');
+Route::get('/admin/cats/archived', [CatController::class, 'archived'])->name('admin.cats.archived');
+
+
 //Contact US route
 Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
 
