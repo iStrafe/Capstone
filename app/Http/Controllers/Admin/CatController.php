@@ -54,6 +54,7 @@ class CatController extends Controller
         $request->validate([
             'cat_name' => 'required|string|max:255',
             'cat_image' => 'nullable|image|mimes:jpeg,png,jpg,gif',
+            'cat_clip' => 'nullable|file|mimes:mp4,mov,avi,wmv,flv|max:10240|',
             'age' => 'nullable|string|min:0|max:25',
             'color' => 'nullable|string|max:50',
             'breed' => 'nullable|string|max:100',
@@ -71,6 +72,14 @@ class CatController extends Controller
             $request->cat_image->move(public_path('images'), $imageName);
             $input['cat_image'] = $imageName;
         }
+
+        // Handle video upload
+        if ($request->hasFile('cat_clip')) {
+           $videoName = time() . '.' . $request->cat_clip->extension();
+           $request->cat_clip->move(public_path('images'), $videoName);
+           $input['cat_clip'] = $videoName;
+        }
+
     
         Cat::create($input);
     
@@ -112,6 +121,7 @@ class CatController extends Controller
             $request->validate([
                 'cat_name' => 'required|string|max:255',
                 'cat_image' => 'nullable|image|mimes:jpeg,png,jpg,gif',
+                'cat_clip' => 'nullable|file|mimes:mp4,mov,avi,wmv,flv|max:10240|',
                 'age' => 'nullable|string|min:0|max:25',
                 'color' => 'nullable|string|max:50',
                 'breed' => 'nullable|string|max:100',
@@ -132,6 +142,12 @@ class CatController extends Controller
                     $fileName = time() . '.' . $request->cat_image->extension();
                     $request->cat_image->move(public_path('images'), $fileName);
                     $cat->cat_image = $fileName;
+                }
+
+                if ($request->hasFile('cat_clip')) {
+                    $videoName = time() . '.' . $request->cat_clip->extension();
+                    $request->cat_clip->move(public_path('images'), $videoName);
+                    $input['cat_clip'] = $videoName;
                 }
 
                 $cat->save();
