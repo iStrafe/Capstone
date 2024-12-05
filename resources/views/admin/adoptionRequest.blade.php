@@ -3,60 +3,69 @@
 @include('admin.adminNavbar')
 
 <div class="container-fluid">
-    <h2> Pending Requests</h2>
-    <table class="table table-bordered table-striped table-responsive">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Address</th>
-                <th>Email</th>
-                <th>Mobile Phone</th>
-                <th>Valid ID</th>
-                <th>Name of Cat</th>
-                <th>Status</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach($adoption_request as $request)
-                <tr>
-                    <td><input type="text" class="form-control" name="name" value="{{ $request->name }}" disabled></td>
-                    <td><input type="text" class="form-control" name="address" value="{{ $request->address }}" disabled></td>
-                    <td><input type="text" class="form-control" name="email" value="{{ $request->email }}" disabled></td>
-                    <td><input type="text" class="form-control" name="mobile_phone" value="{{ $request->mobile_phone }}" disabled></td>
-                    <td>
-                        @if($request->valid_id)
-                            <a href="{{ route('viewValidIds', ['id' => $request->id]) }}" target="_blank" class="btn btn-link">View IDs</a>
-                        @else
-                            <span>No ID Provided</span>
-                        @endif
-                    </td>
-                    <td><input type="text" class="form-control" name="name_of_cat" value="{{ $request->name_of_cat }}" disabled></td>
-                    <td>
-                        <select class="form-control status-dropdown" name="status" data-id="{{ $request->id }}" disabled>
-                            <option value="Pending" {{ $request->status == 'Pending' ? 'selected' : '' }}>Pending</option>
-                            <option value="Approved" {{ $request->status == 'Approved' ? 'selected' : '' }}>Approved</option>
-                            <option value="Not approved" {{ $request->status == 'Not approved' ? 'selected' : '' }}>Not approved</option>
-                        </select>
-                    </td>
-                    <td>
-                        <button class="btn btn-sm btn-primary edit-entry" data-id="{{ $request->id }}">
-                            <i class="fas fa-edit"></i> Edit
-                        </button>
-                        <button class="btn btn-sm btn-success save-status" data-id="{{ $request->id }}" style="display:none;">
-                            <i class="fas fa-save"></i> Save
-                        </button>
-                    </td>
-                </tr>
-            @endforeach
-        </tbody>
-    </table>
 
-    <div class="row mt-5">
+        <!-- Sort Buttons -->
+    <div class="mb-3">
+        <button id="sortAsc" class="btn btn-sm btn-success">Sort by name ascending</button>
+        <button id="sortDesc" class="btn btn-sm btn-warning">Sort by name descending</button>
+    </div>
+    
+    <h2> All Requests</h2>
+    <table class="table table-bordered table-striped table-responsive">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Address</th>
+            <th>Email</th>
+            <th>Mobile Phone</th>
+            <th>Valid ID</th>
+            <th>Name of Cat</th>
+            <th>Status</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach($adoption_request as $request)
+        <tr>
+            <td><input type="text" class="form-control" name="name" value="{{ $request->name }}" disabled></td>
+            <td><input type="text" class="form-control" name="address" value="{{ $request->address }}" disabled></td>
+            <td><input type="text" class="form-control" name="email" value="{{ $request->email }}" disabled></td>
+            <td><input type="text" class="form-control" name="mobile_phone" value="{{ $request->mobile_phone }}" disabled></td>
+            <td>
+                @if($request->valid_id)
+                    <a href="{{ route('viewValidIds', ['id' => $request->id]) }}" target="_blank" class="btn btn-link">View IDs</a>
+                @else
+                    <span>No ID Provided</span>
+                @endif
+            </td>
+            <td><input type="text" class="form-control" name="name_of_cat" value="{{ $request->name_of_cat }}" disabled></td>
+            <td>
+                <select class="form-control status-dropdown" name="status" data-id="{{ $request->id }}" disabled>
+                    <option value="Pending" {{ $request->status == 'Pending' ? 'selected' : '' }}>Pending</option>
+                    <option value="Approved" {{ $request->status == 'Approved' ? 'selected' : '' }}>Approved</option>
+                    <option value="Not approved" {{ $request->status == 'Not approved' ? 'selected' : '' }}>Not approved</option>
+                    <option value="Released" {{ $request->status == 'Released' ? 'selected' : '' }}>Released</option>
+                </select>
+            </td>
+            <td>
+                <button class="btn btn-sm btn-primary edit-entry" data-id="{{ $request->id }}">
+                    <i class="fas fa-edit"></i> Edit
+                </button>
+                <button class="btn btn-sm btn-success save-status" data-id="{{ $request->id }}" style="display:none;">
+                    <i class="fas fa-save"></i> Save
+                </button>
+                <a href="{{ route('adoption-request.pdf', $request->id) }}" class="btn btn-sm btn-info">Download PDF</a>
+            </td>
+        </tr>
+        @endforeach
+    </tbody>
+</table>
+
+    <div class="container-fluid">
         <!-- Approved Requests Column -->
-        <div class="col-md-6 scrollable-section">
+        
             <h2>Approved Requests</h2>
-            <table class="table table-bordered table-striped table-responsive gray-header">
+            <table class="table table-bordered table-striped table-responsive">
                 <thead>
                     <tr>
                         <th>Name</th>
@@ -110,9 +119,9 @@
         </div>
 
         <!-- Rejected Requests Column -->
-        <div class="col-md-6 scrollable-section">
+        <div class="containerfluid">
             <h2>Rejected Requests</h2>
-            <table class="table table-bordered table-striped table-responsive gray-header">
+            <table class="table table-bordered table-striped table-responsive">
                 <thead>
                     <tr>
                         <th>Name</th>
@@ -209,6 +218,34 @@
             });
         });
     });
+</script>
+
+<script>
+document.getElementById('sortAsc').addEventListener('click', function() {
+    sortTable(true);
+});
+
+document.getElementById('sortDesc').addEventListener('click', function() {
+    sortTable(false);
+});
+
+function sortTable(ascending) {
+    var table = document.querySelector('.table tbody');
+    var rows = Array.from(table.rows);
+
+    rows.sort(function(a, b) {
+        var nameA = a.cells[0].querySelector('input').value.toLowerCase();
+        var nameB = b.cells[0].querySelector('input').value.toLowerCase();
+
+        if (nameA < nameB) return ascending ? -1 : 1;
+        if (nameA > nameB) return ascending ? 1 : -1;
+        return 0;
+    });
+
+    rows.forEach(function(row) {
+        table.appendChild(row);
+    });
+}
 </script>
 
 <style>
