@@ -121,7 +121,7 @@
                     </div><br>
                     <div style="text-align: center;">
     <button type="submit" class="btn btn-primary" style="color: black;">Analyze Cat</button>
-    <button type="button" class="btn btn-secondary text-black" data-bs-toggle="modal" data-bs-target="#addCatModal" onclick="fillCatDetails()">Add New Cat</button>
+    <button type="button" class="btn btn-secondary text-black" data-bs-toggle="modal" data-bs-target="#addCatModal" onclick="fillCatDetails()">Add this Cat to Gellery?</button>
 </div>
                     
 </form><br>

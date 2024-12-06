@@ -4,62 +4,69 @@
 
 <div class="container-fluid">
 
-        <!-- Sort Buttons -->
+    <!-- Sort Buttons -->
     <div class="mb-3">
         <button id="sortAsc" class="btn btn-sm btn-success">Sort by name ascending</button>
         <button id="sortDesc" class="btn btn-sm btn-warning">Sort by name descending</button>
+        <button id="sortDateAsc" class="btn btn-sm btn-success">Sort by date ascending</button>
+        <button id="sortDateDesc" class="btn btn-sm btn-warning">Sort by date descending</button>
     </div>
     
     <h2> All Requests</h2>
     <table class="table table-bordered table-striped table-responsive">
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Address</th>
-            <th>Email</th>
-            <th>Mobile Phone</th>
-            <th>Valid ID</th>
-            <th>Name of Cat</th>
-            <th>Status</th>
-            <th>Action</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach($adoption_request as $request)
-        <tr>
-            <td><input type="text" class="form-control" name="name" value="{{ $request->name }}" disabled></td>
-            <td><input type="text" class="form-control" name="address" value="{{ $request->address }}" disabled></td>
-            <td><input type="text" class="form-control" name="email" value="{{ $request->email }}" disabled></td>
-            <td><input type="text" class="form-control" name="mobile_phone" value="{{ $request->mobile_phone }}" disabled></td>
-            <td>
-                @if($request->valid_id)
-                    <a href="{{ route('viewValidIds', ['id' => $request->id]) }}" target="_blank" class="btn btn-link">View IDs</a>
-                @else
-                    <span>No ID Provided</span>
-                @endif
-            </td>
-            <td><input type="text" class="form-control" name="name_of_cat" value="{{ $request->name_of_cat }}" disabled></td>
-            <td>
-                <select class="form-control status-dropdown" name="status" data-id="{{ $request->id }}" disabled>
-                    <option value="Pending" {{ $request->status == 'Pending' ? 'selected' : '' }}>Pending</option>
-                    <option value="Approved" {{ $request->status == 'Approved' ? 'selected' : '' }}>Approved</option>
-                    <option value="Not approved" {{ $request->status == 'Not approved' ? 'selected' : '' }}>Not approved</option>
-                    <option value="Released" {{ $request->status == 'Released' ? 'selected' : '' }}>Released</option>
-                </select>
-            </td>
-            <td>
-                <button class="btn btn-sm btn-primary edit-entry" data-id="{{ $request->id }}">
-                    <i class="fas fa-edit"></i> Edit
-                </button>
-                <button class="btn btn-sm btn-success save-status" data-id="{{ $request->id }}" style="display:none;">
-                    <i class="fas fa-save"></i> Save
-                </button>
-                <a href="{{ route('adoption-request.pdf', $request->id) }}" class="btn btn-sm btn-info">Download PDF</a>
-            </td>
-        </tr>
-        @endforeach
-    </tbody>
-</table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Address</th>
+                <th>Email</th>
+                <th>Mobile Phone</th>
+                <th>Valid ID</th>
+                <th>Name of Cat</th>
+                <th>Status</th>
+                <th>Approval Date</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody id="tableBody">
+            @foreach($adoption_request as $request)
+            <tr>
+                <td><input type="text" class="form-control" name="name" value="{{ $request->name }}" disabled></td>
+                <td><input type="text" class="form-control" name="address" value="{{ $request->address }}" disabled></td>
+                <td><input type="text" class="form-control" name="email" value="{{ $request->email }}" disabled></td>
+                <td><input type="text" class="form-control" name="mobile_phone" value="{{ $request->mobile_phone }}" disabled></td>
+                <td>
+                    @if($request->valid_id)
+                        <a href="{{ route('viewValidIds', ['id' => $request->id]) }}" target="_blank" class="btn btn-link">View IDs</a>
+                    @else
+                        <span>No ID Provided</span>
+                    @endif
+                </td>
+                <td><input type="text" class="form-control" name="name_of_cat" value="{{ $request->name_of_cat }}" disabled></td>
+                <td>
+                    <select class="form-control status-dropdown" name="status" data-id="{{ $request->id }}" disabled>
+                        <option value="Pending" {{ $request->status == 'Pending' ? 'selected' : '' }}>Pending</option>
+                        <option value="Approved" {{ $request->status == 'Approved' ? 'selected' : '' }}>Approved</option>
+                        <option value="Not approved" {{ $request->status == 'Not approved' ? 'selected' : '' }}>Not approved</option>
+                        <option value="Released" {{ $request->status == 'Released' ? 'selected' : '' }}>Released</option>
+                    </select>
+                </td>
+                <td><input type="date" class="form-control" name="approval_date" value="{{ $request->approval_date }}" disabled></td>
+                <td>
+                    <button class="btn btn-sm btn-primary edit-entry" data-id="{{ $request->id }}">
+                        <i class="fas fa-edit"></i> Edit
+                    </button>
+                    <button class="btn btn-sm btn-success save-status" data-id="{{ $request->id }}" style="display:none;">
+                        <i class="fas fa-save"></i> Save
+                    </button>
+                    <a href="{{ route('adoption-request.pdf', $request->id) }}" class="btn btn-sm btn-info">Download PDF</a>
+                </td>
+            </tr>
+            @endforeach
+        </tbody>
+            <div class="d-flex justify-content-center">
+                {{ $adoption_request->links() }}
+            </div>
+    </table>
 
     <div class="container-fluid">
         <!-- Approved Requests Column -->
@@ -229,6 +236,15 @@ document.getElementById('sortDesc').addEventListener('click', function() {
     sortTable(false);
 });
 
+document.getElementById('sortDateAsc').addEventListener('click', function() {
+    sortTableByDate(true);
+});
+
+document.getElementById('sortDateDesc').addEventListener('click', function() {
+    sortTableByDate(false);
+});
+
+
 function sortTable(ascending) {
     var table = document.querySelector('.table tbody');
     var rows = Array.from(table.rows);
@@ -245,7 +261,32 @@ function sortTable(ascending) {
     rows.forEach(function(row) {
         table.appendChild(row);
     });
+
+    displayTable();
 }
+
+function sortTableByDate(ascending) {
+    var table = document.querySelector('.table tbody');
+    var rows = Array.from(table.rows);
+
+    rows.sort(function(a, b) {
+        var dateA = new Date(a.cells[7].querySelector('input').value);
+        var dateB = new Date(b.cells[7].querySelector('input').value);
+
+        if (dateA < dateB) return ascending ? -1 : 1;
+        if (dateA > dateB) return ascending ? 1 : -1;
+        return 0;
+    });
+
+    rows.forEach(function(row) {
+        table.appendChild(row);
+    });
+
+    displayTable();
+}
+
+// Initial display
+displayTable();
 </script>
 
 <style>

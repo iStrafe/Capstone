@@ -188,7 +188,7 @@
     <div class="section">
         <div class="container">
         <div class="header-container">
-            <h1>CAT GALLERY</h1>
+            <h1>CAT INVENTORY</h1>
             <button type="button" class="btn btn-secondary text-black" data-bs-toggle="modal" data-bs-target="#addCatModal">Add New Cat</button>
         </div>
         <div class="card-grid">
