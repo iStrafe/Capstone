@@ -139,12 +139,12 @@
             <div class="modal-body">
                 <form class="form" action="{{ route('adoption.request') }}" method="post" enctype="multipart/form-data">
                     @csrf
-                    @method('POST')
+                    <input type="hidden" name="cat_id" value="{{ old('cat_id') }}">
                     <p class="title">ADOPTION REQUEST FORM</p>
                     <p class="message"></p>
                     <div class="">
                         <label>
-                            <input class="input" type="text" name="name" placeholder="" required>
+                            <input class="input" type="text" name="name" value="{{ old('name', auth()->user()?->name) }}" placeholder="" required>
                             <span>Name</span>
                         </label>
 
@@ -156,13 +156,13 @@
 
                     <div class="">
                         <label>
-                            <input class="input" type="email" name="email" placeholder="" required>
+                            <input class="input" type="email" name="email" value="{{ old('email', auth()->user()?->email) }}" placeholder="" required>
                             <span>Email</span>
                         </label>
                     </div>
                     
                     <label>
-                        <input class="input" type="text" name="phone" placeholder="" required>
+                        <input class="input" type="text" name="phone" placeholder="">
                         <span>Phone Number (Optional)</span>
                     </label>
 
@@ -177,27 +177,27 @@
 
                     <div class="py-3">
                         <label>
-                            <input class="input py-3" type="text" name="name_of_cat" placeholder="" required>
+                            <input class="input py-3" type="text" id="adopt_cat_name" placeholder="" readonly>
                             <span>Cat Name</span>
                         </label>
 
                         <label>
-                            <input class="input py-3" type="text" name="approximate_age" placeholder="" required>
+                            <input class="input py-3" type="text" id="adopt_cat_age" placeholder="" readonly>
                             <span>Age</span>
                         </label>
 
                         <label>
-                            <input class="input py-3" type="text" name="sex" placeholder="" required>
+                            <input class="input py-3" type="text" id="adopt_cat_sex" placeholder="" readonly>
                             <span>Sex</span>
                         </label>
 
                         <label>
-                            <input class="input py-3" type="text" name="color" placeholder="" required>
+                            <input class="input py-3" type="text" id="adopt_cat_color" placeholder="" readonly>
                             <span>Color</span>
                         </label>
 
                         <label>
-                            <input class="input py-3" type="text" name="breed" placeholder="" required>
+                            <input class="input py-3" type="text" id="adopt_cat_breed" placeholder="" readonly>
                             <span>Breed</span>
                         </label>
 

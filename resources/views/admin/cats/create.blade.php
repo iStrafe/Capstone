@@ -38,7 +38,7 @@
 
             <div class="mb-3">
               <label for="age" class="form-label">Age</label>
-              <input type="text" name="age" class="form-control">
+              <input type="number" name="age" class="form-control" min="0" max="30" step="1" placeholder="Years; leave empty if unknown">
             </div>
 
             <div class="mb-3">

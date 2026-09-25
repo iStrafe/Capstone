@@ -17,7 +17,7 @@
           </div>
         @endif
 
-        <form id="editCatForm" action="{{ route('admin.cats.update', $cat->id) }}" method="POST" enctype="multipart/form-data">
+        <form id="editCatForm" action="{{ $cat->exists ? route('admin.cats.update', $cat->id) : '' }}" method="POST" enctype="multipart/form-data">
           @csrf
           @method('PUT')
 
@@ -39,7 +39,7 @@
 
             <div class="mb-3">
               <label for="age" class="form-label">Age</label>
-              <input type="text" name="age" class="form-control" value="{{ $cat->age }}" required>
+              <input type="number" name="age" class="form-control" value="{{ $cat->age }}" min="0" max="30" step="1">
             </div>
 
             <div class="mb-3">

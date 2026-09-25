@@ -72,7 +72,7 @@ class OpenAIController extends Controller
         ])->post('https://api.openai.com/v1/chat/completions', $payload);
 
         // Delete the image from storage
-        Storage::delete('public/' . $imagePath);
+        Storage::disk('public')->delete($imagePath);
 
         // Pass the response data to the view
         return view('analyzeImage', ['response' => $response->json()]);

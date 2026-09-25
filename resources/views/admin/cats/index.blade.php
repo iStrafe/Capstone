@@ -204,7 +204,7 @@
                         @if($cat->cat_clip)
                          <div>
                          <video controls width="300">
-                          <source src="{{ asset('public\images' . $cat->cat_clip) }}" type="video/mp4">
+                          <source src="{{ asset('images/' . $cat->cat_clip) }}" type="video/mp4">
                           Your browser does not support the video tag.
                             </video>
                            </div>
@@ -246,8 +246,9 @@
     </div>
 
 @include('admin.cats.create') 
-@include('admin.cats.edit')
-@include('admin.cats.show') 
+{{-- These modals render outside the loop; fall back to an empty cat so an empty inventory still renders. --}}
+@include('admin.cats.edit', ['cat' => $cats->last() ?? new \App\Models\Cat])
+@include('admin.cats.show', ['cat' => $cats->last() ?? new \App\Models\Cat])
 
 </body>
 </html>
@@ -269,7 +270,7 @@
       var catMedicalRecord = button.getAttribute('data-cat-medical-record');
 
       var modal = this;
-      modal.querySelector('form').action = '/admin/cats/' + catId;
+      modal.querySelector('form').action = @json(route('admin.cats.update', '__CAT__')).replace('__CAT__', catId);
       modal.querySelector('input[name="cat_name"]').value = catName;
       modal.querySelector('input[name="age"]').value = catAge;
       modal.querySelector('input[name="color"]').value = catColor;

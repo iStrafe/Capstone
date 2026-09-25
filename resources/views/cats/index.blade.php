@@ -41,6 +41,16 @@
 <body>
     <div class="container mt-5">
         <h1 class="text-center">Meet Our Cats Available for Adoption</h1>
+        @if ($errors->any())
+            <div class="alert alert-danger">
+                <p>Your adoption request was not sent:</p>
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
         <div class="card-container">
             @foreach($cats as $cat)
                 <div class="card cat-card">
@@ -58,13 +68,19 @@
                                 data-color="{{ $cat->color }}"
                                 data-breed="{{ $cat->breed }}"
                                 data-description="{{ $cat->description }}"
+                                data-clip="{{ $cat->cat_clip ? asset('images/' . $cat->cat_clip) : '' }}"
                                 data-image="{{ $cat->cat_image ? asset('images/' . $cat->cat_image) : asset('images/default_cat.png') }}">View Details</button>
+                        @auth
                         <a href="#" class="btn btn-adopt" data-toggle="modal" data-target="#adoptionFormModal"
+                           data-id="{{ $cat->id }}"
                            data-name="{{ $cat->cat_name }}"
                            data-age="{{ $cat->age }}"
                            data-sex="{{ $cat->sex }}"
                            data-color="{{ $cat->color }}"
                            data-breed="{{ $cat->breed }}">Proceed to Adopt</a>
+                        @else
+                        <a href="{{ route('login') }}" class="btn btn-adopt">Log in to adopt</a>
+                        @endauth
                     </div>
                 </div>
             @endforeach
@@ -83,16 +99,13 @@
                 </div>
                 <div class="modal-body">
                     <img id="catImage" src="" alt="Cat Image" class="img-fluid mb-3">
-                    @if($cat->cat_clip)
-  <div class="text-center mb-3">
-    <video controls style="width: 100%; max-width: 500px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
-      <source src="{{ asset('images/' . $cat->cat_clip) }}" type="video/mp4">
-      Your browser does not support the video tag.
-    </video>
-  </div>
-@else
-  <p class="text-center text-muted">No video available for {{ $cat->cat_name }}</p>
-@endif
+                    {{-- Filled per cat by the View Details script; this modal is shared by every card. --}}
+                    <div class="text-center mb-3" id="catVideoWrap" style="display: none;">
+                        <video id="catVideo" controls style="width: 100%; max-width: 500px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                    <p class="text-center text-muted" id="catNoVideo">No video available for this cat</p>
                     <h5 id="catName"></h5>
                     <p id="catDescription"></p>
                     <ul>
@@ -127,22 +140,29 @@
                 document.getElementById('catBreed').innerText = breed;
                 document.getElementById('catDescription').innerText = description;
                 document.getElementById('catImage').src = image;
+                const clip = this.getAttribute('data-clip');
+                const video = document.getElementById('catVideo');
+                video.pause();
+                if (clip) {
+                    video.src = clip;
+                } else {
+                    video.removeAttribute('src');
+                }
+                video.load();
+                document.getElementById('catVideoWrap').style.display = clip ? '' : 'none';
+                document.getElementById('catNoVideo').style.display = clip ? 'none' : '';
             });
         });
 
         document.querySelectorAll('.btn-adopt').forEach(button => {
             button.addEventListener('click', function() {
-                const name = this.getAttribute('data-name');
-                const age = this.getAttribute('data-age');
-                const sex = this.getAttribute('data-sex');
-                const color = this.getAttribute('data-color');
-                const breed = this.getAttribute('data-breed');
-
-                document.querySelector('input[name="name_of_cat"]').value = name;
-                document.querySelector('input[name="approximate_age"]').value = age;
-                document.querySelector('input[name="sex"]').value = sex;
-                document.querySelector('input[name="color"]').value = color;
-                document.querySelector('input[name="breed"]').value = breed;
+                // Only the cat's id is submitted; the other fields just show which cat was picked.
+                document.querySelector('input[name="cat_id"]').value = this.getAttribute('data-id');
+                document.getElementById('adopt_cat_name').value = this.getAttribute('data-name');
+                document.getElementById('adopt_cat_age').value = this.getAttribute('data-age');
+                document.getElementById('adopt_cat_sex').value = this.getAttribute('data-sex');
+                document.getElementById('adopt_cat_color').value = this.getAttribute('data-color');
+                document.getElementById('adopt_cat_breed').value = this.getAttribute('data-breed');
             });
         });
     </script>

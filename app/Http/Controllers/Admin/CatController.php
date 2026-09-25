@@ -2,200 +2,95 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Concerns\StoresPublicImages;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\CatRequest;
 use App\Models\Cat;
-use Illuminate\Http\Request;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Arr;
+use Illuminate\View\View;
 
 class CatController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        
+    use StoresPublicImages;
 
-        $cats = Cat::whereNull('archived_at')->get();
+    public function index(): View
+    {
+        $cats = Cat::available()->get();
+
         return view('admin.cats.index', compact('cats'));
     }
 
-    public function index2()
-    {
-        //$cats = Cat::all();
-        //return view('dashboard', compact('cats'));
-
-        $cats = Cat::whereNull('archived_at')->get();
-        return view('dashboard', compact('cats'));
-    }
-    public function index3()
-    {
-        //$cats = Cat::all();
-        //return view('home', compact('cats'));
-
-        $cats = Cat::whereNull('archived_at')->get();
-        return view('home', compact('cats'));
-    }
-    public function index4()
-    {
-        //$cats = Cat::all();
-        //return view('cats.index', compact('cats'));
-
-        $cats = Cat::whereNull('archived_at')->get();
-        return view('cats.index', compact('cats'));
-    }
-    public function adminDashboard()
-    {
-        //$cats = Cat::all();
-       // return view('admin.cats.index', compact('cats'));
-
-        $cats = Cat::whereNull('archived_at')->get();
-        return view('admin.cats.index', compact('cats'));
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function create(): View
     {
         return view('admin.cats.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function store(CatRequest $request): RedirectResponse
     {
-        $request->validate([
-            'cat_name' => 'required|string|max:255',
-            'cat_image' => 'nullable|image|mimes:jpeg,png,jpg,gif',
-            'cat_clip' => 'nullable|file|mimes:mp4,mov,avi,wmv,flv|max:25600|',
-            'age' => 'nullable|string|min:0|max:25',
-            'color' => 'nullable|string|max:50',
-            'breed' => 'nullable|string|max:100',
-            'sex' => 'required|in:Male,Female',
-        ]);
-    
-        $input = $request->all();
+        // New cats always start Active.
+        $input = Arr::except($request->validated(), ['cat_image', 'cat_clip', 'status']);
 
-        // Set default value for age if not provided
-        $input['age'] = $input['age'] ?? 'Unknown';
-    
-        // Handle image upload
         if ($request->hasFile('cat_image')) {
-            $imageName = time() . '.' . $request->cat_image->extension();
-            $request->cat_image->move(public_path('images'), $imageName);
-            $input['cat_image'] = $imageName;
+            $input['cat_image'] = $this->moveToPublicImages($request->file('cat_image'));
         }
 
-        // Handle video upload
         if ($request->hasFile('cat_clip')) {
-           $videoName = time() . '.' . $request->cat_clip->extension();
-           $request->cat_clip->move(public_path('images'), $videoName);
-           $input['cat_clip'] = $videoName;
-
+            $input['cat_clip'] = $this->moveToPublicImages($request->file('cat_clip'));
         }
 
-    
         Cat::create($input);
-    
+
         return redirect()->route('admin.cats.index')->with('success', 'Pet created successfully.');
     }
 
-    public function openAiRoute(){
-        
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function show(Cat $cat): View
     {
-        $cat = Cat::find($id);
         return view('admin.cats.show', compact('cat'));
     }
-    public function showUser(string $id)
-    {
-        $cat = Cat::find($id);
-        return view('cats.show', compact('cat'));
-    }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    public function edit(Cat $cat): View
     {
-        $cat = Cat::find($id);
         return view('admin.cats.edit', compact('cat'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-        {
-            $request->validate([
-                'cat_name' => 'required|string|max:255',
-                'cat_image' => 'nullable|image|mimes:jpeg,png,jpg,gif',
-                'cat_clip' => 'nullable|file|mimes:mp4,mov,avi,wmv,flv|max:10240|',
-                'age' => 'nullable|string|min:0|max:25',
-                'color' => 'nullable|string|max:50',
-                'breed' => 'nullable|string|max:100',
-                'sex' => 'required|in:Male,Female',
-                'status' => 'required|in:Active,Inactive',
-            ]);
+    public function update(CatRequest $request, Cat $cat): RedirectResponse
+    {
+        $cat->fill(Arr::except($request->validated(), ['cat_image', 'cat_clip']));
 
-                $cat = Cat::findOrFail($id);
-                $cat->cat_name = $request->input('cat_name');
-                $cat->age = $request->input('age', 'Unknown');
-                $cat->color = $request->input('color');
-                $cat->breed = $request->input('breed');
-                $cat->sex = $request->input('sex');
-                $cat->status = $request->input('status');
-                $cat->Medical_Record = $request->input('Medical_Record');
-
-                if ($request->hasFile('cat_image')) {
-                    $fileName = time() . '.' . $request->cat_image->extension();
-                    $request->cat_image->move(public_path('images'), $fileName);
-                    $cat->cat_image = $fileName;
-                }
-
-                if ($request->hasFile('cat_clip')) {
-                    $videoName = time() . '.' . $request->cat_clip->extension();
-                    $request->cat_clip->move(public_path('images'), $videoName);
-                    $input['cat_clip'] = $videoName;
-                }
-
-                $cat->save();
-
-                return redirect()->route('admin.cats.index')->with('success', 'Cat updated successfully');
+        if ($request->hasFile('cat_image')) {
+            $cat->cat_image = $this->moveToPublicImages($request->file('cat_image'));
         }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+        if ($request->hasFile('cat_clip')) {
+            $cat->cat_clip = $this->moveToPublicImages($request->file('cat_clip'));
+        }
+
+        $cat->save();
+
+        return redirect()->route('admin.cats.index')->with('success', 'Cat updated successfully');
+    }
+
+    public function destroy(Cat $cat): RedirectResponse
     {
-        $cat = Cat::find($id);
         $cat->delete();
+
         return redirect()->route('admin.cats.index');
     }
 
-    //archive
-
-    public function archive(Request $request, Cat $cat)
+    public function archive(Cat $cat): RedirectResponse
     {
         $cat->archived_at = now();
         $cat->status = 'ARCHIVED';
         $cat->save();
-    
+
         return redirect()->route('admin.cats.index')->with('success', 'Cat archived successfully.');
     }
-    
-    public function archived()
+
+    public function archived(): View
     {
         $archivedCats = Cat::whereNotNull('archived_at')->get();
-    
+
         return view('admin.cats.archived', compact('archivedCats'));
     }
-    
 }

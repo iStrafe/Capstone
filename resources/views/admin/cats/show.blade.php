@@ -30,7 +30,7 @@
 
 
         <!-- Additional Details -->
-        <p><strong>Age:</strong> {{ $cat->age }} years</p>
+        <p><strong>Age:</strong> {{ $cat->age !== null ? $cat->age.' years' : 'Unknown' }}</p>
         <p><strong>Color:</strong> {{ $cat->color }}</p>
         <p><strong>Breed:</strong> {{ $cat->breed }}</p>
         <p><strong>Sex:</strong> {{ $cat->sex }}</p>
