@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
          Schema::table('adoption_request', function (Blueprint $table) {
-            $table->string('approval_date')->after('date_of_adoption');
+            $table->string('approval_date')->nullable()->after('date_of_adoption');
         });
     }
 
@@ -21,7 +21,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('adoption_requests', function (Blueprint $table) {
+        Schema::table('adoption_request', function (Blueprint $table) {
             $table->dropColumn('approval_date');
         });
     }
