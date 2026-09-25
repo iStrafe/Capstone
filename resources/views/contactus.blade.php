@@ -410,22 +410,20 @@ body {
                 @csrf
                 <h2>Send Message</h2>
 
-                @if(session('success'))
-                    <div class="alert alert-success">{{ session('success') }}</div>
-                @endif
+                @include('partials.flash')
 
                 <div class="input-box">
-                    <input type="text" name="full_name" required>
+                    <input type="text" name="full_name" value="{{ old('full_name') }}" required>
                     <span>Full Name</span>
                 </div>
 
                 <div class="input-box">
-                    <input type="text" name="mobile_number" required>
+                    <input type="text" name="mobile_number" value="{{ old('mobile_number') }}" required>
                     <span>Mobile Number</span>
                 </div>
 
                 <div class="input-box">
-                    <textarea name="message" required></textarea>
+                    <textarea name="message" required>{{ old('message') }}</textarea>
                     <span>Type your Message...</span>
                 </div>
 
