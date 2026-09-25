@@ -193,7 +193,16 @@
         </div>
         <div class="card-grid">
             @foreach($cats as $cat)
-                <div class="card {{ $cat->status == 'Inactive' ? 'inactive' : '' }}" data-bs-toggle="modal" data-bs-target="#showCatModal" data-cat-id="{{ $cat->id }}">
+                <div class="card {{ $cat->status == 'Inactive' ? 'inactive' : '' }}" data-bs-toggle="modal" data-bs-target="#showCatModal" data-cat-id="{{ $cat->id }}"
+                    data-cat-name="{{ $cat->cat_name }}"
+                    data-cat-image-url="{{ $cat->cat_image ? asset('images/' . $cat->cat_image) : '' }}"
+                    data-cat-clip-url="{{ $cat->cat_clip ? asset('images/' . $cat->cat_clip) : '' }}"
+                    data-cat-age="{{ $cat->age !== null ? $cat->age.' years' : 'Unknown' }}"
+                    data-cat-color="{{ $cat->color }}"
+                    data-cat-breed="{{ $cat->breed }}"
+                    data-cat-sex="{{ $cat->sex }}"
+                    data-cat-status="{{ $cat->status }}"
+                    data-cat-medical-record="{{ $cat->Medical_Record }}">
                     <div class="card-image">
                         @if($cat->cat_image)
                             <img src="{{ asset('images/' . $cat->cat_image) }}" alt="Image of {{ $cat->cat_name }}" class="card-img">
@@ -278,6 +287,47 @@
       modal.querySelector('select[name="sex"]').value = catSex;
       modal.querySelector('select[name="status"]').value = catStatus;
       modal.querySelector('input[name="Medical_Record"]').value = catMedicalRecord;
+    });
+
+    // The whole card toggles the View modal, and Bootstrap listens for that in the capture
+    // phase, so stopPropagation on a button cannot stop it. Remember whether the click came
+    // from the card's Edit/Archive buttons and cancel the View modal in that case.
+    var clickFromCardActions = false;
+    window.addEventListener('click', function (event) {
+      clickFromCardActions = !!(event.target.closest && event.target.closest('.card .actions'));
+    }, true);
+
+    // Fill the View modal from the clicked card (it is rendered once, outside the loop).
+    var showCatModal = document.getElementById('showCatModal');
+    showCatModal.addEventListener('show.bs.modal', function (event) {
+      var card = event.relatedTarget;
+      if (clickFromCardActions) {
+        clickFromCardActions = false;
+        event.preventDefault();
+        return;
+      }
+      if (!card) return;
+      var data = function (name) { return card.getAttribute('data-cat-' + name) || ''; };
+      var field = function (name) { return showCatModal.querySelectorAll('[data-show="' + name + '"]'); };
+      var toggle = function (name, hidden) { field(name).forEach(function (el) { el.classList.toggle('d-none', hidden); }); };
+
+      ['name', 'age', 'color', 'breed', 'sex', 'status', 'medical-record'].forEach(function (name) {
+        field(name).forEach(function (el) { el.textContent = data(name); });
+      });
+
+      var imageUrl = data('image-url');
+      var image = field('image')[0];
+      image.src = imageUrl;
+      image.alt = 'Image of ' + data('name');
+      toggle('image-wrap', !imageUrl);
+      toggle('no-image', !!imageUrl);
+
+      var clipUrl = data('clip-url');
+      var clip = field('clip')[0];
+      clip.pause();
+      if (clipUrl) { clip.src = clipUrl; } else { clip.removeAttribute('src'); clip.load(); }
+      toggle('clip-wrap', !clipUrl);
+      toggle('no-clip', !!clipUrl);
     });
   });
 </script>
