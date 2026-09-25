@@ -21,9 +21,11 @@ class CatController extends Controller
         return view('admin.cats.index', compact('cats'));
     }
 
-    public function create(): View
+    // create, show and edit are modals on the index page; their direct URLs
+    // would only render a bare modal fragment, so send the admin to the index.
+    public function create(): RedirectResponse
     {
-        return view('admin.cats.create');
+        return redirect()->route('admin.cats.index');
     }
 
     public function store(CatRequest $request): RedirectResponse
@@ -44,14 +46,14 @@ class CatController extends Controller
         return redirect()->route('admin.cats.index')->with('success', 'Pet created successfully.');
     }
 
-    public function show(Cat $cat): View
+    public function show(Cat $cat): RedirectResponse
     {
-        return view('admin.cats.show', compact('cat'));
+        return redirect()->route('admin.cats.index');
     }
 
-    public function edit(Cat $cat): View
+    public function edit(Cat $cat): RedirectResponse
     {
-        return view('admin.cats.edit', compact('cat'));
+        return redirect()->route('admin.cats.index');
     }
 
     public function update(CatRequest $request, Cat $cat): RedirectResponse

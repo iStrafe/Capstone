@@ -141,13 +141,15 @@ class AdminPagesTest extends TestCase
             ->assertDontSee('Muning');
     }
 
-    public function test_admin_can_view_create_and_edit_cat_pages(): void
+    public function test_direct_create_show_and_edit_cat_urls_redirect_to_the_inventory(): void
     {
         $cat = $this->createCat();
         $admin = $this->admin();
 
-        $this->actingAs($admin)->get(route('admin.cats.create'))->assertOk();
-        $this->actingAs($admin)->get(route('admin.cats.edit', $cat))->assertOk();
+        // These are modals on the index page; the bare fragments are not pages.
+        $this->actingAs($admin)->get(route('admin.cats.create'))->assertRedirect(route('admin.cats.index'));
+        $this->actingAs($admin)->get(route('admin.cats.show', $cat))->assertRedirect(route('admin.cats.index'));
+        $this->actingAs($admin)->get(route('admin.cats.edit', $cat))->assertRedirect(route('admin.cats.index'));
     }
 
     public function test_admin_can_add_a_cat(): void

@@ -102,7 +102,7 @@
 <!-- Sidebar -->
 <div class="sidebar" id="sidebar">
     <div class="logo">
-        <img src="images/adu logo.png" alt="Logo" />
+        <img src="{{ asset('images/adu logo.png') }}" alt="Logo" />
     </div>
     @if(Auth::check() && Auth::user()->role === "admin")
         <a href="{{ url('userDashboard') }}">User Page</a>
@@ -118,8 +118,10 @@
     <a href="{{ url('analyzeImage') }}">Image Analysis</a>
 
     <button type="button" class="btn btn-primary btn-lg donate-btn" data-bs-toggle="modal" data-bs-target="#modalId">Donate</button>
-    @include('payment')
 </div>
+
+{{-- The donate modal must live outside the fixed #sidebar, otherwise the backdrop covers it and locks the page. --}}
+@include('payment')
 
 <!-- Toggle button -->
 <button class="sidebar-toggle-btn" id="toggle-btn">
@@ -160,6 +162,8 @@
             </ul>
         </div>
     </nav>
+
+    @include('partials.flash')
 </div>
 
 <script>
