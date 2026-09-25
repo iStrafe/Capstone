@@ -68,7 +68,7 @@ class OpenAIController extends Controller
         // Send the request to OpenAI API
         $response = Http::withHeaders([
             'Content-Type' => 'application/json',
-            'Authorization' => 'Bearer ' . env('OPENAI_API_KEY'),
+            'Authorization' => 'Bearer ' . config('services.openai.key'),
         ])->post('https://api.openai.com/v1/chat/completions', $payload);
 
         // Delete the image from storage

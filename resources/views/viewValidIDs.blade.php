@@ -25,7 +25,7 @@
             @foreach ($valid_ids as $valid_id)
                 <div class="col-md-4 mb-3">
                     <div class="card">
-                        <img src="{{ asset('images/' . $valid_id) }}" class="card-img-top" alt="Valid ID">
+                        <img src="{{ route('validIdFile', ['filename' => $valid_id]) }}" class="card-img-top" alt="Valid ID">
                         <div class="card-body">
                             <p class="card-text">Valid ID</p>
                         </div>

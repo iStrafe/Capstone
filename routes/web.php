@@ -20,7 +20,7 @@ use Laravel\Socialite\Facades\Socialite;
 use SebastianBergmann\CodeCoverage\Driver\Driver;
 
 //Contact US route
-Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
+Route::post('/contact', [ContactController::class, 'store'])->middleware('throttle:10,1')->name('contact.store');
 
 //Route for adoption process
 Route::get('/cat/{id}', [CatController::class, 'showUser'])->name('cats.show');
@@ -49,7 +49,7 @@ Route::get('dashboard',function(){
 
 //Paymongo Payment
 Route::get('/payment',[PaymentController::class,'paymentView']);
-Route::post('/payment', [PaymentController::class, 'createPayment'])->name('paymongo.create');
+Route::post('/payment', [PaymentController::class, 'createPayment'])->middleware('throttle:10,1')->name('paymongo.create');
 /*
 Route::get('/home',[PaymentController::class,'paymentView']);
 Route::post('/home', [PaymentController::class, 'createPayment'])->name('paymongo.create.home');*/
@@ -105,7 +105,7 @@ Route::get('/feed', function () {
 
 //======= services controllers ======
 Route::get('Services/report',[CatinfoController::class,'reportpage']);
-Route::post('Services/report',[CatinfoController::class,'report'])->name('admin.report');
+Route::post('Services/report',[CatinfoController::class,'report'])->middleware('throttle:10,1')->name('admin.report');
 //Route::get('admintest/create',[CatinfoController::class,'viewReportInformation'])->name('reportinfo.view');
 
 /*
@@ -162,6 +162,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::post('/update-status/{id}', [AdoptionController::class, 'updateStatus']);
 
     Route::get('/view-valid-ids/{id}', [AdoptionController::class, 'viewValidIds'])->name('viewValidIds');
+    Route::get('/valid-ids/{filename}', [AdoptionController::class, 'showValidIdFile'])->name('validIdFile');
 
     //Route for PDF generation
     Route::get('/adoption-request/pdf/{id}', [AdoptionController::class, 'generatePDF'])->name('adoption-request.pdf');
@@ -187,7 +188,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
 
     //Adoption page routes non-admin
     Route::get('/AdoptionForm',[adoptionController::class,'showAdoptionForm'])->name('AdoptionForm');
-    Route::post('/AdoptionForm',[adoptionController::class,'create'])->name('adoption.request');
+    Route::post('/AdoptionForm',[adoptionController::class,'create'])->middleware('throttle:10,1')->name('adoption.request');
 
 
 

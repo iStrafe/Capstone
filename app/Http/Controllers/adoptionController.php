@@ -6,6 +6,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class adoptionController extends Controller
 {
@@ -51,7 +52,7 @@ class adoptionController extends Controller
             'name' => 'required|string|max:255',
             'address' => 'required|string|max:255',
             'email' => 'required|email|max:255',
-            'valid_id.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'valid_id.*' => 'image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
         $data = [
@@ -71,9 +72,8 @@ class adoptionController extends Controller
         $valid_ids = [];
         if ($request->hasFile('valid_id')) {
             foreach ($request->file('valid_id') as $file) {
-                $filename = time() . '_' . $file->getClientOriginalName();
-                $file->move(public_path('images'), $filename);
-                $valid_ids[] = $filename;
+                // IDs are personal documents: keep them off the public disk under a random name.
+                $valid_ids[] = basename($file->store('valid-ids', 'local'));
             }
         }
         $data['valid_id'] = json_encode($valid_ids);
@@ -87,9 +87,26 @@ class adoptionController extends Controller
         public function viewValidIds($id)
         {
             $request = DB::table('adoption_request')->where('id', $id)->first();
-            $valid_ids = json_decode($request->valid_id);
+            abort_if(! $request, 404);
+            $valid_ids = json_decode($request->valid_id) ?: [];
 
-            return view('viewValidIds', compact('valid_ids'));
+            return view('viewValidIDs', compact('valid_ids'));
+        }
+
+        //Serve one uploaded ID to an admin
+        public function showValidIdFile(string $filename)
+        {
+            $filename = basename($filename);
+
+            if (Storage::disk('local')->exists('valid-ids/'.$filename)) {
+                return Storage::disk('local')->response('valid-ids/'.$filename);
+            }
+
+            // IDs uploaded before they moved to private storage still live in public/images.
+            $legacy = public_path('images/'.$filename);
+            abort_unless(is_file($legacy), 404);
+
+            return response()->file($legacy);
         }
 
         //update request status

@@ -28,8 +28,8 @@ class PaymentController extends Controller
         // Convert amount to cents (PayMongo requires the amount in cents)
         $amountInCents = $amount * 100;
 
-        // Load the PayMongo API key from the environment file
-        $secretKey = env('PAYMONGO_SECRET_KEY');
+        // Load the PayMongo API key (read through config so it still works when config is cached)
+        $secretKey = config('services.paymongo.secret_key');
 
         // Correctly format the Authorization header with base64 encoding
         $encodedKey = base64_encode($secretKey);
@@ -64,12 +64,12 @@ class PaymentController extends Controller
 
         } catch (RequestException $e) {
             // Handle API errors
-            if ($e->hasResponse()) {
-                $responseBody = $e->getResponse()->getBody()->getContents();
-                return back()->with('error', 'Error creating payment link: ' . $responseBody);
-            }
+            // Log PayMongo's error body for us; don't show gateway internals to the visitor.
+            Log::error('PayMongo payment link failed', [
+                'response' => $e->hasResponse() ? (string) $e->getResponse()->getBody() : $e->getMessage(),
+            ]);
 
-            return back()->with('error', 'Something went wrong.');
+            return back()->with('error', 'We could not create the payment link. Please try again later.');
         }
     }
    

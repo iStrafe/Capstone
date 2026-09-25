@@ -31,6 +31,7 @@ class AdminRoutesTest extends TestCase
             'released requests' => ['get', '/ReleasedRequest'],
             'update request status' => ['post', '/update-status/1'],
             'valid ids' => ['get', '/view-valid-ids/1'],
+            'valid id file' => ['get', '/valid-ids/front.jpg'],
             'single request pdf' => ['get', '/adoption-request/pdf/1'],
             'all requests pdf' => ['get', '/adoption-requests/pdf'],
             'analyze image form' => ['get', '/analyzeImage'],

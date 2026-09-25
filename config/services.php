@@ -40,4 +40,8 @@ return [
        'key' => env('OPENAI_API_KEY'),
    ],
 
+    'paymongo' => [
+        'secret_key' => env('PAYMONGO_SECRET_KEY'),
+    ],
+
 ];
