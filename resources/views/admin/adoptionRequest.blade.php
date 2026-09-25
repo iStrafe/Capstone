@@ -149,11 +149,7 @@
                             <td><input type="text" class="form-control" name="email" value="{{ $request->email }}" disabled></td>
                             <td><input type="text" class="form-control" name="mobile_phone" value="{{ $request->mobile_phone }}" disabled></td>
                             <td>
-                                @if($request->valid_id)
-                                    <img src="{{ asset('images/' . $request->valid_id) }}" alt="Valid ID" style="max-width: 100px;">
-                                @else
-                                    <a href="{{ asset('images/' . $request->valid_id) }}" target="_blank" class="btn btn-link">Empty</a>
-                                @endif
+                                <a href="{{ route('viewValidIds', ['id' => $request->id]) }}" target="_blank" class="btn btn-link">View IDs</a>
                             </td>
                             <td><input type="text" class="form-control" name="name_of_cat" value="{{ $request->name_of_cat }}" disabled></td>
                             <td>

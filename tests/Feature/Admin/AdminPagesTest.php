@@ -5,7 +5,9 @@ namespace Tests\Feature\Admin;
 use App\Models\Cat;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
@@ -60,6 +62,21 @@ class AdminPagesTest extends TestCase
         $this->createAdoptionRequest(['status' => 'Released']);
 
         $this->actingAs($this->admin())->get($uri)->assertOk();
+    }
+
+    public function test_admin_can_view_uploaded_valid_ids(): void
+    {
+        Storage::fake('local');
+        $path = UploadedFile::fake()->image('front.jpg')->store('valid-ids', 'local');
+        $id = $this->createAdoptionRequest(['valid_id' => json_encode([basename($path)])]);
+        $admin = $this->admin();
+
+        $this->actingAs($admin)->get('/view-valid-ids/'.$id)
+            ->assertOk()
+            ->assertSee(route('validIdFile', ['filename' => basename($path)]), false);
+
+        $this->actingAs($admin)->get('/valid-ids/'.basename($path))->assertOk();
+        $this->actingAs($admin)->get('/valid-ids/missing.jpg')->assertNotFound();
     }
 
     public function test_adoption_requests_page_lists_requests(): void

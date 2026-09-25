@@ -5,29 +5,18 @@ namespace Tests\Feature\Adoption;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class AdoptionRequestTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @var array<int, string> */
-    private array $existingImages = [];
-
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->existingImages = File::glob(public_path('images/*'));
-    }
-
-    protected function tearDown(): void
-    {
-        // The controller moves uploads straight into public/images, so remove anything a test added.
-        File::delete(array_diff(File::glob(public_path('images/*')), $this->existingImages));
-
-        parent::tearDown();
+        Storage::fake('local');
     }
 
     private function validPayload(array $overrides = []): array
@@ -79,7 +68,9 @@ class AdoptionRequestTest extends TestCase
 
         $this->assertCount(2, $validIds);
         foreach ($validIds as $file) {
-            $this->assertFileExists(public_path('images/'.$file));
+            Storage::disk('local')->assertExists('valid-ids/'.$file);
+            $this->assertFileDoesNotExist(public_path('images/'.$file));
+            $this->assertStringNotContainsString('front', $file);
         }
     }
 
@@ -99,6 +90,16 @@ class AdoptionRequestTest extends TestCase
     {
         $response = $this->post('/AdoptionForm', $this->validPayload([
             'valid_id' => [UploadedFile::fake()->create('id.pdf', 10, 'application/pdf')],
+        ]));
+
+        $response->assertSessionHasErrors('valid_id.0');
+        $this->assertSame(0, DB::table('adoption_request')->count());
+    }
+
+    public function test_valid_id_cannot_be_an_svg(): void
+    {
+        $response = $this->post('/AdoptionForm', $this->validPayload([
+            'valid_id' => [UploadedFile::fake()->createWithContent('id.svg', '<svg xmlns="http://www.w3.org/2000/svg"><script>alert(1)</script></svg>')],
         ]));
 
         $response->assertSessionHasErrors('valid_id.0');
