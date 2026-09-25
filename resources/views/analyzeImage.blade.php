@@ -99,7 +99,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Upload Image for Analysis</title>
-    <link rel="stylesheet" href="{{ asset('css/styles.css') }}"> <!-- Link to your CSS file -->
 </head>
 <body>
 
@@ -121,20 +120,24 @@
                     </div><br>
                     <div style="text-align: center;">
     <button type="submit" class="btn btn-primary" style="color: black;">Analyze Cat</button>
-    <button type="button" class="btn btn-secondary text-black" data-bs-toggle="modal" data-bs-target="#addCatModal" onclick="fillCatDetails()">Add this Cat to Gellery?</button>
+    <button type="button" class="btn btn-secondary text-black" data-bs-toggle="modal" data-bs-target="#addCatModal" onclick="fillCatDetails()">Add this Cat to Gallery?</button>
+    <p class="small text-muted mt-2">After an analysis, the Add Cat form fills in the colour and breed; choose the image file again in the form.</p>
 </div>
                     
 </form><br>
 
 <div class="container" style="overflow-x: hidden; border: 2px solid rgb(1, 235, 252); padding: 10px; border-radius: 10px; background-color: rgba(0, 0, 0, 0.8); color: white;">
     <h1 class="title py-1">Response</h1>
-    @if(isset($response))
+    @if(session('error'))
+    <div class="alert alert-danger" role="alert">{{ session('error') }}</div>
+    @endif
+    @isset($analysis)
     <div class="result">
         <h2 class="result-title">Analysis Result:</h2>
-        <pre class="result-content">{{ $response['choices'][0]['message']['content'] }}</pre>
+        <pre class="result-content">{{ $analysis }}</pre>
     </div>
-    <input type="hidden" id="aiResponse" value="{{ $response['choices'][0]['message']['content'] }}">
-    @endif
+    <input type="hidden" id="aiResponse" value="{{ $analysis }}">
+    @endisset
 </div>
 
 <!-- Alert upon upload -->
@@ -158,7 +161,13 @@
     }
 
     function fillCatDetails() {
-        const aiResponse = document.getElementById('aiResponse').value;
+        // Only prefill after an analysis; before that the modal simply opens empty.
+        const el = document.getElementById('aiResponse');
+        if (!el) {
+            return;
+        }
+
+        const aiResponse = el.value;
         const colorMatch = aiResponse.match(/Color:\s*(\w+)/i);
         const breedMatch = aiResponse.match(/Breed:\s*(\w+)/i);
         const color = colorMatch ? colorMatch[1] : '';
@@ -166,16 +175,8 @@
 
         document.querySelector('#addCatModal input[name="color"]').value = color.toLowerCase();
         document.querySelector('#addCatModal input[name="breed"]').value = breed.toLowerCase();
-
-        const uploadedImageData = document.getElementById('uploadedImageData').value;
-        document.querySelector('#addCatModal img#modalUploadedImage').src = uploadedImageData;
-        document.querySelector('#addCatModal img#modalUploadedImage').style.display = 'block';
     }
 </script>
-
-        @if(isset($response))
-            <input type="hidden" id="aiResponse" value="{{ $response['choices'][0]['message']['content'] }}">
-        @endif
     </div>
 
 </body>
