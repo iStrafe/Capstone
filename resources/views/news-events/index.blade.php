@@ -162,7 +162,7 @@
                         </td>
                         <td>
                             <button type="button" class="btn btn-link"><a href="{{ route('news-events.edit', $info->id) }}">Edit</a></button>
-                            <form action="{{ route('news-events.destroy', $info->id) }}" method="POST" style="display:inline">
+                            <form action="{{ route('news-events.destroy', $info->id) }}" method="POST" style="display:inline" onsubmit="return confirm('Delete this event?')">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="btn btn-link">Delete</button>

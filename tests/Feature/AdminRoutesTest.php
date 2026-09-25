@@ -61,7 +61,7 @@ class AdminRoutesTest extends TestCase
     {
         $this->actingAs($this->userWithRole('admin'))
             ->get('/adminDashboard/cats/create')
-            ->assertOk();
+            ->assertRedirect(route('admin.cats.index'));
     }
 
     // Unsaved users keep these tests off the database; the middleware only reads the role.
