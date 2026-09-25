@@ -59,7 +59,8 @@
     }
 </style>
 
-<!-- Idle Detection Script -->
+<!-- Idle Detection Script (signed-in users only: guests have no logout form) -->
+@auth
 <script>
     let idleTime = 0;
 
@@ -70,7 +71,7 @@
         }
     }
 
-    document.onload = resetTimer;
+    window.addEventListener('load', resetTimer);
     document.onmousemove = resetTimer;
     document.onkeypress = resetTimer;
 
@@ -81,6 +82,7 @@
     setInterval(timerIncrement, 60000); // 1 minute
 
 </script>
+@endauth
 
 <nav class="navbar navbar-expand-lg border-bottom border-body" data-bs-theme="dark">
     <div class="container-fluid">

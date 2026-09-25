@@ -133,7 +133,7 @@
             <label>Name </label>
         </div>
         <div class="inputForm">
-            <input id="name" class="input" type="text" name="name" :value="old('name')" required autofocus autocomplete="name">
+            <input id="name" class="input" type="text" name="name" value="{{ old('name') }}" required autofocus autocomplete="name">
             <x-input-error :messages="$errors->get('name')" class="mt-2" />
         </div>
         <!--Email-->
@@ -142,7 +142,7 @@
             <x-input-error :messages="$errors->get('email')" class="" />
         </div>
         <div class="inputForm">
-            <input id="email" class="input" type="email" name="email" :value="old('email')" required autofocus autocomplete="username">
+            <input id="email" class="input" type="email" name="email" value="{{ old('email') }}" required autofocus autocomplete="username">
         </div>
 
         <!--Password-->
