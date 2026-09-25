@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Models\Contact;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -19,6 +21,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // Badge on the admin sidebar's Messages link.
+        View::composer('admin.adminNavbar', function ($view) {
+            $view->with('unhandledMessages', auth()->user()?->role === 'admin' ? Contact::unhandled()->count() : 0);
+        });
     }
 }
