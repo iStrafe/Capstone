@@ -229,6 +229,8 @@
 
     <div class="section py-5">
         <div class="container">
+            {{-- Donation (DONATE popup) errors come back to this page --}}
+            @include('partials.flash')
             <div class="content-section">
                 <div class="title">
                     <h1>ABOUT US</h1>

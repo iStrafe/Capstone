@@ -57,7 +57,8 @@
                     @if($cat->cat_image)
                         <img src="{{ asset('images/' . $cat->cat_image) }}" alt="{{ $cat->cat_name }}">
                     @else
-                        <img src="{{ asset('images/default_cat.png') }}" alt="No Image Available">
+                        {{-- Stand-in picture for cats without a photo --}}
+                        <img src="{{ asset('images/placeholder.png') }}" alt="No Image Available">
                     @endif
                     <div class="card-body">
                         <h5 class="card-title">{{ $cat->cat_name }}</h5>
@@ -69,7 +70,7 @@
                                 data-breed="{{ $cat->breed }}"
                                 data-description="{{ $cat->description }}"
                                 data-clip="{{ $cat->cat_clip ? asset('images/' . $cat->cat_clip) : '' }}"
-                                data-image="{{ $cat->cat_image ? asset('images/' . $cat->cat_image) : asset('images/default_cat.png') }}">View Details</button>
+                                data-image="{{ $cat->cat_image ? asset('images/' . $cat->cat_image) : asset('images/placeholder.png') }}">View Details</button>
                         @auth
                         <a href="#" class="btn btn-adopt" data-toggle="modal" data-target="#adoptionFormModal"
                            data-id="{{ $cat->id }}"
