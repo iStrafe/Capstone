@@ -170,7 +170,7 @@
                             @endforeach
                         </select>
                     </td>
-                    <td><input type="date" class="form-control" name="approval_date" value="{{ $request->approval_date?->format('Y-m-d') }}" disabled></td>
+                    <td><input type="date" class="form-control" name="Release_date" value="{{ $request->Release_date?->format('Y-m-d') }}" disabled></td>
                     <td>
                         <button class="btn btn-sm btn-primary edit-entry" data-id="{{ $request->id }}">
                             <i class="fas fa-edit"></i> Edit

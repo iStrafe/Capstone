@@ -23,13 +23,14 @@
                 <th>Valid ID</th>
                 <th>Name of Cat</th>
                 <th>Status</th>
+                <th>Requested On</th>
                 <th>Approval Date</th>
                 <th>Action</th>
             </tr>
         </thead>
         <tbody id="tableBody">
             @foreach($adoption_request as $request)
-            <tr>
+            <tr data-requested-at="{{ $request->created_at?->toIso8601String() }}">
                 <td><input type="text" class="form-control" name="name" value="{{ $request->name }}" readonly></td>
                 <td><input type="text" class="form-control" name="address" value="{{ $request->address }}" readonly></td>
                 <td><input type="text" class="form-control" name="email" value="{{ $request->email }}" readonly></td>
@@ -49,6 +50,7 @@
                         @endforeach
                     </select>
                 </td>
+                <td><input type="date" class="form-control" name="created_at" value="{{ $request->created_at?->format('Y-m-d') }}" disabled></td>
                 <td><input type="date" class="form-control" name="approval_date" value="{{ $request->approval_date?->format('Y-m-d') }}" disabled></td>
                 <td>
                     <button class="btn btn-sm btn-primary edit-entry" data-id="{{ $request->id }}">
@@ -238,7 +240,7 @@ document.getElementById('sortDateDesc').addEventListener('click', function() {
 
 
 function sortTable(ascending) {
-    var table = document.querySelector('.table tbody');
+    var table = document.getElementById('tableBody');
     var rows = Array.from(table.rows);
 
     rows.sort(function(a, b) {
@@ -253,17 +255,20 @@ function sortTable(ascending) {
     rows.forEach(function(row) {
         table.appendChild(row);
     });
-
-    displayTable();
 }
 
+// Sorts on the date the request was submitted; rows without one count as oldest.
 function sortTableByDate(ascending) {
-    var table = document.querySelector('.table tbody');
+    var table = document.getElementById('tableBody');
     var rows = Array.from(table.rows);
+    var time = function(row) {
+        var value = Date.parse(row.dataset.requestedAt || '');
+        return isNaN(value) ? -Infinity : value;
+    };
 
     rows.sort(function(a, b) {
-        var dateA = new Date(a.cells[7].querySelector('input').value);
-        var dateB = new Date(b.cells[7].querySelector('input').value);
+        var dateA = time(a);
+        var dateB = time(b);
 
         if (dateA < dateB) return ascending ? -1 : 1;
         if (dateA > dateB) return ascending ? 1 : -1;
@@ -273,12 +278,7 @@ function sortTableByDate(ascending) {
     rows.forEach(function(row) {
         table.appendChild(row);
     });
-
-    displayTable();
 }
-
-// Initial display
-displayTable();
 </script>
 
 <style>
