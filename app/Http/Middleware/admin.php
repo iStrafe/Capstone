@@ -26,6 +26,6 @@ class admin
             return $next($request);
         }
 
-        return redirect('/'); // Redirect to home if not admin
+        abort(403); // Logged in but not an admin
     }
 }

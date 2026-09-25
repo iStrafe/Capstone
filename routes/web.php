@@ -19,43 +19,14 @@ use Illuminate\Support\Facades\Route;
 use Laravel\Socialite\Facades\Socialite;
 use SebastianBergmann\CodeCoverage\Driver\Driver;
 
-//Archived route
-
-Route::patch('/admin/cats/{cat}/archive', [CatController::class, 'archive'])->name('admin.cats.archive');
-Route::get('/admin/cats/archived', [CatController::class, 'archived'])->name('admin.cats.archived');
-
-
 //Contact US route
 Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
 
-// User-side routes
-Route::middleware('auth')->group(function () {
-
-    Route::get('/adminDashboard', [CatController::class, 'adminDashboard'])->name('admin.dashboard');
-
-
-
-});
-
 //Route for adoption process
-Route::get('/cat', [CatController::class, 'index'])->name('cats.index');
 Route::get('/cat/{id}', [CatController::class, 'showUser'])->name('cats.show');
 Route::get('/cat/adopt/{id}', [CatController::class, 'adopt'])->name('cats.adopt');
 Route::get('adoptCat', [CatController::class, 'index4'])->name('adoptCat');
-Route::put('/admin/cats/{cat}', [CatController::class, 'update'])->name('admin.cats.update');
 
-
-//Route fo OpenAI image analysis
-// Route to show the image upload form
-Route::get('/analyzeImage', [OpenAIController::class, 'showUploadForm']);
-
-// Route to handle the image analysi
-Route::post('/analyzeImage', [OpenAIController::class, 'analyzeImage'])->name('analyze.image');
-
-//Admin Cat Adoption
-Route::prefix('adminDashboard')->name('admin.')->group(function () {
-    Route::resource('cats', CatController::class);
-});
 
 
 //Route for Users upon login
@@ -132,15 +103,6 @@ Route::get('/feed', function () {
     return view('feed');
 })->name('feed');
 
-//========admin controllers =======
-Route::get('admintestDashboard',[CatinfoController::class,'index'])->name('admin.index');
-Route::get('admintestDashboard',[CatinfoController::class,'create']);
-Route::post('admintestDashboard',[CatinfoController::class,'store'])->name('admin.store');
-Route::get('admintestDashboard',[CatinfoController::class,'viewCatInformation2'])->name('catinfo.view');
-
-Route::get('admintest/search', [CatinfoController::class, 'search'])->name('admin.create');
-
-
 //======= services controllers ======
 Route::get('Services/report',[CatinfoController::class,'reportpage']);
 Route::post('Services/report',[CatinfoController::class,'report'])->name('admin.report');
@@ -186,14 +148,8 @@ Route::middleware('auth')->group(function () {
 //})->middleware(['auth', 'verified'])->name('aboutus');
 
 
-//Adoption page admin view
-Route::middleware('auth')->group(function () {
-    Route::get('/RejectedRequest', [adoptionController::class, 'showRejected'])->name('RejectedRequest');
-    Route::get('/AdoptionRequest', [adoptionController::class, 'showAdoptionRequest'])->name('AdoptionRequest');
-    Route::post('/update-status/{id}', [AdoptionController::class, 'updateStatus']);
-    
-    
-});
+//Public events page; registered before the admin news-events resource so {news_event} doesn't swallow it
+Route::get('/news-events/events', [NewsEventController::class, 'index3'])->name('news-events.index3');
 
 //Admin
 Route::middleware(['auth', 'admin'])->group(function () {
@@ -203,16 +159,30 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/AdoptionRequest', [AdoptionController::class, 'showAdoptionRequest'])->name('AdoptionRequest');
     Route::get('/RejectedRequest', [AdoptionController::class, 'showRejected'])->name('RejectedRequest');
     Route::get('/ReleasedRequest', [AdoptionController::class, 'showReleased'])->name('ReleasedRequest');
+    Route::post('/update-status/{id}', [AdoptionController::class, 'updateStatus']);
+
+    Route::get('/view-valid-ids/{id}', [AdoptionController::class, 'viewValidIds'])->name('viewValidIds');
+
+    //Route for PDF generation
+    Route::get('/adoption-request/pdf/{id}', [AdoptionController::class, 'generatePDF'])->name('adoption-request.pdf');
+    Route::get('/adoption-requests/pdf', [AdoptionController::class, 'generateAllPDF'])->name('adoption-requests.pdf');
+
+    //Admin cats
+    Route::get('/cat', [CatController::class, 'index'])->name('cats.index');
+    Route::patch('/admin/cats/{cat}/archive', [CatController::class, 'archive'])->name('admin.cats.archive');
+    Route::get('/admin/cats/archived', [CatController::class, 'archived'])->name('admin.cats.archived');
+    Route::prefix('adminDashboard')->name('admin.')->group(function () {
+        Route::resource('cats', CatController::class);
+    });
     Route::resource('/adminDashboard', CatController::class);
+
+    //Cat info (admin test dashboard)
+    Route::get('admintestDashboard',[CatinfoController::class,'viewCatInformation2'])->name('catinfo.view');
+    Route::post('admintestDashboard',[CatinfoController::class,'store'])->name('admin.store');
+    Route::get('admintest/search', [CatinfoController::class, 'search'])->name('admin.create');
+
     Route::resource('/news-events', NewsEventController::class);
 });
-
-Route::get('/view-valid-ids/{id}', [AdoptionController::class, 'viewValidIds'])->name('viewValidIds');
-
-
-//Route for PDF generation
-Route::get('/adoption-request/pdf/{id}', [AdoptionController::class, 'generatePDF'])->name('adoption-request.pdf');
-Route::get('/adoption-requests/pdf', [AdoptionController::class, 'generateAllPDF'])->name('adoption-requests.pdf');
     
 
     //Adoption page routes non-admin
@@ -220,11 +190,6 @@ Route::get('/adoption-requests/pdf', [AdoptionController::class, 'generateAllPDF
     Route::post('/AdoptionForm',[adoptionController::class,'create'])->name('adoption.request');
 
 
-
-//News & Events page routes
-Route::resource('news-events', NewsEventController::class);
-
-Route::get('/news-events/events', [NewsEventController::class, 'index3'])->name('news-events.index3');
 
 
 //Service page
