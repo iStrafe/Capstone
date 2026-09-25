@@ -204,7 +204,7 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    alert('Entry updated successfully');
+                    alert(data.message || 'Entry updated successfully');
                     row.querySelectorAll('select').forEach(input => input.disabled = true);
                     row.querySelector('.edit-entry').style.display = 'inline-block';
                     this.style.display = 'none';

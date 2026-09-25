@@ -11,18 +11,16 @@ class ContactController extends Controller
     public function store(Request $request)
     {
         // Validate the form data
-        $request->validate([
+        $validated = $request->validate([
             'full_name' => 'required|string|max:255',
+            // Optional, so the shelter can answer by email from the admin inbox.
+            'email' => 'nullable|email|max:255',
             'mobile_number' => 'required|string|max:15',
             'message' => 'required|string',
         ]);
 
         // Create a new contact entry
-        Contact::create([
-            'full_name' => $request->full_name,
-            'mobile_number' => $request->mobile_number,
-            'message' => $request->message,
-        ]);
+        Contact::create($validated);
 
         // Redirect or return response
         return redirect()->back()->with('success', 'Message sent successfully! Wait for the update');

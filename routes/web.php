@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\CatController as AdminCatController;
+use App\Http\Controllers\Admin\ContactMessageController;
 use App\Http\Controllers\AdoptionController;
 use App\Http\Controllers\CatController;
 use App\Http\Controllers\ContactController;
@@ -67,6 +68,12 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/cat', [AdminCatController::class, 'index'])->name('cats.index');
     Route::patch('/admin/cats/{cat}/archive', [AdminCatController::class, 'archive'])->name('admin.cats.archive');
     Route::get('/admin/cats/archived', [AdminCatController::class, 'archived'])->name('admin.cats.archived');
+    Route::patch('/admin/cats/{cat}/restore', [AdminCatController::class, 'restore'])->name('admin.cats.restore');
+
+    // Messages sent through the Contact Us form
+    Route::get('/admin/messages', [ContactMessageController::class, 'index'])->name('admin.messages.index');
+    Route::patch('/admin/messages/{contact}/handled', [ContactMessageController::class, 'handled'])->name('admin.messages.handled');
+    Route::delete('/admin/messages/{contact}', [ContactMessageController::class, 'destroy'])->name('admin.messages.destroy');
     Route::prefix('adminDashboard')->name('admin.')->group(function () {
         Route::resource('cats', AdminCatController::class);
     });

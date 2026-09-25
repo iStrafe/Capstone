@@ -71,6 +71,11 @@
                                 data-description="{{ $cat->description }}"
                                 data-clip="{{ $cat->cat_clip ? asset('images/' . $cat->cat_clip) : '' }}"
                                 data-image="{{ $cat->cat_image ? asset('images/' . $cat->cat_image) : asset('images/placeholder.png') }}">View Details</button>
+                        @if(in_array($cat->id, $requestedCatIds))
+                        <button type="button" class="btn btn-secondary" style="margin-top: 10px;" disabled>Request sent</button>
+                        @elseif(! $cat->hasRoomForRequests())
+                        <button type="button" class="btn btn-secondary" style="margin-top: 10px;" disabled title="This cat already has {{ \App\Models\Cat::MAX_PENDING_REQUESTS }} adoption requests waiting for a decision">Requests full</button>
+                        @else
                         @auth
                         <a href="#" class="btn btn-adopt" data-toggle="modal" data-target="#adoptionFormModal"
                            data-id="{{ $cat->id }}"
@@ -82,6 +87,7 @@
                         @else
                         <a href="{{ route('login') }}" class="btn btn-adopt">Log in to adopt</a>
                         @endauth
+                        @endif
                     </div>
                 </div>
             @endforeach

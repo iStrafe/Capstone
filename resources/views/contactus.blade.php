@@ -418,6 +418,10 @@ body {
                 </div>
 
                 <div class="input-box">
+                    <input type="email" name="email" value="{{ old('email') }}" placeholder="Email (optional)">
+                </div>
+
+                <div class="input-box">
                     <input type="text" name="mobile_number" value="{{ old('mobile_number') }}" required>
                     <span>Mobile Number</span>
                 </div>

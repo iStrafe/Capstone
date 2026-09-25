@@ -11,7 +11,9 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
 class AdoptionController extends Controller
@@ -45,30 +47,39 @@ class AdoptionController extends Controller
     // Create adoption request
     public function create(StoreAdoptionRequest $request): RedirectResponse
     {
-        $cat = Cat::findOrFail($request->validated('cat_id'));
+        $user = $request->user();
 
-        $valid_ids = [];
-        foreach ($request->file('valid_id', []) as $file) {
-            // IDs are personal documents: keep them off the public disk under a random name.
-            $valid_ids[] = basename($file->store('valid-ids', 'local'));
-        }
+        DB::transaction(function () use ($request, $user) {
+            // Lock the cat and check again, so a double submit or several applicants at once
+            // can't slip past the one-open-request rule or the pending-request cap.
+            $cat = Cat::lockForUpdate()->findOrFail($request->validated('cat_id'));
+            if (($refusal = $cat->requestRefusalFor($user)) !== null) {
+                throw ValidationException::withMessages(['cat_id' => $refusal]);
+            }
 
-        $request->user()->adoptionRequests()->create([
-            'cat_id' => $cat->id,
-            'name' => $request->validated('name'),
-            'address' => $request->validated('address'),
-            'email' => $request->validated('email'),
-            'home_phone' => $request->validated('phone'),
-            'mobile_phone' => $request->validated('phone'),
-            // A copy of the cat's details at the time of the request, for the admin tables and PDFs.
-            'name_of_cat' => $cat->cat_name,
-            'breed' => $cat->breed,
-            'approximate_age' => $cat->age,
-            'sex' => strtolower($cat->sex),
-            'color' => $cat->color,
-            'date_of_adoption' => $request->validated('date_of_adoption'),
-            'valid_id' => $valid_ids,
-        ]);
+            $valid_ids = [];
+            foreach ($request->file('valid_id', []) as $file) {
+                // IDs are personal documents: keep them off the public disk under a random name.
+                $valid_ids[] = basename($file->store('valid-ids', 'local'));
+            }
+
+            $user->adoptionRequests()->create([
+                'cat_id' => $cat->id,
+                'name' => $request->validated('name'),
+                'address' => $request->validated('address'),
+                'email' => $request->validated('email'),
+                'home_phone' => $request->validated('phone'),
+                'mobile_phone' => $request->validated('phone'),
+                // A copy of the cat's details at the time of the request, for the admin tables and PDFs.
+                'name_of_cat' => $cat->cat_name,
+                'breed' => $cat->breed,
+                'approximate_age' => $cat->age,
+                'sex' => strtolower($cat->sex),
+                'color' => $cat->color,
+                'date_of_adoption' => $request->validated('date_of_adoption'),
+                'valid_id' => $valid_ids,
+            ]);
+        });
 
         return redirect()->route('myRequest')->with('success', 'Adoption request submitted successfully.');
     }
@@ -100,16 +111,36 @@ class AdoptionController extends Controller
     {
         $status = $request->enum('status', AdoptionStatus::class);
 
-        $adoptionRequest->status = $status;
-        if ($status === AdoptionStatus::Approved) {
-            $adoptionRequest->approval_date = now();
-        }
-        if ($status === AdoptionStatus::Released) {
-            $adoptionRequest->Release_date = now();
-        }
-        $adoptionRequest->save();
+        $autoRejected = DB::transaction(function () use ($adoptionRequest, $status) {
+            $adoptionRequest->status = $status;
+            if ($status === AdoptionStatus::Approved) {
+                $adoptionRequest->approval_date = now();
+            }
+            if ($status === AdoptionStatus::Released) {
+                $adoptionRequest->Release_date = now();
+            }
+            $adoptionRequest->save();
 
-        return response()->json(['success' => true]);
+            // Once a cat goes home, the other applicants still waiting for it get their answer.
+            if ($status !== AdoptionStatus::Released || $adoptionRequest->cat_id === null) {
+                return 0;
+            }
+
+            return AdoptionRequest::where('cat_id', $adoptionRequest->cat_id)
+                ->whereKeyNot($adoptionRequest->getKey())
+                ->where('status', AdoptionStatus::Pending)
+                ->update(['status' => AdoptionStatus::Rejected]);
+        });
+
+        $message = 'Entry updated successfully.';
+        if ($autoRejected > 0) {
+            $message .= ' '.trans_choice(
+                '{1} The other pending request for this cat was rejected automatically.|[2,*] The other :count pending requests for this cat were rejected automatically.',
+                $autoRejected
+            );
+        }
+
+        return response()->json(['success' => true, 'message' => $message, 'auto_rejected' => $autoRejected]);
     }
 
     // Download one request as PDF

@@ -203,7 +203,8 @@
 
                         <label>
                             <label for="date_of_adoption">Date of Adoption</label>
-                            <input class="input py-3" type="date" name="date_of_adoption" placeholder="" required>
+                            {{-- The day the applicant wants to take the cat home: past days are greyed out (the server checks too). --}}
+                            <input class="input py-3" type="date" name="date_of_adoption" min="{{ today()->toDateString() }}" placeholder="" required>
                         </label>
                     
                     </div>

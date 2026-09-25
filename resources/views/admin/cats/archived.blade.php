@@ -121,6 +121,20 @@
         font-size: 1em;
     }
 
+    .archive-reason {
+        font-size: 0.95em;
+        overflow-wrap: anywhere;
+    }
+
+    /* The reset in the shared scripts partial clears the background of [type=submit] buttons. */
+    .actions .btn {
+        background-color: var(--bs-btn-bg);
+    }
+
+    .actions .btn:hover {
+        background-color: var(--bs-btn-hover-bg);
+    }
+
     /* Header styling */
     .header-container {
         text-align: center;
@@ -188,6 +202,9 @@
         <div class="header-container">
             <h1>Archived Cats</h1>
         </div>
+        @if($archivedCats->isEmpty())
+            <p class="text-center">No archived cats.</p>
+        @endif
         <div class="card-grid">
             @foreach($archivedCats as $cat)
                 <div class="card">
@@ -195,12 +212,33 @@
                         @if($cat->cat_image)
                             <img src="{{ asset('images/' . $cat->cat_image) }}" alt="Image of {{ $cat->cat_name }}" class="card-img">
                         @else
-                            <span>No image</span>
+                            <img src="{{ asset('images/placeholder.png') }}" alt="No image for {{ $cat->cat_name }}" class="card-img">
                         @endif
                     </div>
                     <div class="card-content">
                         <div class="heading">{{ $cat->cat_name }}</div>
-                        <p>Status: {{ $cat->status }}</p>
+                        <p class="mb-1">Status: {{ $cat->status }}</p>
+                        <p class="author mb-1">Archived {{ $cat->archived_at->format('M j, Y') }}</p>
+                        <p class="archive-reason">
+                            <strong>Reason:</strong>
+                            @if(filled($cat->archive_reason))
+                                {{ $cat->archive_reason }}
+                            @else
+                                <span class="text-muted">No reason given</span>
+                            @endif
+                        </p>
+                        <div class="actions">
+                            <form action="{{ route('admin.cats.restore', $cat) }}" method="POST" style="display:inline">
+                                @csrf
+                                @method('PATCH')
+                                <button type="submit" class="btn btn-success">Restore</button>
+                            </form>
+                            <form action="{{ route('admin.cats.destroy', $cat) }}" method="POST" style="display:inline" onsubmit="return confirm('Delete this cat for good? Its adoption requests are kept, but the cat and its details cannot be restored.')">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-danger">Delete</button>
+                            </form>
+                        </div>
                     </div>
                 </div>
             @endforeach

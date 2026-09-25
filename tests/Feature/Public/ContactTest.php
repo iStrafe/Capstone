@@ -25,6 +25,29 @@ class ContactTest extends TestCase
         $this->assertSame(1, Contact::count());
     }
 
+    public function test_contact_form_takes_an_optional_email_for_the_admin_inbox(): void
+    {
+        $this->get(route('contactus'))->assertOk()->assertSee('name="email"', false);
+
+        $this->post(route('contact.store'), [
+            'full_name' => 'Juan Dela Cruz',
+            'email' => 'juan@example.com',
+            'mobile_number' => '09171234567',
+            'message' => 'Hello',
+        ])->assertSessionHasNoErrors();
+
+        $this->post(route('contact.store'), [
+            'full_name' => 'Maria Clara',
+            'email' => 'not-an-email',
+            'mobile_number' => '09171234567',
+            'message' => 'Hello',
+        ])->assertSessionHasErrors('email');
+
+        $contact = Contact::sole();
+        $this->assertSame('juan@example.com', $contact->email);
+        $this->assertNull($contact->handled_at);
+    }
+
     public function test_contact_form_shows_validation_errors_and_keeps_the_input(): void
     {
         $this->from(route('contactus'))

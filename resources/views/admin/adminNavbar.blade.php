@@ -114,6 +114,11 @@
     <a href="{{ route('admin.cats.archived') }}">View Archived Cats</a>
     <a href="{{ url('adminDashboard') }}">Cats</a>
     <a href="{{ Auth::check() && Auth::user()->role === 'admin' ? url('news-events') : url('events') }}">News / Events</a>
+    <a href="{{ route('admin.messages.index') }}">Messages
+        @if($unhandledMessages ?? 0)
+            <span class="badge rounded-pill bg-danger ms-1" title="Messages not handled yet">{{ $unhandledMessages }}</span>
+        @endif
+    </a>
     <a href="{{ url('ContactUs') }}">Contact Us</a>
     <a href="{{ url('analyzeImage') }}">Image Analysis</a>
 
