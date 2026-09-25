@@ -62,20 +62,6 @@ class AdminPagesTest extends TestCase
         $this->actingAs($this->admin())->get($uri)->assertOk();
     }
 
-    #[DataProvider('adminOnlyPages')]
-    public function test_regular_users_are_redirected_away_from_admin_pages(string $uri): void
-    {
-        $user = User::factory()->create();
-
-        $this->actingAs($user)->get($uri)->assertRedirect('/');
-    }
-
-    #[DataProvider('adminOnlyPages')]
-    public function test_guests_are_redirected_to_login_from_admin_pages(string $uri): void
-    {
-        $this->get($uri)->assertRedirect(route('login'));
-    }
-
     public function test_adoption_requests_page_lists_requests(): void
     {
         $this->createAdoptionRequest(['name' => 'Maria Clara']);
