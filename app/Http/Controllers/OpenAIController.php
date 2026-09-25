@@ -2,13 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class OpenAIController extends Controller
 {
+    private const FAILURE_MESSAGE = 'Image analysis is unavailable right now. Please try again later.';
+
      // Show the image upload form
     public function showUploadForm()
     {
@@ -23,13 +26,20 @@ class OpenAIController extends Controller
             'image' => 'required|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
+        $apiKey = config('services.openai.key');
+
+        if (blank($apiKey)) {
+            Log::warning('Image analysis skipped: OPENAI_API_KEY is not set');
+
+            return back()->with('error', self::FAILURE_MESSAGE);
+        }
+
         // Store the uploaded image
         $image = $request->file('image');
         $imagePath = $image->store('uploads', 'public');
-        $imageUrl = asset('storage/' . $imagePath);
 
         // Encode the image to base64
-        $base64Image = base64_encode(file_get_contents(storage_path('app/public/' . $imagePath)));
+        $base64Image = base64_encode(Storage::disk('public')->get($imagePath));
 
         // Prepare the payload for OpenAI API
         $payload = [
@@ -65,16 +75,34 @@ class OpenAIController extends Controller
             "max_tokens" => 2000
         ];
 
-        // Send the request to OpenAI API
-        $response = Http::withHeaders([
-            'Content-Type' => 'application/json',
-            'Authorization' => 'Bearer ' . config('services.openai.key'),
-        ])->post('https://api.openai.com/v1/chat/completions', $payload);
+        // Send the request to OpenAI API; the upload is removed whatever happens
+        $response = null;
 
-        // Delete the image from storage
-        Storage::disk('public')->delete($imagePath);
+        try {
+            $response = Http::withToken($apiKey)
+                ->acceptJson()
+                ->timeout(30)
+                ->post('https://api.openai.com/v1/chat/completions', $payload);
+        } catch (ConnectionException $e) {
+            Log::warning('Image analysis failed: could not connect to OpenAI', ['message' => $e->getMessage()]);
+        } finally {
+            Storage::disk('public')->delete($imagePath);
+        }
 
-        // Pass the response data to the view
-        return view('analyzeImage', ['response' => $response->json()]);
+        $analysis = data_get($response?->json(), 'choices.0.message.content');
+
+        if (! $response || $response->failed() || ! is_string($analysis) || $analysis === '') {
+            if ($response) {
+                Log::warning('Image analysis failed', [
+                    'status' => $response->status(),
+                    'response' => $response->body(),
+                ]);
+            }
+
+            return back()->with('error', self::FAILURE_MESSAGE);
+        }
+
+        // Pass only the analysis text to the view
+        return view('analyzeImage', ['analysis' => $analysis]);
     }
 }
