@@ -252,16 +252,14 @@
 </head>
 <body>
 
- <!-- Adoption contract modal-->
-        <div data-bs-theme="dark">
-            @include('Services.adoptContract')
-        </div>
+ <!-- Adoption contract modal comes from Navigationbar (included above) -->
             
         <!-- Masthead -->
         <div class="mast-header py-1">
             <div class="main-container">
             <div class="image-preview">
-                    <img src="https://scontent.fmnl30-3.fna.fbcdn.net/v/t1.15752-9/467474751_937653994952718_4473491335332974707_n.png?_nc_cat=105&ccb=1-7&_nc_sid=9f807c&_nc_eui2=AeGlh9F1gZrdZiC1hVjuKGi_fSgS73JsVzB9KBLvcmxXMAYlnE1FsHvEboJxiI77YemdwOk0zyklY2rSNK1dPdiL&_nc_ohc=gsyOSDjx5AEQ7kNvgGAsUJj&_nc_zt=23&_nc_ht=scontent.fmnl30-3.fna&oh=03_Q7cD1QENp_nA26yYR7VSyvbJ88HDtjrDXO48dbO3F58FGo6o2g&oe=67698B65" alt="Adopt a cat">
+                    {{-- Stand-in picture until the real banner image is supplied --}}
+                    <img src="{{ asset('images/placeholder.png') }}" alt="Adopt a cat">
                     <video loop muted playsinline>
                         <source src="https://media.giphy.com/media/gVsmn4qdyBn1Bra2tN/giphy.webm" type="video/webm">
                     </video>
