@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 use App\Models\NewsEvent; 
 
 use App\Http\Controllers\Concerns\StoresPublicImages;
-use Illuminate\Http\Request;
+use App\Http\Requests\Admin\NewsEventRequest;
 
 class NewsEventController extends Controller
 {
@@ -30,28 +30,18 @@ class NewsEventController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(NewsEventRequest $request)
     {
-        $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'required',
-            'event_date' => 'required|date',
-            'eventimage' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-        ]);
-    
-        $data = $request->only(['title', 'description', 'event_date']);
-    
+        $data = $request->safe()->only(['title', 'description', 'event_date']);
+
         if ($request->hasFile('eventimage')) {
             $data['eventimage'] = $this->moveToPublicImages($request->file('eventimage'));
         }
-    
-        // Save the event data (including image filename)
+
         NewsEvent::create($data);
-    
+
         return redirect()->route('news-events.index')->with('success', 'Event created successfully');
     }
-    
-    
 
     /**
      * Display the specified resource.
@@ -78,27 +68,19 @@ public function show($id)
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $id)
-
-{
-    $request->validate([
-        'title' => 'required|string|max:255',
-        'description' => 'required',
-        'event_date' => 'required|date',
-        'eventimage' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-    ]);
-
+    public function update(NewsEventRequest $request, $id)
+    {
         $renew = NewsEvent::findOrFail($id);
-        $renew->fill($request->only(['title', 'description', 'event_date']));
+        $renew->fill($request->safe()->only(['title', 'description', 'event_date']));
 
         if ($request->hasFile('eventimage')) {
             $renew->eventimage = $this->moveToPublicImages($request->file('eventimage'));
         }
 
         $renew->save();
-        return redirect()->route('news-events.index')->with('success', 'Pet updated successfully.');
-}
 
+        return redirect()->route('news-events.index')->with('success', 'Event updated successfully.');
+    }
 
     /**
      * Remove the specified resource from storage.

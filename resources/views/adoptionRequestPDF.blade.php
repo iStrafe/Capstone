@@ -41,7 +41,7 @@
         </tr>
         <tr>
             <th>Valid ID</th>
-            <td>{{ $request->valid_id }}</td>
+            <td>{{ count($request->valid_id ?? []) }} file(s)</td>
         </tr>
         <tr>
             <th>Name of Cat</th>

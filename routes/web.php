@@ -1,204 +1,78 @@
 <?php
 
-use App\Http\Controllers\Auth\AuthenticatedSessionController;
-use App\Http\Controllers\Admin\CatController;
-use App\Http\Controllers\adoptionController;
-use App\Http\Controllers\CatinfoController;
+use App\Http\Controllers\Admin\CatController as AdminCatController;
+use App\Http\Controllers\AdoptionController;
+use App\Http\Controllers\CatController;
 use App\Http\Controllers\ContactController;
-use App\Http\Controllers\DonationController;
 use App\Http\Controllers\GoogleAuthController;
-use App\Http\Controllers\PaymentController;
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\serviceController;
-use App\Http\Controllers\EventsController;
 use App\Http\Controllers\NewsEventController;
 use App\Http\Controllers\OpenAIController;
-use GuzzleHttp\Psr7\Request;
-use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
-use Laravel\Socialite\Facades\Socialite;
-use SebastianBergmann\CodeCoverage\Driver\Driver;
 
-//Contact US route
-Route::post('/contact', [ContactController::class, 'store'])->middleware('throttle:10,1')->name('contact.store');
+// Public pages
+Route::get('/', [CatController::class, 'home'])->name('home');
+Route::get('adoptCat', [CatController::class, 'index'])->name('adoptCat');
+Route::get('/cat/{cat}', [CatController::class, 'show'])->whereNumber('cat')->name('cats.show');
 
-//Route for adoption process
-Route::get('/cat/{id}', [CatController::class, 'showUser'])->name('cats.show');
-Route::get('/cat/adopt/{id}', [CatController::class, 'adopt'])->name('cats.adopt');
-Route::get('adoptCat', [CatController::class, 'index4'])->name('adoptCat');
-
-
-
-//Route for Users upon login
-Route::get('userDashboard', [CatController::class, 'index2'])->middleware(['auth'])->name('dashboard');
-
-
-//Home Route
-Route::get('/', [CatController::class, 'index3'])->name('home');
-
-/*
-Route::get('dashboard',function(){
-    if(!Auth::user()){
-        redirect('/');
-    }
-    return view('dashboard');
-   
-})->middleware(['auth'])->name('dashboard');*/
-
-
-
-//Paymongo Payment
-Route::get('/payment',[PaymentController::class,'paymentView']);
-Route::post('/payment', [PaymentController::class, 'createPayment'])->middleware('throttle:10,1')->name('paymongo.create');
-/*
-Route::get('/home',[PaymentController::class,'paymentView']);
-Route::post('/home', [PaymentController::class, 'createPayment'])->name('paymongo.create.home');*/
-
-//Google Authentication
-Route::get('auth/google/redirect', [GoogleAuthController::class, 'redirect'])->name('google-auth');
-Route::get('auth/google/callbacks', [GoogleAuthController::class,'callbackGoogle']);
-
-//Session Timeout route
-Route::group(['middleware' => ['web', \App\Http\Middleware\SessionTimeout::class]], function () {
-    Route::get('/home', function () {
-        return view('home');
-    });
-});
-
-//Rout for logout
-Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
-
-//Route for Image verification
-
-//test route
-Route::get('/test', function () {
-    return view('index');
-});
-
-//Adoption request page
-//Route::get('myRequest', function () {
-   // return view('myRequest');
-//})->middleware(['auth', 'verified']);
-
-//Route::get('myRequest', [AdoptionController::class, 'showMyRequests'])->name('myRequest');
-
-
-//About us Route
 Route::get('/aboutus', function () {
     return view('aboutus');
 })->name('aboutus');
 
-//Events Route
-Route::get('/events' , [NewsEventController::class,'index3'], function () {
-    return view('news-events.events');
-})->name('news-events.events');
-
-//Contact page route
 Route::get('/ContactUs', function () {
     return view('contactus');
 })->name('contactus');
+Route::post('/contact', [ContactController::class, 'store'])->middleware('throttle:10,1')->name('contact.store');
 
-//Feed page route
-Route::get('/feed', function () {
-    return view('feed');
-})->name('feed');
+Route::get('/events', [NewsEventController::class, 'index3'])->name('news-events.events');
+// Registered before the admin news-events resource so {news_event} doesn't swallow it
+Route::get('/news-events/events', [NewsEventController::class, 'index3'])->name('news-events.index3');
 
-//======= services controllers ======
-Route::get('Services/report',[CatinfoController::class,'reportpage']);
-Route::post('Services/report',[CatinfoController::class,'report'])->middleware('throttle:10,1')->name('admin.report');
-//Route::get('admintest/create',[CatinfoController::class,'viewReportInformation'])->name('reportinfo.view');
+// PayMongo donation
+Route::get('/payment', [PaymentController::class, 'paymentView']);
+Route::post('/payment', [PaymentController::class, 'createPayment'])->middleware('throttle:10,1')->name('paymongo.create');
 
-/*
+// Google Authentication
+Route::get('auth/google/redirect', [GoogleAuthController::class, 'redirect'])->name('google-auth');
+Route::get('auth/google/callbacks', [GoogleAuthController::class, 'callbackGoogle']);
+
+// Signed-in users
 Route::middleware('auth')->group(function () {
+    Route::get('userDashboard', [CatController::class, 'dashboard'])->name('dashboard');
 
-    
-    Route::get('dashboard',[CatinfoController::class,'viewCatInformation'])->name('dashboard');
-    
-   
-});*/
+    // Adoption requests need an account so they can be tied to the applicant
+    Route::post('/AdoptionForm', [AdoptionController::class, 'create'])->middleware('throttle:10,1')->name('adoption.request');
+    Route::get('/myRequest', [AdoptionController::class, 'showMyRequests'])->name('myRequest');
 
-
-//Testing route
-Route::get('/homecopy', function () {
-    return view('homecopy');
-});
-
-
-// ====== logged-in user homepage
-//Route::get('/home', function () {
-    //return view('dashboard');
-//})->middleware(['auth', 'verified'])->name('dashboard');
-
-//Authentication - User profile management 
-Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-
-
-
-
-//============= Navbar Routes =============== 
-
-//About-us page
-//Route::get('/aboutus', function () {
-   // return view('aboutus');
-//})->middleware(['auth', 'verified'])->name('aboutus');
-
-
-//Public events page; registered before the admin news-events resource so {news_event} doesn't swallow it
-Route::get('/news-events/events', [NewsEventController::class, 'index3'])->name('news-events.index3');
-
-//Admin
+// Admin
 Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/analyzeImage', [OpenAIController::class, 'showUploadForm']);
     Route::post('/analyzeImage', [OpenAIController::class, 'analyzeImage'])->name('analyze.image');
 
     Route::get('/AdoptionRequest', [AdoptionController::class, 'showAdoptionRequest'])->name('AdoptionRequest');
-    Route::get('/RejectedRequest', [AdoptionController::class, 'showRejected'])->name('RejectedRequest');
     Route::get('/ReleasedRequest', [AdoptionController::class, 'showReleased'])->name('ReleasedRequest');
-    Route::post('/update-status/{id}', [AdoptionController::class, 'updateStatus']);
+    Route::post('/update-status/{adoptionRequest}', [AdoptionController::class, 'updateStatus'])->name('adoption-request.status');
 
-    Route::get('/view-valid-ids/{id}', [AdoptionController::class, 'viewValidIds'])->name('viewValidIds');
+    Route::get('/view-valid-ids/{adoptionRequest}', [AdoptionController::class, 'viewValidIds'])->name('viewValidIds');
     Route::get('/valid-ids/{filename}', [AdoptionController::class, 'showValidIdFile'])->name('validIdFile');
+    Route::get('/adoption-request/pdf/{adoptionRequest}', [AdoptionController::class, 'generatePDF'])->name('adoption-request.pdf');
 
-    //Route for PDF generation
-    Route::get('/adoption-request/pdf/{id}', [AdoptionController::class, 'generatePDF'])->name('adoption-request.pdf');
-    Route::get('/adoption-requests/pdf', [AdoptionController::class, 'generateAllPDF'])->name('adoption-requests.pdf');
-
-    //Admin cats
-    Route::get('/cat', [CatController::class, 'index'])->name('cats.index');
-    Route::patch('/admin/cats/{cat}/archive', [CatController::class, 'archive'])->name('admin.cats.archive');
-    Route::get('/admin/cats/archived', [CatController::class, 'archived'])->name('admin.cats.archived');
+    // Cat inventory
+    Route::get('/adminDashboard', [AdminCatController::class, 'index']);
+    Route::get('/cat', [AdminCatController::class, 'index'])->name('cats.index');
+    Route::patch('/admin/cats/{cat}/archive', [AdminCatController::class, 'archive'])->name('admin.cats.archive');
+    Route::get('/admin/cats/archived', [AdminCatController::class, 'archived'])->name('admin.cats.archived');
     Route::prefix('adminDashboard')->name('admin.')->group(function () {
-        Route::resource('cats', CatController::class);
+        Route::resource('cats', AdminCatController::class);
     });
-    Route::resource('/adminDashboard', CatController::class);
-
-    //Cat info (admin test dashboard)
-    Route::get('admintestDashboard',[CatinfoController::class,'viewCatInformation2'])->name('catinfo.view');
-    Route::post('admintestDashboard',[CatinfoController::class,'store'])->name('admin.store');
-    Route::get('admintest/search', [CatinfoController::class, 'search'])->name('admin.create');
 
     Route::resource('/news-events', NewsEventController::class);
 });
-    
-
-    //Adoption page routes non-admin
-    Route::get('/AdoptionForm',[adoptionController::class,'showAdoptionForm'])->name('AdoptionForm');
-    Route::post('/AdoptionForm',[adoptionController::class,'create'])->middleware('throttle:10,1')->name('adoption.request');
-
-
-
-
-//Service page
-/*
-Route::group(['prefix' => 'service'],function(){
-
-    Route::get('/',[serviceController::class,'showServices']);
-
-})->middleware(['auth', 'verified'])->name('services');*/
 
 require __DIR__.'/auth.php';

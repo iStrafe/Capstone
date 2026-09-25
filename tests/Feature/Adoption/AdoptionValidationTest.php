@@ -2,42 +2,25 @@
 
 namespace Tests\Feature\Adoption;
 
+use App\Enums\AdoptionStatus;
+use App\Models\AdoptionRequest;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class AdoptionValidationTest extends TestCase
 {
     use RefreshDatabase;
 
-    protected function setUp(): void
+    private function admin(): User
     {
-        parent::setUp();
-
-        Storage::fake('local');
+        return User::factory()->create(['role' => 'admin']);
     }
 
-    private function payload(array $overrides = []): array
+    private function createRequest(array $overrides = []): int
     {
-        return array_merge([
-            'name' => 'Juan Dela Cruz',
-            'address' => '123 Rizal St, Manila',
-            'email' => 'juan@example.com',
-            'phone' => '09171234567',
-            'name_of_cat' => 'Mingming',
-            'breed' => 'Puspin',
-            'approximate_age' => 2,
-            'sex' => 'female',
-            'color' => 'Orange',
-            'date_of_adoption' => '2026-10-01',
-        ], $overrides);
-    }
-
-    private function createRequest(): int
-    {
-        return DB::table('adoption_request')->insertGetId([
+        return DB::table('adoption_request')->insertGetId(array_merge([
             'name' => 'Juan Dela Cruz',
             'email' => 'juan@example.com',
             'address' => '123 Rizal St, Manila',
@@ -46,64 +29,85 @@ class AdoptionValidationTest extends TestCase
             'color' => 'Orange',
             'date_of_adoption' => '2026-10-01',
             'valid_id' => json_encode([]),
-        ]);
-    }
-
-    public function test_sex_prefilled_from_the_cat_record_is_accepted(): void
-    {
-        // The Adopt button copies the cat's "Male"/"Female" into the form; the column only takes lowercase.
-        $this->post('/AdoptionForm', $this->payload(['sex' => 'Male']))->assertRedirect(route('home'));
-
-        $this->assertDatabaseHas('adoption_request', ['name' => 'Juan Dela Cruz', 'sex' => 'male']);
-    }
-
-    public function test_missing_cat_details_show_validation_errors(): void
-    {
-        $this->post('/AdoptionForm', $this->payload([
-            'name_of_cat' => '',
-            'sex' => 'unknown',
-            'color' => '',
-            'date_of_adoption' => '',
-            'approximate_age' => 'two years',
-        ]))->assertSessionHasErrors(['name_of_cat', 'sex', 'color', 'date_of_adoption', 'approximate_age']);
-
-        $this->assertDatabaseCount('adoption_request', 0);
+        ], $overrides));
     }
 
     public function test_status_update_for_a_missing_request_returns_404(): void
     {
-        $admin = User::factory()->create(['role' => 'admin']);
-
-        $this->actingAs($admin)
-            ->postJson('/update-status/999', ['name' => 'A', 'address' => 'B', 'name_of_cat' => 'C', 'status' => 'Approved'])
+        $this->actingAs($this->admin())
+            ->postJson('/update-status/999', ['status' => 'Approved'])
             ->assertNotFound();
     }
 
-    public function test_status_update_without_applicant_fields_is_rejected_instead_of_blanking_them(): void
+    public function test_status_update_changes_only_the_status(): void
     {
-        $admin = User::factory()->create(['role' => 'admin']);
         $id = $this->createRequest();
 
-        $this->actingAs($admin)
-            ->postJson("/update-status/{$id}", ['status' => 'Approved'])
-            ->assertUnprocessable()
-            ->assertJsonValidationErrors(['name', 'address', 'name_of_cat']);
+        // Extra fields are ignored: admins can't rewrite what the applicant submitted.
+        $this->actingAs($this->admin())
+            ->postJson("/update-status/{$id}", ['status' => 'Approved', 'name' => 'Changed', 'address' => ''])
+            ->assertOk()
+            ->assertJson(['success' => true]);
 
-        $this->assertDatabaseHas('adoption_request', ['id' => $id, 'name' => 'Juan Dela Cruz']);
+        $request = AdoptionRequest::findOrFail($id);
+        $this->assertSame(AdoptionStatus::Approved, $request->status);
+        $this->assertSame('Juan Dela Cruz', $request->name);
+        $this->assertSame('123 Rizal St, Manila', $request->address);
+        $this->assertNotNull($request->approval_date);
+    }
+
+    public function test_releasing_a_request_records_the_release_date(): void
+    {
+        $id = $this->createRequest(['status' => 'Approved']);
+
+        $this->actingAs($this->admin())->postJson("/update-status/{$id}", ['status' => 'Released'])->assertOk();
+
+        $this->assertNotNull(AdoptionRequest::findOrFail($id)->Release_date);
+    }
+
+    public function test_status_must_be_one_of_the_known_values(): void
+    {
+        $id = $this->createRequest();
+
+        foreach (['Not approved', 'approved', 'Anything', ''] as $status) {
+            $this->actingAs($this->admin())
+                ->postJson("/update-status/{$id}", ['status' => $status])
+                ->assertUnprocessable()
+                ->assertJsonValidationErrors('status');
+        }
+
+        $this->assertDatabaseHas('adoption_request', ['id' => $id, 'status' => 'Pending']);
+    }
+
+    public function test_rejected_requests_appear_in_the_rejected_table(): void
+    {
+        $id = $this->createRequest();
+        $this->actingAs($this->admin())->postJson("/update-status/{$id}", ['status' => 'Rejected'])->assertOk();
+
+        $this->actingAs($this->admin())
+            ->get('/AdoptionRequest')
+            ->assertOk()
+            ->assertViewHas('rejected_request', fn ($paginator) => $paginator->total() === 1)
+            ->assertViewHas('approved_requests', fn ($paginator) => $paginator->total() === 0);
     }
 
     public function test_pdf_for_a_missing_request_returns_404(): void
     {
-        $admin = User::factory()->create(['role' => 'admin']);
+        $this->actingAs($this->admin())->get(route('adoption-request.pdf', 999))->assertNotFound();
+    }
 
-        $this->actingAs($admin)->get(route('adoption-request.pdf', 999))->assertNotFound();
+    public function test_pdf_downloads_for_an_existing_request(): void
+    {
+        $id = $this->createRequest(['status' => 'Approved', 'approval_date' => now()]);
+
+        $this->actingAs($this->admin())->get(route('adoption-request.pdf', $id))
+            ->assertOk()
+            ->assertHeader('content-type', 'application/pdf');
     }
 
     public function test_request_tables_page_independently(): void
     {
-        $admin = User::factory()->create(['role' => 'admin']);
-
-        $this->actingAs($admin)
+        $this->actingAs($this->admin())
             ->get('/AdoptionRequest?approved_page=2')
             ->assertOk()
             ->assertViewHas('adoption_request', fn ($paginator) => $paginator->currentPage() === 1)

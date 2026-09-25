@@ -72,7 +72,7 @@
         color: green;
     }
 
-    .status[data-status="Not Approved"] {
+    .status[data-status="Rejected"] {
         color: red;
     }
 
@@ -149,29 +149,28 @@
         <tbody>
             @foreach($released_request as $request)
                 <tr>
-                    <td><input type="text" class="form-control" name="name" value="{{ $request->name }}" disabled></td>
-                    <td><input type="text" class="form-control" name="address" value="{{ $request->address }}" disabled></td>
-                    <td><input type="text" class="form-control" name="email" value="{{ $request->email }}" disabled></td>
-                    <td><input type="text" class="form-control" name="mobile_phone" value="{{ $request->mobile_phone }}" disabled></td>
+                    <td><input type="text" class="form-control" name="name" value="{{ $request->name }}" readonly></td>
+                    <td><input type="text" class="form-control" name="address" value="{{ $request->address }}" readonly></td>
+                    <td><input type="text" class="form-control" name="email" value="{{ $request->email }}" readonly></td>
+                    <td><input type="text" class="form-control" name="mobile_phone" value="{{ $request->mobile_phone }}" readonly></td>
                     <td>
                         @if($request->valid_id)
-                            <a href="{{ route('viewValidIds', ['id' => $request->id]) }}" target="_blank" class="btn btn-link">
+                            <a href="{{ route('viewValidIds', $request) }}" target="_blank" class="btn btn-link">
                                 View IDs
                             </a>
                         @else
                             <span>No ID Provided</span>
                         @endif
                     </td>
-                    <td><input type="text" class="form-control" name="name_of_cat" value="{{ $request->name_of_cat }}" disabled></td>
+                    <td><input type="text" class="form-control" name="name_of_cat" value="{{ $request->name_of_cat }}" readonly></td>
                     <td>
                         <select class="form-control status-dropdown" name="status" data-id="{{ $request->id }}" disabled>
-                            <option value="Pending" {{ $request->status == 'Pending' ? 'selected' : '' }}>Pending</option>
-                            <option value="Approved" {{ $request->status == 'Approved' ? 'selected' : '' }}>Approved</option>
-                            <option value="Not approved" {{ $request->status == 'Not approved' ? 'selected' : '' }}>Not approved</option>
-                            <option value="Released" {{ $request->status == 'Released' ? 'selected' : '' }}>Released</option>
+                            @foreach (\App\Enums\AdoptionStatus::cases() as $status)
+                                <option value="{{ $status->value }}" @selected($request->status === $status)>{{ $status->value }}</option>
+                            @endforeach
                         </select>
                     </td>
-                    <td><input type="date" class="form-control" name="approval_date" value="{{ $request->approval_date }}" disabled></td>
+                    <td><input type="date" class="form-control" name="approval_date" value="{{ $request->approval_date?->format('Y-m-d') }}" disabled></td>
                     <td>
                         <button class="btn btn-sm btn-primary edit-entry" data-id="{{ $request->id }}">
                             <i class="fas fa-edit"></i> Edit
@@ -190,7 +189,8 @@
     document.querySelectorAll('.edit-entry').forEach(button => {
         button.addEventListener('click', function() {
             const row = this.closest('tr');
-            row.querySelectorAll('input, select').forEach(input => input.disabled = false);
+            // Admins only change the status; applicant details stay as submitted.
+            row.querySelectorAll('select').forEach(input => input.disabled = false);
             row.querySelector('.save-status').style.display = 'inline-block';
             this.style.display = 'none';
         });
@@ -200,10 +200,6 @@
         button.addEventListener('click', function() {
             const row = this.closest('tr');
             const requestId = this.getAttribute('data-id');
-            const name = row.querySelector('input[name="name"]').value;
-            const address = row.querySelector('input[name="address"]').value;
-            const mobile_phone = row.querySelector('input[name="mobile_phone"]').value;
-            const name_of_cat = row.querySelector('input[name="name_of_cat"]').value;
             const status = row.querySelector('select[name="status"]').value;
 
             fetch(`/update-status/${requestId}`, {
@@ -213,13 +209,13 @@
                     'Accept': 'application/json',
                     'X-CSRF-TOKEN': '{{ csrf_token() }}'
                 },
-                body: JSON.stringify({ name, address, mobile_phone, name_of_cat, status })
+                body: JSON.stringify({ status })
             })
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
                     alert('Entry updated successfully');
-                    row.querySelectorAll('input, select').forEach(input => input.disabled = true);
+                    row.querySelectorAll('select').forEach(input => input.disabled = true);
                     row.querySelector('.edit-entry').style.display = 'inline-block';
                     this.style.display = 'none';
                     location.reload(); // Refresh the page

@@ -24,7 +24,17 @@ php artisan migrate --seed
 php artisan serve
 ```
 
-The seeder creates one admin account from `ADMIN_EMAIL` and `ADMIN_PASSWORD`. If the password is empty, a random one is printed once.
+The seeder creates one admin account from `ADMIN_EMAIL` and `ADMIN_PASSWORD`. If the password is empty, a random one is printed once. Use it for local setup only.
+
+## Admin accounts on a real server
+
+Don't run the seeder on a deployed site. Create the admin from the server's shell instead:
+
+```bash
+php artisan app:create-admin admin@yourdomain.test
+```
+
+It asks for the password twice without showing it, so the password never lands in code or shell history. It must be at least 12 characters with upper- and lowercase letters and a number, and in production it is also checked against known leaked passwords. To make an existing account (for example one created with Google sign-in) an admin, add `--promote`.
 
 Optional services read their keys from `.env`: `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` and `GOOGLE_REDIRECT` for Google login, `PAYMONGO_SECRET_KEY` for donations, and `OPENAI_API_KEY` for the breed guess.
 

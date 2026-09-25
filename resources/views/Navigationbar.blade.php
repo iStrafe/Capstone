@@ -59,21 +59,6 @@
     }
 </style>
 
-<!-- Modal for session timeout -->
-<div class="modal fade" id="timeoutModal" tabindex="-1" aria-labelledby="timeoutModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="timeoutModalLabel">Session Timeout</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                {{ session('timeoutMessage') }}
-            </div>
-        </div>
-    </div>
-</div>
-
 <!-- Idle Detection Script -->
 <script>
     let idleTime = 0;
@@ -95,13 +80,6 @@
 
     setInterval(timerIncrement, 60000); // 1 minute
 
-    if(session('timeoutMessage')) {
-        var timeoutModal = new bootstrap.Modal(document.getElementById('timeoutModal'));
-        timeoutModal.show();
-        setTimeout(function() {
-            timeoutModal.hide();
-        }, 5000); // Hide after 5 seconds
-    }
 </script>
 
 <nav class="navbar navbar-expand-lg border-bottom border-body" data-bs-theme="dark">
@@ -125,7 +103,10 @@
                 <a class="nav-link" href="{{ url('aboutus') }}">ABOUT US</a>
                 <a class="nav-link" href="{{ url('events') }}">NEWS / EVENTS</a>
                 <a class="nav-link" href="{{ url('ContactUs') }}">CONTACT US</a>
-                <a class="nav-link" data-bs-toggle="modal" data-bs-target="#modalId2">ADOPT</a>
+                <a class="nav-link" href="{{ route('adoptCat') }}">ADOPT</a>
+                @auth
+                    <a class="nav-link" href="{{ route('myRequest') }}">MY REQUESTS</a>
+                @endauth
                 <a class="nav-link" data-bs-toggle="modal" data-bs-target="#modalId">DONATE</a>
                 @include('payment')
             </div>

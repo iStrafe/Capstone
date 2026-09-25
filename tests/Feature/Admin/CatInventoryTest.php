@@ -133,4 +133,27 @@ class CatInventoryTest extends TestCase
         $this->actingAs($admin)->delete(route('admin.cats.destroy', 999))->assertNotFound();
         $this->get(route('cats.show', 999))->assertNotFound();
     }
+
+    public function test_age_is_optional_and_stored_as_whole_years(): void
+    {
+        $admin = $this->admin();
+
+        $this->actingAs($admin)->post(route('admin.cats.store'), ['cat_name' => 'NoAge', 'sex' => 'Male'])
+            ->assertRedirect(route('admin.cats.index'));
+        $this->actingAs($admin)->post(route('admin.cats.store'), ['cat_name' => 'Tom', 'sex' => 'Male', 'age' => '3'])
+            ->assertRedirect(route('admin.cats.index'));
+
+        $this->assertNull(Cat::where('cat_name', 'NoAge')->sole()->age);
+        $this->assertSame(3, Cat::where('cat_name', 'Tom')->sole()->age);
+        $this->assertSame('Active', Cat::where('cat_name', 'Tom')->sole()->fresh()->status);
+    }
+
+    public function test_age_must_be_a_whole_number(): void
+    {
+        $this->actingAs($this->admin())
+            ->post(route('admin.cats.store'), ['cat_name' => 'Kit', 'sex' => 'Female', 'age' => '8 months'])
+            ->assertSessionHasErrors('age');
+
+        $this->assertDatabaseCount('cats', 0);
+    }
 }
