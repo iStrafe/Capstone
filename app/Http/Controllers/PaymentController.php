@@ -2,16 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Request;
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception\RequestException;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 class PaymentController extends Controller
 {
-     public function paymentView(){
-        return view('payment');
-    }
+    private const FAILURE_MESSAGE = 'We could not create the payment link. Please try again later.';
 
     public function createPayment(Request $request)
     {
@@ -32,46 +30,51 @@ class PaymentController extends Controller
         // Load the PayMongo API key (read through config so it still works when config is cached)
         $secretKey = config('services.paymongo.secret_key');
 
-        // Correctly format the Authorization header with base64 encoding
-        $encodedKey = base64_encode($secretKey);
+        if (blank($secretKey)) {
+            Log::error('PayMongo payment link skipped: PAYMONGO_SECRET_KEY is not set');
 
-        $client = new Client();
+            return $this->failed();
+        }
 
         try {
-            // Send the POST request to PayMongo API
-            $response = $client->request('POST', 'https://api.paymongo.com/v1/links', [
-                'json' => [
+            // PayMongo uses Basic auth with the secret key as the username and an empty password
+            $response = Http::withBasicAuth($secretKey, '')
+                ->acceptJson()
+                ->timeout(15)
+                ->post('https://api.paymongo.com/v1/links', [
                     'data' => [
                         'attributes' => [
                             'amount' => $amountInCents, // Amount in cents
                             'description' => $description,
                             'remarks' => 'Payment for service',
-                        ]
-                    ]
-                ],
-                'headers' => [
-                    'Authorization' => 'Basic ' . $encodedKey, // Correct Authorization header
-                    'accept' => 'application/json',
-                    'Content-Type' => 'application/json',
-                ],
-            ]);
+                        ],
+                    ],
+                ]);
+        } catch (ConnectionException $e) {
+            // DNS failure, timeout or refused connection
+            Log::error('PayMongo payment link failed: could not connect', ['message' => $e->getMessage()]);
 
-            // Get the payment link
-            $responseBody = json_decode($response->getBody(), true);
-            $paymentUrl = $responseBody['data']['attributes']['checkout_url'];
+            return $this->failed();
+        }
 
-            // Redirect to the payment link
-            return redirect($paymentUrl);
+        $paymentUrl = data_get($response->json(), 'data.attributes.checkout_url');
 
-        } catch (RequestException $e) {
-            // Handle API errors
+        if ($response->failed() || ! is_string($paymentUrl) || $paymentUrl === '') {
             // Log PayMongo's error body for us; don't show gateway internals to the visitor.
             Log::error('PayMongo payment link failed', [
-                'response' => $e->hasResponse() ? (string) $e->getResponse()->getBody() : $e->getMessage(),
+                'status' => $response->status(),
+                'response' => $response->body(),
             ]);
 
-            return back()->with('error', 'We could not create the payment link. Please try again later.');
+            return $this->failed();
         }
+
+        // Redirect to the payment link
+        return redirect()->away($paymentUrl);
     }
-   
+
+    private function failed()
+    {
+        return back()->withInput()->with('error', self::FAILURE_MESSAGE);
+    }
 }

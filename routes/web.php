@@ -30,7 +30,6 @@ Route::get('/events', [NewsEventController::class, 'index3'])->name('news-events
 Route::get('/news-events/events', [NewsEventController::class, 'index3'])->name('news-events.index3');
 
 // PayMongo donation
-Route::get('/payment', [PaymentController::class, 'paymentView']);
 Route::post('/payment', [PaymentController::class, 'createPayment'])->middleware('throttle:10,1')->name('paymongo.create');
 
 // Google Authentication
