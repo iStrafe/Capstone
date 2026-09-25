@@ -18,7 +18,13 @@ class ProfileTest extends TestCase
             ->actingAs($user)
             ->get('/profile');
 
-        $response->assertOk();
+        // Rendered with the site head (which loads the Vite bundle with Alpine, so the
+        // delete confirmation opens) and the site navigation.
+        $response->assertOk()
+            ->assertSee('<meta name="viewport"', false)
+            ->assertSee('id="logout-form"', false)
+            ->assertSee('href="'.route('profile.edit').'"', false)
+            ->assertSee('confirm-user-deletion', false);
     }
 
     public function test_profile_information_can_be_updated(): void
