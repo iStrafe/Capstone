@@ -14,7 +14,7 @@
     @vite('resources/sass/app.scss')
     @vite('resources/js/app.js')
     @include('scripts')
-    <!--@include('scripts2')-->
+    {{-- @include('scripts2') --}}
    
     <style>
                 body {

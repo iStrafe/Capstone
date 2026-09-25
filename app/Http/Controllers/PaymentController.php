@@ -17,7 +17,7 @@ class PaymentController extends Controller
     {
         // Validate the request inputs
         $request->validate([
-            'amount' => 'required|numeric|min:1',
+            'amount' => 'required|numeric|min:1|decimal:0,2',
             'description' => 'required|string|max:255',
         ]);
 
@@ -26,7 +26,8 @@ class PaymentController extends Controller
         $description = $request->input('description');
 
         // Convert amount to cents (PayMongo requires the amount in cents)
-        $amountInCents = $amount * 100;
+        // Round: float maths turns 19.99 * 100 into 1998.999..., and PayMongo expects a whole number.
+        $amountInCents = (int) round($amount * 100);
 
         // Load the PayMongo API key (read through config so it still works when config is cached)
         $secretKey = config('services.paymongo.secret_key');

@@ -58,6 +58,7 @@
                                 data-color="{{ $cat->color }}"
                                 data-breed="{{ $cat->breed }}"
                                 data-description="{{ $cat->description }}"
+                                data-clip="{{ $cat->cat_clip ? asset('images/' . $cat->cat_clip) : '' }}"
                                 data-image="{{ $cat->cat_image ? asset('images/' . $cat->cat_image) : asset('images/default_cat.png') }}">View Details</button>
                         <a href="#" class="btn btn-adopt" data-toggle="modal" data-target="#adoptionFormModal"
                            data-name="{{ $cat->cat_name }}"
@@ -83,16 +84,13 @@
                 </div>
                 <div class="modal-body">
                     <img id="catImage" src="" alt="Cat Image" class="img-fluid mb-3">
-                    @if($cat->cat_clip)
-  <div class="text-center mb-3">
-    <video controls style="width: 100%; max-width: 500px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
-      <source src="{{ asset('images/' . $cat->cat_clip) }}" type="video/mp4">
-      Your browser does not support the video tag.
-    </video>
-  </div>
-@else
-  <p class="text-center text-muted">No video available for {{ $cat->cat_name }}</p>
-@endif
+                    {{-- Filled per cat by the View Details script; this modal is shared by every card. --}}
+                    <div class="text-center mb-3" id="catVideoWrap" style="display: none;">
+                        <video id="catVideo" controls style="width: 100%; max-width: 500px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                    <p class="text-center text-muted" id="catNoVideo">No video available for this cat</p>
                     <h5 id="catName"></h5>
                     <p id="catDescription"></p>
                     <ul>
@@ -127,6 +125,17 @@
                 document.getElementById('catBreed').innerText = breed;
                 document.getElementById('catDescription').innerText = description;
                 document.getElementById('catImage').src = image;
+                const clip = this.getAttribute('data-clip');
+                const video = document.getElementById('catVideo');
+                video.pause();
+                if (clip) {
+                    video.src = clip;
+                } else {
+                    video.removeAttribute('src');
+                }
+                video.load();
+                document.getElementById('catVideoWrap').style.display = clip ? '' : 'none';
+                document.getElementById('catNoVideo').style.display = clip ? 'none' : '';
             });
         });
 

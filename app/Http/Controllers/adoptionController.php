@@ -16,9 +16,10 @@ class adoptionController extends Controller
 
     //Show Pending and approved requests
     public function showAdoptionRequest(){
-        $adoption_request = DB::table('adoption_request')->paginate(10);
-        $approved_requests = DB::table('adoption_request')->where('status', 'Approved')->paginate(5);
-        $rejected_request = DB::table('adoption_request')->where('status', 'Not Approved')->paginate(5);
+        // Each table pages on its own query-string key; sharing ?page moved all three at once.
+        $adoption_request = DB::table('adoption_request')->paginate(10, ['*'], 'page');
+        $approved_requests = DB::table('adoption_request')->where('status', 'Approved')->paginate(5, ['*'], 'approved_page');
+        $rejected_request = DB::table('adoption_request')->where('status', 'Not Approved')->paginate(5, ['*'], 'rejected_page');
         return view('admin.adoptionRequest', [
             'adoption_request' => $adoption_request,
             'approved_requests' => $approved_requests,
@@ -47,11 +48,24 @@ class adoptionController extends Controller
 
     //Create adoption request
     public function create(Request $request){
-        
+        // The Adopt button pre-fills sex from the cat record ("Male"), but the column only accepts lowercase.
+        if (is_string($request->input('sex'))) {
+            $request->merge(['sex' => strtolower(trim($request->input('sex')))]);
+        }
+
+        // Rules mirror the adoption_request columns so bad input gets a message instead of a database error.
         $request->validate([
             'name' => 'required|string|max:255',
             'address' => 'required|string|max:255',
             'email' => 'required|email|max:255',
+            'phone' => 'nullable|string|max:255',
+            'name_of_cat' => 'required|string|max:255',
+            'breed' => 'nullable|string|max:255',
+            'approximate_age' => 'nullable|integer|min:0|max:40',
+            'sex' => 'required|in:male,female',
+            'color' => 'required|string|max:255',
+            'date_of_adoption' => 'required|date',
+            'valid_id' => 'nullable|array',
             'valid_id.*' => 'image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
@@ -111,6 +125,17 @@ class adoptionController extends Controller
 
         //update request status
         public function updateStatus($id, Request $request){
+            abort_unless(DB::table('adoption_request')->where('id', $id)->exists(), 404);
+
+            // The admin table always sends these; the columns that are NOT NULL must not be blanked.
+            $request->validate([
+                'name' => 'required|string|max:255',
+                'address' => 'required|string|max:255',
+                'mobile_phone' => 'nullable|string|max:255',
+                'name_of_cat' => 'required|string|max:255',
+                'status' => 'required|string|max:255',
+            ]);
+
             $data = [
                 'name' => $request->input('name'),
                 'address' => $request->input('address'),
@@ -143,6 +168,7 @@ class adoptionController extends Controller
         public function generatePDF($id)
         {
             $request = DB::table('adoption_request')->where('id', $id)->first();
+            abort_if(! $request, 404);
 
             $pdf = Pdf::loadView('adoptionRequestPDF', compact('request'));
 

@@ -6,6 +6,7 @@ use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class DatabaseSeeder extends Seeder
 {
@@ -16,12 +17,18 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
+        // Credentials come from the environment so no real login lives in the repository.
+        $password = env('ADMIN_PASSWORD') ?: Str::password(16);
+
         User::factory()->create([
             'name' => 'AduCats Admin',
-            'email' => 'reginald.unisa@adamson.edu.ph',
+            'email' => env('ADMIN_EMAIL', 'admin@example.com'),
             'role' => 'admin',
-            'phone' => '09270130174',
-            'password' => Hash::make('akbar911'),
+            'password' => Hash::make($password),
         ]);
+
+        if (! env('ADMIN_PASSWORD')) {
+            $this->command?->warn("Generated admin password: {$password}");
+        }
     }
 }

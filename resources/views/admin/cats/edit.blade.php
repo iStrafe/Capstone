@@ -17,7 +17,7 @@
           </div>
         @endif
 
-        <form id="editCatForm" action="{{ route('admin.cats.update', $cat->id) }}" method="POST" enctype="multipart/form-data">
+        <form id="editCatForm" action="{{ $cat->exists ? route('admin.cats.update', $cat->id) : '' }}" method="POST" enctype="multipart/form-data">
           @csrf
           @method('PUT')
 

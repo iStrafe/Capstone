@@ -4,10 +4,13 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Cat;
+use App\Http\Controllers\Concerns\StoresPublicImages;
 use Illuminate\Http\Request;
 
 class CatController extends Controller
 {
+    use StoresPublicImages;
+
     /**
      * Display a listing of the resource.
      */
@@ -82,17 +85,12 @@ class CatController extends Controller
     
         // Handle image upload
         if ($request->hasFile('cat_image')) {
-            $imageName = time() . '.' . $request->cat_image->extension();
-            $request->cat_image->move(public_path('images'), $imageName);
-            $input['cat_image'] = $imageName;
+            $input['cat_image'] = $this->moveToPublicImages($request->file('cat_image'));
         }
 
         // Handle video upload
         if ($request->hasFile('cat_clip')) {
-           $videoName = time() . '.' . $request->cat_clip->extension();
-           $request->cat_clip->move(public_path('images'), $videoName);
-           $input['cat_clip'] = $videoName;
-
+            $input['cat_clip'] = $this->moveToPublicImages($request->file('cat_clip'));
         }
 
     
@@ -110,12 +108,12 @@ class CatController extends Controller
      */
     public function show(string $id)
     {
-        $cat = Cat::find($id);
+        $cat = Cat::findOrFail($id);
         return view('admin.cats.show', compact('cat'));
     }
     public function showUser(string $id)
     {
-        $cat = Cat::find($id);
+        $cat = Cat::findOrFail($id);
         return view('cats.show', compact('cat'));
     }
 
@@ -124,7 +122,7 @@ class CatController extends Controller
      */
     public function edit(string $id)
     {
-        $cat = Cat::find($id);
+        $cat = Cat::findOrFail($id);
         return view('admin.cats.edit', compact('cat'));
     }
 
@@ -154,15 +152,11 @@ class CatController extends Controller
                 $cat->Medical_Record = $request->input('Medical_Record');
 
                 if ($request->hasFile('cat_image')) {
-                    $fileName = time() . '.' . $request->cat_image->extension();
-                    $request->cat_image->move(public_path('images'), $fileName);
-                    $cat->cat_image = $fileName;
+                    $cat->cat_image = $this->moveToPublicImages($request->file('cat_image'));
                 }
 
                 if ($request->hasFile('cat_clip')) {
-                    $videoName = time() . '.' . $request->cat_clip->extension();
-                    $request->cat_clip->move(public_path('images'), $videoName);
-                    $input['cat_clip'] = $videoName;
+                    $cat->cat_clip = $this->moveToPublicImages($request->file('cat_clip'));
                 }
 
                 $cat->save();
@@ -175,7 +169,7 @@ class CatController extends Controller
      */
     public function destroy(string $id)
     {
-        $cat = Cat::find($id);
+        $cat = Cat::findOrFail($id);
         $cat->delete();
         return redirect()->route('admin.cats.index');
     }
@@ -197,5 +191,6 @@ class CatController extends Controller
     
         return view('admin.cats.archived', compact('archivedCats'));
     }
+
     
 }

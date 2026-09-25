@@ -3,10 +3,13 @@
 namespace App\Http\Controllers;
 use App\Models\NewsEvent; 
 
+use App\Http\Controllers\Concerns\StoresPublicImages;
 use Illuminate\Http\Request;
 
 class NewsEventController extends Controller
 {
+    use StoresPublicImages;
+
     /**
      * Display a listing of the resource.
      */
@@ -32,21 +35,14 @@ class NewsEventController extends Controller
         $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'required',
-            'eventimage' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048', // Ensure it's an image
+            'event_date' => 'required|date',
+            'eventimage' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
     
-        $data = $request->all();
+        $data = $request->only(['title', 'description', 'event_date']);
     
-        // Handle the file upload
         if ($request->hasFile('eventimage')) {
-            // Get the file with the extension
-            $image = $request->file('eventimage');
-            // Generate a unique filename
-            $filename = time() . '.' . $image->getClientOriginalExtension();
-            // Move the file to the public/images directory
-            $image->move(public_path('images'), $filename);
-            // Save the filename to the database
-            $data['eventimage'] = $filename;
+            $data['eventimage'] = $this->moveToPublicImages($request->file('eventimage'));
         }
     
         // Save the event data (including image filename)
@@ -89,18 +85,14 @@ public function show($id)
         'title' => 'required|string|max:255',
         'description' => 'required',
         'event_date' => 'required|date',
-        'catimage' => 'nullable|image|mimes:jpeg,png,jpg,gif'
+        'eventimage' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
     ]);
 
-    $input = $request->all();
-
-        $renew = NewsEvent::find($id);
-        $renew->fill($request->all());
+        $renew = NewsEvent::findOrFail($id);
+        $renew->fill($request->only(['title', 'description', 'event_date']));
 
         if ($request->hasFile('eventimage')) {
-            $fileName = time() . '.' . $request->eventimage->extension();
-            $request->eventimage->move(public_path('images'), $fileName);
-            $renew->eventimage = $fileName;
+            $renew->eventimage = $this->moveToPublicImages($request->file('eventimage'));
         }
 
         $renew->save();
