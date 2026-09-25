@@ -16,7 +16,7 @@ class CatinfoController extends Controller
         //return view('admin.index',['displayData' => $displayData]);
 
 
-        $select = DB::select('select * from catinfo');
+        $select = CatInfo::all();
         
     }
 
@@ -53,13 +53,16 @@ class CatinfoController extends Controller
     public function search(Request $request) {
     $query = $request->input('query');
 
+    // Lowercase both sides so the search stays case-insensitive on PostgreSQL,
+    // where LIKE is case-sensitive (MySQL and SQLite ignore case by default).
+    $term = '%' . mb_strtolower($query ?? '') . '%';
+
     $displayData = DB::table('catinfo')
-                    ->where('name', 'LIKE', "%{$query}%")
-                    ->orWhere('gender', 'LIKE', "%{$query}%")
-                    ->orWhere('breed', 'LIKE', "%{$query}%")
-                    ->orWhere('eye_color', 'LIKE', "%{$query}%")
-                    ->orWhere('fur_color', 'LIKE', "%{$query}%")
-                    ->orWhere('description', 'LIKE', "%{$query}%")
+                    ->where(function ($q) use ($term) {
+                        foreach (['name', 'gender', 'breed', 'eye_color', 'fur_color', 'description'] as $column) {
+                            $q->orWhereRaw("LOWER({$column}) LIKE ?", [$term]);
+                        }
+                    })
                     ->get();
 
     return view('admin.create', compact('displayData'));

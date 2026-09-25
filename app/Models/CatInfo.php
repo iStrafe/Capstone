@@ -9,6 +9,10 @@ class CatInfo extends Model
 {
     use HasFactory;
 
+    protected $table = 'catinfo';
+
+    public $timestamps = false;
+
     protected $fillable = [
             'name',
             'gender',
