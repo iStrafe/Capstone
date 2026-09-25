@@ -113,7 +113,7 @@
 
                 <!-- Modal Body -->
                 <!-- Paymongo Modal -->
-                <div class="modal fade" id="modalId" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false" role="dialog" aria-labelledby="modalTitleId" aria-hidden="true">
+                <div class="modal fade" id="modalId" tabindex="-1" role="dialog" aria-labelledby="modalTitleId" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-md" role="document">
                         <div class="modal-content form-container">
                         <div class="modal-header form">
@@ -128,7 +128,7 @@
                                 <input class="input" placeholder="Amount" type="number" name="amount" id="amount" required>
                             </div>
                             <div class="mb-3">
-                                <label class="modalText" for="amount">Description</label>
+                                <label class="modalText" for="description">Description</label>
                                 <textarea class="input" type="text" name="description" id="description" required></textarea>
                             </div>
                                 <div class="button-container">
@@ -143,7 +143,3 @@
                 </div>
                 </div>
 
-        <!-- Bootstrap Modal Initialization Script -->
-        <script>
-        const myModal = new bootstrap.Modal(document.getElementById('modalId'));
-        </script>
