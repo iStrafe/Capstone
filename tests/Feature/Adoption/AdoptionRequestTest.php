@@ -12,8 +12,8 @@ class AdoptionRequestTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @var array<int, string> */
-    private array $existingImages = [];
+    /** @var array<int, string>|null */
+    private ?array $existingImages = null;
 
     protected function setUp(): void
     {
@@ -25,7 +25,10 @@ class AdoptionRequestTest extends TestCase
     protected function tearDown(): void
     {
         // The controller moves uploads straight into public/images, so remove anything a test added.
-        File::delete(array_diff(File::glob(public_path('images/*')), $this->existingImages));
+        // Skip when setUp failed before taking the snapshot, or every existing image would be deleted.
+        if ($this->existingImages !== null) {
+            File::delete(array_diff(File::glob(public_path('images/*')), $this->existingImages));
+        }
 
         parent::tearDown();
     }
