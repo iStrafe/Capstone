@@ -67,6 +67,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/cat', [AdminCatController::class, 'index'])->name('cats.index');
     Route::patch('/admin/cats/{cat}/archive', [AdminCatController::class, 'archive'])->name('admin.cats.archive');
     Route::get('/admin/cats/archived', [AdminCatController::class, 'archived'])->name('admin.cats.archived');
+    Route::patch('/admin/cats/{cat}/restore', [AdminCatController::class, 'restore'])->name('admin.cats.restore');
     Route::prefix('adminDashboard')->name('admin.')->group(function () {
         Route::resource('cats', AdminCatController::class);
     });

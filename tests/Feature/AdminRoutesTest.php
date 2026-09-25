@@ -14,6 +14,7 @@ class AdminRoutesTest extends TestCase
             'admin cat list' => ['get', '/cat'],
             'archive cat' => ['patch', '/admin/cats/1/archive'],
             'archived cats' => ['get', '/admin/cats/archived'],
+            'restore cat' => ['patch', '/admin/cats/1/restore'],
             'admin dashboard' => ['get', '/adminDashboard'],
             'cats index' => ['get', '/adminDashboard/cats'],
             'cats create' => ['get', '/adminDashboard/cats/create'],

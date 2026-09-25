@@ -140,6 +140,15 @@
     .btn-secondary {
     color: black; /* Set text color to black */
     }
+
+    /* The reset in the shared scripts partial clears the background of [type=submit] buttons. */
+    #archiveCatModal .btn {
+        background-color: var(--bs-btn-bg);
+    }
+
+    #archiveCatModal .btn:hover {
+        background-color: var(--bs-btn-hover-bg);
+    }
     
 
     /* Mobile responsiveness */
@@ -225,7 +234,12 @@
                     <div class="card-content">
                     
                         <div class="heading">{{ $cat->cat_name }}</div>
-                        
+                        @if($cat->is_adopted)
+                            <p><span class="badge bg-success">Adopted</span></p>
+                        @elseif($cat->is_reserved)
+                            <p><span class="badge bg-info text-dark">Adoption in progress</span></p>
+                        @endif
+
                         <div class="actions">
                             <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#editCatModal" 
                                 data-cat-id="{{ $cat->id }}" 
@@ -240,11 +254,11 @@
                                 data-cat-medical-record="{{ $cat->Medical_Record }}">
                                 Edit
                             </button>
-                            <form action="{{ route('admin.cats.archive', $cat->id) }}" method="POST" style="display:inline">
-                                @csrf
-                                @method('PATCH')
-                                <button type="submit" class="btn btn-secondary">Archive</button>
-                            </form>
+                            <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#archiveCatModal"
+                                data-cat-id="{{ $cat->id }}"
+                                data-cat-name="{{ $cat->cat_name }}">
+                                Archive
+                            </button>
 
                         </div>
                     </div>
@@ -258,6 +272,29 @@
 {{-- These modals render outside the loop; fall back to an empty cat so an empty inventory still renders. --}}
 @include('admin.cats.edit', ['cat' => $cats->last() ?? new \App\Models\Cat])
 @include('admin.cats.show', ['cat' => $cats->last() ?? new \App\Models\Cat])
+
+{{-- Shared by every card's Archive button; the script below points the form at the clicked cat. --}}
+<div class="modal fade" id="archiveCatModal" tabindex="-1" aria-labelledby="archiveCatModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form class="modal-content" method="POST" action="">
+            @csrf
+            @method('PATCH')
+            <div class="modal-header">
+                <h5 class="modal-title" id="archiveCatModalLabel">Archive <span data-archive="name"></span>?</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>The cat leaves the inventory and the adoption list. You can restore it from View Archived Cats.</p>
+                <label for="archive_reason" class="form-label">Reason (optional, shown on the cat's public page)</label>
+                <textarea class="form-control" id="archive_reason" name="archive_reason" rows="3" maxlength="255" placeholder="e.g. Moved to a partner shelter"></textarea>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" class="btn btn-danger">Archive</button>
+            </div>
+        </form>
+    </div>
+</div>
 
 </body>
 </html>
@@ -287,6 +324,17 @@
       modal.querySelector('select[name="sex"]').value = catSex;
       modal.querySelector('select[name="status"]').value = catStatus;
       modal.querySelector('input[name="Medical_Record"]').value = catMedicalRecord;
+    });
+
+    // Point the Archive form at the clicked cat and start with an empty reason.
+    var archiveCatModal = document.getElementById('archiveCatModal');
+    archiveCatModal.addEventListener('show.bs.modal', function (event) {
+      var button = event.relatedTarget;
+      if (!button) return;
+      var form = archiveCatModal.querySelector('form');
+      form.action = @json(route('admin.cats.archive', '__CAT__')).replace('__CAT__', button.getAttribute('data-cat-id'));
+      form.querySelector('textarea[name="archive_reason"]').value = '';
+      archiveCatModal.querySelector('[data-archive="name"]').textContent = button.getAttribute('data-cat-name');
     });
 
     // The whole card toggles the View modal, and Bootstrap listens for that in the capture

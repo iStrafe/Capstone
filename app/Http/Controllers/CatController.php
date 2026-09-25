@@ -34,8 +34,13 @@ class CatController extends Controller
         ]);
     }
 
+    // Cats that are off the adoption list get a page explaining why instead of a 404.
     public function show(Cat $cat): View
     {
-        return view('cats.show', compact('cat'));
+        if ($cat->isAvailable()) {
+            return view('cats.show', compact('cat'));
+        }
+
+        return view('cats.unavailable', ['cat' => $cat, 'reason' => $cat->unavailableReason() ?? 'inactive']);
     }
 }
