@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\AdoptionStatus;
 use App\Models\Cat;
+use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 /**
@@ -20,9 +22,16 @@ class CatController extends Controller
         return view('dashboard', ['cats' => Cat::available()->get()]);
     }
 
-    public function index(): View
+    public function index(Request $request): View
     {
-        return view('cats.index', ['cats' => Cat::available()->get()]);
+        return view('cats.index', [
+            'cats' => Cat::available()->withPendingRequestCount()->get(),
+            // Cats the signed-in user is already waiting on, so their Adopt button can say so.
+            'requestedCatIds' => $request->user()?->adoptionRequests()
+                ->whereIn('status', AdoptionStatus::open())
+                ->pluck('cat_id')
+                ->all() ?? [],
+        ]);
     }
 
     public function show(Cat $cat): View

@@ -43,7 +43,8 @@ class AdoptionRequestTest extends TestCase
             'address' => '123 Rizal St, Manila',
             'email' => 'juan@example.com',
             'phone' => '09171234567',
-            'date_of_adoption' => '2026-10-01',
+            // Must be today or later, so keep it relative.
+            'date_of_adoption' => now()->addWeek()->toDateString(),
         ], $overrides);
     }
 

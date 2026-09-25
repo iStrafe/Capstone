@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Enums\AdoptionStatus;
 use App\Http\Controllers\Concerns\StoresPublicImages;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\CatRequest;
@@ -16,7 +17,12 @@ class CatController extends Controller
 
     public function index(): View
     {
-        $cats = Cat::available()->get();
+        // Admins see every cat that isn't archived, including Inactive and adopted ones;
+        // the flags label cats that are off the public list because of an adoption.
+        $cats = Cat::notArchived()
+            ->withExists(['adoptionRequests as is_adopted' => fn ($query) => $query->where('status', AdoptionStatus::Released)])
+            ->withExists(['adoptionRequests as is_reserved' => fn ($query) => $query->where('status', AdoptionStatus::Approved)])
+            ->get();
 
         return view('admin.cats.index', compact('cats'));
     }
