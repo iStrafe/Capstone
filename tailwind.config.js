@@ -9,6 +9,9 @@ export default {
         './resources/views/**/*.blade.php',
     ],
 
+    // The rest of the site has no dark theme, so dark: variants only apply under a .dark class.
+    darkMode: 'class',
+
     theme: {
         extend: {
             fontFamily: {

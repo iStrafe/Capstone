@@ -1,14 +1,13 @@
-{{-- Uses the site's own head and navigation like the other user pages. The Breeze
-     layout is not used because Tailwind is not in the Vite build, so it renders unstyled.
-     The scripts partial loads Vite (Alpine), which opens the Delete Account confirmation. --}}
+{{-- Uses the site's own head and navigation like the other user pages. The Breeze partials
+     below are styled by resources/css/profile.css: Tailwind utilities scoped to .profile-page,
+     without preflight, so the Bootstrap navbar is untouched. The scripts partial loads Vite
+     (Alpine), which opens the Delete Account confirmation. --}}
 @include('scripts')
 @include('Navigationbar')
+@vite('resources/css/profile.css')
 
 <style>
-    /* Breeze button colours, which Bootstrap does not provide */
-    .profile-page button.inline-flex { padding: .5rem 1rem; border-radius: .375rem; }
-    .profile-page .bg-gray-800 { background-color: #1f2937; color: #fff; }
-    .profile-page .bg-red-600 { background-color: #dc3545; color: #fff; }
+    /* Text inputs, which Tailwind leaves unstyled without its forms plugin */
     .profile-page input[type=text], .profile-page input[type=email], .profile-page input[type=password] {
         display: block; width: 100%; padding: .375rem .75rem; border: 1px solid #ced4da; border-radius: .375rem;
     }

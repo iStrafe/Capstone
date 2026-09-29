@@ -1,0 +1,11 @@
+/*
+ * The profile page uses the site's Bootstrap layout but renders Breeze partials
+ * (forms, buttons and the delete-account modal) written with Tailwind classes.
+ * This build has no preflight and every utility is scoped to .profile-page,
+ * so it cannot restyle the navbar or anything else on the page.
+ */
+@config "../../tailwind.profile.config.js";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
