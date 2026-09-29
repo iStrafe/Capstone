@@ -110,10 +110,6 @@
         height: 3.125em;
     }
 
-    .text {
-        max-width: 55px;
-    }
-
     .image {
         background: rgb(241, 241, 241);
         width: 100%;
@@ -259,7 +255,7 @@
             <div class="main-container">
             <div class="image-preview">
                     {{-- Stand-in picture until the real banner image is supplied --}}
-                    <img src="{{ asset('images/placeholder.png') }}" alt="Adopt a cat">
+                    <img src="{{ asset('images/1731818466.png') }}" alt="Adopt a cat">
                     <video loop muted playsinline>
                         <source src="https://media.giphy.com/media/gVsmn4qdyBn1Bra2tN/giphy.webm" type="video/webm">
                     </video>
@@ -351,15 +347,15 @@
                         <button class="btn btn-outline-secondary" type="button" id="nextBtn" style="display: none;">Next</button>
                     </div>
 
-                <div class="row" id="catGallery">
+                <div class="cat-gallery" id="catGallery">
                     @foreach($cats as $cat)
-                        <div class="col-md-4 cat-card" data-bs-toggle="modal" data-bs-target="#modalId2">
+                        <div class="cat-card" data-bs-toggle="modal" data-bs-target="#modalId2">
                             <div class="card {{ $cat->status == 'Inactive' ? 'inactive' : '' }}" data-name="{{ $cat->cat_name }}" data-age="{{ $cat->age }}" data-color="{{ $cat->color }}" data-breed="{{ $cat->breed }}" data-sex="{{ $cat->sex }}">
                                 <div class="image">
                                     @if($cat->cat_image)
                                         <img src="{{ asset('images/' . $cat->cat_image) }}" alt="Image of {{ $cat->cat_name }}" style="width: 100%; height: auto;">
                                     @else
-                                        <span class="text">No image available</span>
+                                        <img src="{{ asset('images/placeholder.png') }}" alt="No photo yet of {{ $cat->cat_name }}" style="width: 100%; height: auto;">
                                     @endif
                                 </div>
                                 <span class="title">{{ $cat->cat_name }}</span>

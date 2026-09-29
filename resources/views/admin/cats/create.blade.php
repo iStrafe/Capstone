@@ -65,7 +65,7 @@
               <input type="text" name="Medical_Record" class="form-control" required oninput="this.value = this.value.toLowerCase()">
             </div>
 
-            <button type="submit" class="btn btn-primary mb-3" style="color: black;">Add Cat</button>
+            <button type="submit" class="btn btn-primary mb-3">Add Cat</button>
           </div>
         </form>
       </div>

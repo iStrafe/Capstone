@@ -126,15 +126,6 @@
         overflow-wrap: anywhere;
     }
 
-    /* The reset in the shared scripts partial clears the background of [type=submit] buttons. */
-    .actions .btn {
-        background-color: var(--bs-btn-bg);
-    }
-
-    .actions .btn:hover {
-        background-color: var(--bs-btn-hover-bg);
-    }
-
     /* Header styling */
     .header-container {
         text-align: center;
@@ -151,9 +142,6 @@
         font-size: 1.2em;
     }
 
-    .btn-secondary {
-    color: black; /* Set text color to black */
-    }
     
 
     /* Mobile responsiveness */
