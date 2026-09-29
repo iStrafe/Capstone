@@ -148,7 +148,7 @@
                     </li>
                 @else
                     <li class="nav-item dropdown">
-                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <div>{{ Auth::user()->name }}</div>
                         </button>
                         <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">

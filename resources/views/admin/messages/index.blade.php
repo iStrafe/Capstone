@@ -45,14 +45,8 @@
         display: inline;
     }
 
-    /* The reset in the shared scripts partial clears the background of [type=submit] buttons. */
     .messages-table .actions .btn {
-        background-color: var(--bs-btn-bg);
         font-weight: normal;
-    }
-
-    .messages-table .actions .btn:hover {
-        background-color: var(--bs-btn-hover-bg);
     }
 </style>
 

@@ -137,18 +137,6 @@
         font-size: 1.2em;
     }
 
-    .btn-secondary {
-    color: black; /* Set text color to black */
-    }
-
-    /* The reset in the shared scripts partial clears the background of [type=submit] buttons. */
-    #archiveCatModal .btn {
-        background-color: var(--bs-btn-bg);
-    }
-
-    #archiveCatModal .btn:hover {
-        background-color: var(--bs-btn-hover-bg);
-    }
     
 
     /* Mobile responsiveness */
@@ -198,7 +186,7 @@
         <div class="container">
         <div class="header-container">
             <h1>CAT INVENTORY</h1>
-            <button type="button" class="btn btn-secondary text-black" data-bs-toggle="modal" data-bs-target="#addCatModal">Add New Cat</button>
+            <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#addCatModal">Add New Cat</button>
         </div>
         <div class="card-grid">
             @foreach($cats as $cat)
@@ -241,7 +229,7 @@
                         @endif
 
                         <div class="actions">
-                            <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#editCatModal" 
+                            <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#editCatModal" 
                                 data-cat-id="{{ $cat->id }}" 
                                 data-cat-name="{{ $cat->cat_name }}" 
                                 data-cat-image="{{ $cat->cat_image }}"
@@ -254,7 +242,7 @@
                                 data-cat-medical-record="{{ $cat->Medical_Record }}">
                                 Edit
                             </button>
-                            <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#archiveCatModal"
+                            <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#archiveCatModal"
                                 data-cat-id="{{ $cat->id }}"
                                 data-cat-name="{{ $cat->cat_name }}">
                                 Archive
