@@ -1,11 +1,25 @@
+<!DOCTYPE html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Log in · AduCats</title>
 <style>
     body {
         display: flex;
         justify-content: center;
         align-items: center;
-        height: 100vh;
+        min-height: 100vh;
         background-color: #03045e;
         margin: 0;
+        padding: 16px;
+        box-sizing: border-box;
+    }
+
+    /* Same 510px card as before on desktop, full width on phones */
+    body > .mb-4 {
+        width: 100%;
+        max-width: 510px;
     }
 
     .form {
@@ -14,7 +28,8 @@
         gap: 10px;
         background-color: #ffffff;
         padding: 30px;
-        width: 450px;
+        width: 100%;
+        box-sizing: border-box;
         border-radius: 20px;
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     }
@@ -48,6 +63,7 @@
         border: none;
         width: 85%;
         height: 100%;
+        box-sizing: border-box; /* as in quirks mode before; keeps the field inside its rounded border */
     }
 
     .input:focus {
@@ -140,6 +156,8 @@
         font-size: 14px;
     }
 </style>
+</head>
+<body>
 
 <div class="mb-4">
     <form class="form" method="POST" action="{{ route('login') }}">
@@ -212,3 +230,5 @@
 
     </form>
 </div>
+</body>
+</html>
