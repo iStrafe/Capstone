@@ -1,30 +1,51 @@
 @include('scripts')
 @include('admin.adminNavbar')
-    <h1>{{ $newsEvent->title }}</h1>
-    <p>{{ $newsEvent->description }}</p>
-    <p>{{ $newsEvent->event_date }}</p>
 
-   <body>
-    <div class="container w-50">
-     <div class="shadow p-4 mb-4 bg--white" style="height: 450px;overflow: auto;">
-        @foreach ($newsEvent as $event)
-        <div class="card m-2">
-            <div class="card-body pb-2">
-            <h1>{{ $newsEvent->title }}</h1>
-            <p>{{ $newsEvent->description }}</p>
-            <p>{{ $newsEvent->event_date }}</p>
+<style>
+    .news-event-show .card {
+        background: #fff;
+        border: 1px solid rgba(0, 0, 0, .125);
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .news-event-show h1 {
+        font-size: clamp(1.5rem, 4vw, 2.25rem);
+        font-weight: 600;
+        text-align: left;
+        padding-top: 0;
+        margin-bottom: .25rem;
+        overflow-wrap: anywhere;
+    }
+
+    .news-event-show .event-date {
+        color: #555;
+        margin-bottom: 1rem;
+    }
+
+    .news-event-show .event-description {
+        white-space: pre-line;
+        overflow-wrap: anywhere;
+    }
+</style>
+
+<div class="container news-event-show py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm mb-4">
+                @if ($newsEvent->eventimage)
+                    <img src="{{ asset('images/' . $newsEvent->eventimage) }}" alt="Event photo" class="card-img-top">
+                @endif
+                <div class="card-body p-4">
+                    <h1>{{ $newsEvent->title }}</h1>
+                    @if ($newsEvent->event_date)
+                        <p class="event-date">{{ \Illuminate\Support\Carbon::parse($newsEvent->event_date)->format('F j, Y') }}</p>
+                    @endif
+                    <p class="event-description">{{ $newsEvent->description }}</p>
+                </div>
             </div>
-        </div>
-        @endforeach
-     </div>
-   </body>
 
-
-@if($newsEvent->eventimage)
-        <div>
-            <img src="{{ asset('images/' . $newsEvent->eventimage) }}" alt="Image of {{ $newsEvent->eventimage }}" style="width: 300px; height: auto;">
+            <a href="{{ route('news-events.index') }}" class="btn btn-secondary">Back to Events</a>
         </div>
-    @else
-        <p>No image available for {{ $newsEvent->title }}</p>
-    @endif
-    <a href="{{ route('news-events.index') }}">Back to Events</a>
+    </div>
+</div>
