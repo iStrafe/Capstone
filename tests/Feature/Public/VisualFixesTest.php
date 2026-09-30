@@ -109,12 +109,11 @@ class VisualFixesTest extends TestCase
         $vite = file_get_contents(base_path('vite.config.js'));
         $this->assertStringContainsString("'resources/css/app.css'", $vite);
         $this->assertStringContainsString("'resources/css/profile.css'", $vite);
+        $this->assertStringNotContainsString('breeze.js', $vite, 'the dead Breeze app layout script is gone');
 
-        foreach (['guest', 'app'] as $layout) {
-            $source = file_get_contents(resource_path("views/layouts/{$layout}.blade.php"));
-            $this->assertStringContainsString('resources/css/app.css', $source, "layouts/{$layout} must load Tailwind");
-            $this->assertStringNotContainsString('resources/sass/app.scss', $source, "layouts/{$layout} must not load Bootstrap");
-        }
+        $source = file_get_contents(resource_path('views/layouts/guest.blade.php'));
+        $this->assertStringContainsString('resources/css/app.css', $source, 'layouts/guest must load Tailwind');
+        $this->assertStringNotContainsString('resources/sass/app.scss', $source, 'layouts/guest must not load Bootstrap');
 
         $this->assertStringContainsString("@vite('resources/css/profile.css')", file_get_contents(resource_path('views/profile/edit.blade.php')));
 
