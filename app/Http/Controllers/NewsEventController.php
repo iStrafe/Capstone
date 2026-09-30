@@ -1,10 +1,12 @@
 <?php
 
 namespace App\Http\Controllers;
-use App\Models\NewsEvent; 
 
 use App\Http\Controllers\Concerns\StoresPublicImages;
 use App\Http\Requests\Admin\NewsEventRequest;
+use App\Http\Resources\NewsEventResource;
+use App\Models\NewsEvent;
+use Inertia\Inertia;
 
 class NewsEventController extends Controller
 {
@@ -14,18 +16,19 @@ class NewsEventController extends Controller
      * Display a listing of the resource.
      */
     public function index()
-{
-    $newsEvent = NewsEvent::all();
-    return view('news-events.index', compact('newsEvent'));
-}
+    {
+        $newsEvent = NewsEvent::all();
+
+        return view('news-events.index', compact('newsEvent'));
+    }
 
     /**
      * Show the form for creating a new resource.
      */
     public function create()
-{
-    return view('news-events.create');
-}
+    {
+        return view('news-events.create');
+    }
 
     /**
      * Store a newly created resource in storage.
@@ -46,24 +49,22 @@ class NewsEventController extends Controller
     /**
      * Display the specified resource.
      */
+    public function show($id)
+    {
+        $newsEvent = NewsEvent::findorFail($id);
 
-
-public function show($id)
-{
-    $newsEvent = NewsEvent::findorFail($id);
-    return view('news-events.show', compact('newsEvent'));
-}
-
+        return view('news-events.show', compact('newsEvent'));
+    }
 
     /**
      * Show the form for editing the specified resource.
      */
     public function edit($id)
-{
-    $newsEvent = NewsEvent::findOrFail($id);
-    return view('news-events.edit', compact('newsEvent'));
-}
+    {
+        $newsEvent = NewsEvent::findOrFail($id);
 
+        return view('news-events.edit', compact('newsEvent'));
+    }
 
     /**
      * Update the specified resource in storage.
@@ -86,22 +87,22 @@ public function show($id)
      * Remove the specified resource from storage.
      */
     public function destroy($id)
-{
-    $newsEvent = NewsEvent::findOrFail($id);
-    $newsEvent->delete();
-
-    return redirect()->route('news-events.index')
-                     ->with('success', 'News Event deleted successfully.');
-}
- //Cards for User Events
- public function index3()
     {
-        // Fetch the most recent news event (you can modify this to fetch a specific one)
-        $newsEvent = NewsEvent::all();  // Use first() to get a single instance
-        
-        // Pass the single event to the view
-        return view('news-events.events', compact('newsEvent'));
+        $newsEvent = NewsEvent::findOrFail($id);
+        $newsEvent->delete();
+
+        return redirect()->route('news-events.index')
+            ->with('success', 'News Event deleted successfully.');
     }
 
-
+    // Cards for User Events
+    public function index3()
+    {
+        // Public News & events page, newest first.
+        return Inertia::render('Events', [
+            'events' => NewsEventResource::collection(
+                NewsEvent::orderByDesc('event_date')->orderByDesc('id')->get()
+            )->resolve(),
+        ]);
+    }
 }

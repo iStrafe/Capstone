@@ -1,4 +1,4 @@
-import { Head, router, usePage } from '@inertiajs/react';
+import { Head, Link, router, usePage } from '@inertiajs/react';
 import { createContext, useContext, useEffect, useState } from 'react';
 import { buttonClasses } from '../components/Button';
 import DonateDialog from '../components/DonateDialog';
@@ -22,10 +22,11 @@ export default function SiteLayout({ title, active, children }) {
     useEffect(() => router.on('navigate', () => setMenuOpen(false)), []);
 
     const nav = [
+        // `inertia` marks pages that are already React; the rest are Blade and need a full page load.
         { key: 'adopt', label: 'Adopt', href: links.adopt },
-        { key: 'events', label: 'News & events', href: links.events },
-        { key: 'about', label: 'About', href: links.about },
-        { key: 'contact', label: 'Contact', href: links.contact },
+        { key: 'events', label: 'News & events', href: links.events, inertia: true },
+        { key: 'about', label: 'About', href: links.about, inertia: true },
+        { key: 'contact', label: 'Contact', href: links.contact, inertia: true },
     ];
 
     const logout = () => router.post(links.logout);
@@ -43,14 +44,14 @@ export default function SiteLayout({ title, active, children }) {
                         <Logo href={links.home} />
                         <nav aria-label="Main" className="hidden gap-8 lg:flex">
                             {nav.map((item) => (
-                                <a
+                                <NavLink
                                     key={item.key}
-                                    href={item.href}
+                                    item={item}
                                     aria-current={active === item.key ? 'page' : undefined}
                                     className="border-b-2 border-transparent py-2 font-medium text-body hover:text-ink aria-[current=page]:border-azure-500 aria-[current=page]:font-semibold aria-[current=page]:text-ink"
                                 >
                                     {item.label}
-                                </a>
+                                </NavLink>
                             ))}
                         </nav>
                     </div>
@@ -89,9 +90,9 @@ export default function SiteLayout({ title, active, children }) {
                     <div id="mobile-menu" className="border-t border-mist bg-white px-4 pb-6 pt-2 lg:hidden">
                         <nav aria-label="Main" className="flex flex-col">
                             {nav.map((item) => (
-                                <a key={item.key} href={item.href} aria-current={active === item.key ? 'page' : undefined} className="border-b border-mist py-3.5 text-lg font-medium aria-[current=page]:text-azure-700">
+                                <NavLink key={item.key} item={item} aria-current={active === item.key ? 'page' : undefined} className="border-b border-mist py-3.5 text-lg font-medium aria-[current=page]:text-azure-700">
                                     {item.label}
-                                </a>
+                                </NavLink>
                             ))}
                             {user && (
                                 <>
@@ -131,6 +132,10 @@ export default function SiteLayout({ title, active, children }) {
             <DonateDialog open={donateOpen} onClose={() => setDonateOpen(false)} />
         </>
     );
+}
+
+function NavLink({ item, ...props }) {
+    return item.inertia ? <Link href={item.href} {...props} /> : <a href={item.href} {...props} />;
 }
 
 function UserMenu({ user, links, onLogout }) {
@@ -195,9 +200,9 @@ function Footer({ links }) {
                         </div>
                         <div className={column}>
                             <span className="font-bold text-white">AduCats</span>
-                            <a href={links.about} className={link}>About us</a>
-                            <a href={links.events} className={link}>News & events</a>
-                            <a href={links.contact} className={link}>Contact</a>
+                            <Link href={links.about} className={link}>About us</Link>
+                            <Link href={links.events} className={link}>News & events</Link>
+                            <Link href={links.contact} className={link}>Contact</Link>
                         </div>
                         <div className={`${column} max-w-56`}>
                             <span className="font-bold text-white">Visit</span>

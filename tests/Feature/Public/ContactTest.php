@@ -4,6 +4,7 @@ namespace Tests\Feature\Public;
 
 use App\Models\Contact;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
 
 class ContactTest extends TestCase
@@ -20,14 +21,18 @@ class ContactTest extends TestCase
                 'message' => 'Is Mingming still available?',
             ])
             ->assertOk()
-            ->assertSee('Message sent successfully!');
+            ->assertSee('Your message reached the AduCats team.');
 
         $this->assertSame(1, Contact::count());
     }
 
     public function test_contact_form_takes_an_optional_email_for_the_admin_inbox(): void
     {
-        $this->get(route('contactus'))->assertOk()->assertSee('name="email"', false);
+        $this->get(route('contactus'))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Contact')
+                ->where('links.contactSend', route('contact.store')));
 
         $this->post(route('contact.store'), [
             'full_name' => 'Juan Dela Cruz',
@@ -48,19 +53,22 @@ class ContactTest extends TestCase
         $this->assertNull($contact->handled_at);
     }
 
-    public function test_contact_form_shows_validation_errors_and_keeps_the_input(): void
+    public function test_contact_form_sends_validation_errors_back_to_the_react_page(): void
     {
+        // The React form keeps what was typed itself; the server only has to send the errors back.
         $this->from(route('contactus'))
-            ->followingRedirects()
             ->post(route('contact.store'), [
                 'full_name' => 'Juan Dela Cruz',
                 'mobile_number' => str_repeat('9', 20),
                 'message' => 'Is Mingming still available?',
             ])
-            ->assertOk()
-            ->assertSee('The mobile number field must not be greater than 15 characters.')
-            ->assertSee('value="Juan Dela Cruz"', false)
-            ->assertSee('>Is Mingming still available?</textarea>', false);
+            ->assertRedirect(route('contactus'))
+            ->assertSessionHasErrors(['mobile_number' => 'The mobile number field must not be greater than 15 characters.']);
+
+        $this->get(route('contactus'))
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Contact')
+                ->where('errors.mobile_number', 'The mobile number field must not be greater than 15 characters.'));
 
         $this->assertSame(0, Contact::count());
     }

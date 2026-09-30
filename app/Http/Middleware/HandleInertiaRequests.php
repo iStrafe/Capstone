@@ -60,6 +60,7 @@ class HandleInertiaRequests extends Middleware
                 'about' => route('aboutus'),
                 'events' => route('news-events.events'),
                 'contact' => route('contactus'),
+                'contactSend' => route('contact.store'),
                 'donate' => route('paymongo.create'),
                 'login' => route('login'),
                 'register' => route('register'),

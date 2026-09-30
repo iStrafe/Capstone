@@ -8,6 +8,7 @@ use App\Http\Controllers\ContactController;
 use App\Http\Controllers\GoogleAuthController;
 use App\Http\Controllers\NewsEventController;
 use App\Http\Controllers\OpenAIController;
+use App\Http\Controllers\PageController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
@@ -19,13 +20,8 @@ Route::get('/cat/{cat}', [CatController::class, 'show'])->whereNumber('cat')->na
 // The old user dashboard duplicated Home's gallery; old links, bookmarks and intended URLs land on Home.
 Route::redirect('userDashboard', '/')->name('dashboard');
 
-Route::get('/aboutus', function () {
-    return view('aboutus');
-})->name('aboutus');
-
-Route::get('/ContactUs', function () {
-    return view('contactus');
-})->name('contactus');
+Route::get('/aboutus', [PageController::class, 'about'])->name('aboutus');
+Route::get('/ContactUs', [PageController::class, 'contact'])->name('contactus');
 Route::post('/contact', [ContactController::class, 'store'])->middleware('throttle:10,1')->name('contact.store');
 
 Route::get('/events', [NewsEventController::class, 'index3'])->name('news-events.events');
