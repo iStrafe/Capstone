@@ -105,7 +105,7 @@
         <img src="{{ asset('images/adu logo.png') }}" alt="Logo" />
     </div>
     @if(Auth::check() && Auth::user()->role === "admin")
-        <a href="{{ url('userDashboard') }}">User Page</a>
+        <a href="{{ route('home') }}">User Page</a>
     @endif
 
     <a href="{{ url('AdoptionRequest') }}">Adoption Requests</a>

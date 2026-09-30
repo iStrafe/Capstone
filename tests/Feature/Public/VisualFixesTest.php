@@ -69,15 +69,6 @@ class VisualFixesTest extends TestCase
     {
         $partial = file_get_contents(resource_path('views/scripts.blade.php'));
         $this->assertDoesNotMatchRegularExpression('/(^|[\s}])\.row\s*\{[^}]*display:\s*grid/', $partial);
-
-        Cat::create(['cat_name' => 'Mochi', 'cat_image' => 'mochi.png', 'age' => 2, 'color' => 'White', 'breed' => 'Puspin', 'sex' => 'Male']);
-
-        // The home page is a React page now; the Blade user dashboard still has the gallery.
-        $this->actingAs(User::factory()->create())
-            ->get(route('dashboard'))
-            ->assertOk()
-            ->assertSee('<div class="cat-gallery" id="catGallery">', false)
-            ->assertDontSee('col-md-4 cat-card', false);
     }
 
     public function test_cats_without_a_photo_show_the_generic_placeholder_in_the_gallery(): void
@@ -97,11 +88,6 @@ class VisualFixesTest extends TestCase
                 ->where('cats.0.name', 'Nophoto')
                 ->where('cats.0.image', null)
                 ->where('cats.0.placeholder', asset('images/placeholder.png')));
-
-        $this->actingAs(User::factory()->create())->get(route('dashboard'))
-            ->assertOk()
-            ->assertSee('alt="No photo yet of Nophoto"', false)
-            ->assertDontSee('No image available');
     }
 
     public function test_breeze_layouts_load_the_tailwind_build_and_not_bootstrap(): void

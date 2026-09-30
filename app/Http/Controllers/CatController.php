@@ -33,11 +33,6 @@ class CatController extends Controller
         ]);
     }
 
-    public function dashboard(): View
-    {
-        return view('dashboard', ['cats' => Cat::available()->get()]);
-    }
-
     public function index(Request $request): View
     {
         return view('cats.index', [
