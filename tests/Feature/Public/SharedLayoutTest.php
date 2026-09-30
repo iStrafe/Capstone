@@ -53,13 +53,13 @@ class SharedLayoutTest extends TestCase
     public function test_blade_pages_no_longer_log_idle_users_out_after_five_minutes(): void
     {
         // Signing out after inactivity is left to the normal session lifetime (SESSION_LIFETIME).
-        $this->get(route('aboutus'))
+        $this->get(route('adoptCat'))
             ->assertOk()
             ->assertDontSee('timerIncrement', false)
             ->assertDontSee('css/styles.css', false);
 
         $this->actingAs(User::factory()->create())
-            ->get(route('aboutus'))
+            ->get(route('adoptCat'))
             ->assertOk()
             ->assertDontSee('timerIncrement', false)
             ->assertDontSee('idleTime', false)

@@ -45,6 +45,30 @@ const paths = {
             <path d="M12 11v5M12 8h.01" />
         </>
     ),
+    users: (
+        <>
+            <circle cx="9" cy="8" r="3.5" />
+            <path d="M2.5 19c1-3.5 3.6-5 6.5-5s5.5 1.5 6.5 5" />
+            <circle cx="17" cy="9" r="2.5" />
+            <path d="M17 14c2.3 0 4 1.3 4.5 4" />
+        </>
+    ),
+    send: <path d="M4 12l16-8-6 16-2.5-6.5z" />,
+    mail: (
+        <>
+            <rect x="3" y="5" width="18" height="14" rx="2" />
+            <path d="M3 7l9 6 9-6" />
+        </>
+    ),
+    phone: <path d="M5 4h4l2 5-2.5 1.5a11 11 0 005 5L15 13l5 2v4a1 1 0 01-1 1A16 16 0 014 5a1 1 0 011-1z" />,
+    image: (
+        <>
+            <rect x="3.5" y="4.5" width="17" height="15" rx="2" />
+            <circle cx="9" cy="10" r="1.8" />
+            <path d="M4 18l5-5 4 4 3-3 4 4" />
+        </>
+    ),
+    external: <path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 01-1 1H5a1 1 0 01-1-1V7a1 1 0 011-1h5" />,
 };
 
 export default function Icon({ name, size = 20, className = '', ...props }) {

@@ -23,6 +23,6 @@ class ContactController extends Controller
         Contact::create($validated);
 
         // Redirect or return response
-        return redirect()->back()->with('success', 'Message sent successfully! Wait for the update');
+        return redirect()->back()->with('success', 'Thanks! Your message reached the AduCats team. We will get back to you soon.');
     }
 }

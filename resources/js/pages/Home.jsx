@@ -3,6 +3,7 @@ import { useMemo, useState } from 'react';
 import Button, { ButtonLink } from '../components/Button';
 import CatCard from '../components/CatCard';
 import CatPhoto from '../components/CatPhoto';
+import EventCard from '../components/EventCard';
 import Icon from '../components/Icon';
 import SiteLayout, { useDonate } from '../layouts/SiteLayout';
 
@@ -150,9 +151,9 @@ export default function Home({ cats, events }) {
                     <p className="leading-relaxed text-azure-100">
                         We care for cats already on campus and help them get adopted. Please don't leave pets here: abandoning an animal is unlawful under RA 10631, Section 7.
                     </p>
-                    <a href={links.about} className="self-start font-semibold text-white underline underline-offset-4 hover:text-azure-200">
+                    <Link href={links.about} className="self-start font-semibold text-white underline underline-offset-4 hover:text-azure-200">
                         Read our full statement
-                    </a>
+                    </Link>
                 </div>
                 <div className="flex flex-col gap-4 rounded-[28px] bg-azure-100 p-8 sm:p-10">
                     <p className="flex items-center gap-2.5 font-bold text-azure-800">
@@ -169,21 +170,13 @@ export default function Home({ cats, events }) {
                 <section aria-labelledby="news-title" className="mx-auto flex max-w-7xl flex-col gap-7 px-4 pb-20 sm:px-8">
                     <div className="flex items-end justify-between gap-4">
                         <h2 id="news-title" className="font-display text-3xl font-semibold sm:text-4xl">News &amp; events</h2>
-                        <a href={links.events} className="flex items-center gap-2 font-semibold text-azure-700 hover:text-azure-900">
+                        <Link href={links.events} className="flex items-center gap-2 font-semibold text-azure-700 hover:text-azure-900">
                             All updates <Icon name="arrowRight" size={18} />
-                        </a>
+                        </Link>
                     </div>
                     <div className="grid gap-6 md:grid-cols-3">
                         {events.map((event) => (
-                            <article key={event.id} className="flex flex-col gap-2.5 rounded-[20px] border border-mist bg-white p-7">
-                                {event.date && (
-                                    <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.14em] text-azure-700">
-                                        <Icon name="calendar" size={16} /> {event.date}
-                                    </p>
-                                )}
-                                <h3 className="font-display text-2xl font-semibold">{event.title}</h3>
-                                <p className="line-clamp-3 leading-relaxed text-body">{event.description}</p>
-                            </article>
+                            <EventCard key={event.id} event={event} />
                         ))}
                     </div>
                 </section>
