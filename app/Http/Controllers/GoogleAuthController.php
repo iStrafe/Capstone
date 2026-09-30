@@ -64,6 +64,11 @@ class GoogleAuthController extends Controller
 
         Auth::login($user);
 
-        return redirect()->route($user->role === 'admin' ? 'admin.cats.index' : 'dashboard');
+        if ($user->role === 'admin') {
+            return redirect()->route('admin.cats.index');
+        }
+
+        // Back to the page that asked them to log in, if any.
+        return redirect()->intended(route('home'));
     }
 }

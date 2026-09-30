@@ -4,6 +4,7 @@ namespace Tests\Feature\Auth;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Route;
 use Tests\TestCase;
 
 class AuthenticationTest extends TestCase
@@ -27,7 +28,7 @@ class AuthenticationTest extends TestCase
         ]);
 
         $this->assertAuthenticated();
-        $response->assertRedirect(route('dashboard', absolute: false));
+        $response->assertRedirect(route('home'));
     }
 
     public function test_users_can_not_authenticate_with_invalid_password(): void
@@ -95,7 +96,27 @@ class AuthenticationTest extends TestCase
         $this->post('/login', [
             'email' => $user->email,
             'password' => 'password',
-        ])->assertRedirect(route('dashboard'));
+        ])->assertRedirect(route('home'));
+    }
+
+    public function test_the_retired_user_dashboard_redirects_to_home(): void
+    {
+        $this->get('/userDashboard')->assertRedirect(route('home'));
+        $this->actingAs(User::factory()->create())->get(route('dashboard'))->assertRedirect(route('home'));
+    }
+
+    public function test_verify_email_and_confirm_password_pages_are_gone(): void
+    {
+        $this->actingAs(User::factory()->create());
+
+        $this->get('/verify-email')->assertNotFound();
+        $this->get('/confirm-password')->assertNotFound();
+        $this->post('/confirm-password', ['password' => 'password'])->assertNotFound();
+        $this->post('/email/verification-notification')->assertNotFound();
+
+        foreach (['verification.notice', 'verification.verify', 'verification.send', 'password.confirm'] as $name) {
+            $this->assertFalse(Route::has($name), "route {$name} should be gone");
+        }
     }
 
     public function test_users_can_logout(): void

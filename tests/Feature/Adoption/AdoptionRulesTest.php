@@ -79,9 +79,6 @@ class AdoptionRulesTest extends TestCase
             $response = $this->get($url)->assertOk();
             $listed ? $response->assertSee($name) : $response->assertDontSee($name);
         }
-
-        $response = $this->actingAs($this->user)->get(route('dashboard'))->assertOk();
-        $listed ? $response->assertSee($name) : $response->assertDontSee($name);
     }
 
     public function test_inactive_cats_are_hidden_and_cannot_be_requested(): void

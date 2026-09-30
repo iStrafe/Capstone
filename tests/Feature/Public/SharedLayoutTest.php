@@ -37,24 +37,22 @@ class SharedLayoutTest extends TestCase
             ->assertOk()
             ->assertSee(asset('images/placeholder.png'), false)
             ->assertDontSee('default_cat.png', false);
-
-        $dashboard = $this->actingAs(User::factory()->create())->get(route('dashboard'))->assertOk();
-        $dashboard->assertSee(asset('images/placeholder.png'), false);
-        $this->assertStringNotContainsString('fbcdn.net', $dashboard->getContent());
     }
 
-    public function test_user_dashboard_includes_the_adoption_contract_once(): void
+    public function test_blade_pages_include_the_adoption_contract_once(): void
     {
+        // The contract modal still comes with the shared Blade navbar until its terms move to the adoption page.
         $content = $this->actingAs(User::factory()->create())
-            ->get(route('dashboard'))
+            ->get(route('myRequest'))
             ->assertOk()
             ->getContent();
 
         $this->assertSame(1, substr_count($content, 'id="modalId2"'));
     }
 
-    public function test_idle_logout_timer_is_only_on_pages_for_signed_in_users(): void
+    public function test_blade_pages_no_longer_log_idle_users_out_after_five_minutes(): void
     {
+        // Signing out after inactivity is left to the normal session lifetime (SESSION_LIFETIME).
         $this->get(route('aboutus'))
             ->assertOk()
             ->assertDontSee('timerIncrement', false)
@@ -63,7 +61,8 @@ class SharedLayoutTest extends TestCase
         $this->actingAs(User::factory()->create())
             ->get(route('aboutus'))
             ->assertOk()
-            ->assertSee('timerIncrement', false)
+            ->assertDontSee('timerIncrement', false)
+            ->assertDontSee('idleTime', false)
             ->assertSee('id="logout-form"', false);
     }
 }

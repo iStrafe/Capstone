@@ -59,31 +59,6 @@
     }
 </style>
 
-<!-- Idle Detection Script (signed-in users only: guests have no logout form) -->
-@auth
-<script>
-    let idleTime = 0;
-
-    function timerIncrement() {
-        idleTime++;
-        if (idleTime > 4) { // 5 minutes
-            document.getElementById('logout-form').submit();
-        }
-    }
-
-    window.addEventListener('load', resetTimer);
-    document.onmousemove = resetTimer;
-    document.onkeypress = resetTimer;
-
-    function resetTimer() {
-        idleTime = 0;
-    }
-
-    setInterval(timerIncrement, 60000); // 1 minute
-
-</script>
-@endauth
-
 <nav class="navbar navbar-expand-lg border-bottom border-body" data-bs-theme="dark">
     <div class="container-fluid">
              @if(Auth::check() && Auth::user()->role === "admin")

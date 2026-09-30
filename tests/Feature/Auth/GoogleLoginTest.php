@@ -46,7 +46,7 @@ class GoogleLoginTest extends TestCase
         $existing = User::factory()->create(['email' => 'juan@example.com']);
         $this->fakeGoogleUser('juan@example.com');
 
-        $this->get('/auth/google/callbacks')->assertRedirect(route('dashboard'));
+        $this->get('/auth/google/callbacks')->assertRedirect(route('home'));
 
         $this->assertAuthenticatedAs($existing);
         $this->assertSame('google-123', $existing->fresh()->google_id);
@@ -69,9 +69,27 @@ class GoogleLoginTest extends TestCase
         $existing = User::factory()->create(['email' => 'old@example.com', 'google_id' => 'google-123']);
         $this->fakeGoogleUser('new@example.com');
 
-        $this->get('/auth/google/callbacks')->assertRedirect(route('dashboard'));
+        $this->get('/auth/google/callbacks')->assertRedirect(route('home'));
 
         $this->assertAuthenticatedAs($existing);
+    }
+
+    public function test_returning_google_users_go_back_to_the_page_they_wanted(): void
+    {
+        User::factory()->create(['google_id' => 'google-123']);
+        $this->fakeGoogleUser('juan@example.com');
+
+        $this->get(route('myRequest'))->assertRedirect(route('login'));
+
+        $this->get('/auth/google/callbacks')->assertRedirect(route('myRequest'));
+    }
+
+    public function test_google_admins_still_land_on_the_cat_inventory(): void
+    {
+        User::factory()->create(['google_id' => 'google-123', 'role' => 'admin']);
+        $this->fakeGoogleUser('admin@example.com');
+
+        $this->get('/auth/google/callbacks')->assertRedirect(route('admin.cats.index'));
     }
 
     public function test_failed_google_callback_returns_to_login(): void
