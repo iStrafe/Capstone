@@ -1,5 +1,3 @@
-import defaultTheme from 'tailwindcss/defaultTheme';
-
 /** Tailwind build for resources/css/profile.css (see the comment there). */
 /** @type {import('tailwindcss').Config} */
 export default {
@@ -21,7 +19,7 @@ export default {
     theme: {
         extend: {
             fontFamily: {
-                sans: ['Figtree', ...defaultTheme.fontFamily.sans],
+                sans: ['Figtree', 'ui-sans-serif', 'system-ui', 'sans-serif'],
             },
         },
     },

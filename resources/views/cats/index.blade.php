@@ -161,6 +161,15 @@
             });
         });
 
+        // The React cat profile links here as #adopt-{id}: open the adoption form for that cat.
+        window.addEventListener('load', function () {
+            const match = window.location.hash.match(/^#adopt-(\d+)$/);
+            const button = match && document.querySelector('.btn-adopt[data-id="' + match[1] + '"]');
+            if (button) {
+                button.click();
+            }
+        });
+
         document.querySelectorAll('.btn-adopt').forEach(button => {
             button.addEventListener('click', function() {
                 // Only the cat's id is submitted; the other fields just show which cat was picked.

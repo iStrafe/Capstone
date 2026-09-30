@@ -1,0 +1,54 @@
+/*
+ * Styles for the React (Inertia) pages: Tailwind CSS 4 with the AduCats "Azure" theme.
+ * Only files under resources/js are scanned, so Blade templates never add classes here.
+ */
+@import 'tailwindcss' source(none);
+@source '../js';
+
+@theme {
+    --font-sans: 'Figtree', ui-sans-serif, system-ui, sans-serif;
+    --font-display: 'Fraunces', ui-serif, Georgia, serif;
+
+    /* Azure #1A8CFF is the brand color. White text on it is only 3.4:1, so text and
+       small-text buttons use the deeper 600-900 shades (4.5:1 or better on white). */
+    --color-azure-50: #f0f7ff;
+    --color-azure-100: #e0f0ff;
+    --color-azure-200: #b2d9ff;
+    --color-azure-300: #8cc6ff;
+    --color-azure-500: #1a8cff;
+    --color-azure-600: #006bd6;
+    --color-azure-700: #005cb8;
+    --color-azure-800: #0a4f99;
+    --color-azure-900: #083f7a;
+    --color-azure-950: #0a2a4f;
+
+    --color-ink: #0f1e3d;
+    --color-body: #44506a;
+    --color-muted: #56627a;
+    --color-cloud: #f5f9ff;
+    --color-mist: #dce4ef;
+    --color-mist-strong: #c9d4e4;
+    --color-sky: #eaf4ff;
+
+    /* Adoption request and cat status badges: always a word plus a dot, never color alone. */
+    --color-pending: #7a4e00;
+    --color-pending-bg: #fdf0d5;
+    --color-approved: #1b5e3b;
+    --color-approved-bg: #ddf1e4;
+    --color-rejected: #9a2c23;
+    --color-rejected-bg: #fbe3df;
+    --color-released: #1f4e8c;
+    --color-released-bg: #e0eaf8;
+    --color-neutral: #4e5260;
+    --color-neutral-bg: #e7ecf3;
+}
+
+@layer base {
+    body {
+        @apply bg-cloud font-sans text-ink antialiased;
+    }
+
+    :focus-visible {
+        @apply outline-3 outline-offset-2 outline-azure-500;
+    }
+}

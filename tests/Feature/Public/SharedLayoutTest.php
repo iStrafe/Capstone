@@ -5,6 +5,7 @@ namespace Tests\Feature\Public;
 use App\Models\Cat;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
 
 class SharedLayoutTest extends TestCase
@@ -27,8 +28,9 @@ class SharedLayoutTest extends TestCase
 
         Cat::create(['cat_name' => 'Tiger', 'age' => 3, 'color' => 'Black', 'breed' => 'Puspin', 'sex' => 'Male']);
 
-        $home = $this->get(route('home'))->assertOk();
-        $home->assertSee(asset('images/placeholder.png'), false);
+        $home = $this->get(route('home'))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page->where('cats.0.placeholder', asset('images/placeholder.png')));
         $this->assertStringNotContainsString('fbcdn.net', $home->getContent());
 
         $this->get(route('adoptCat'))
