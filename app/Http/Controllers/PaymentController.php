@@ -6,6 +6,7 @@ use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Inertia\Inertia;
 
 class PaymentController extends Controller
 {
@@ -70,7 +71,8 @@ class PaymentController extends Controller
         }
 
         // Redirect to the payment link
-        return redirect()->away($paymentUrl);
+        // Inertia::location also leaves the React pages cleanly (a plain redirect would be followed over XHR).
+        return Inertia::location($paymentUrl);
     }
 
     private function failed()

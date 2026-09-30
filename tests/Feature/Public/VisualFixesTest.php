@@ -6,6 +6,7 @@ use App\Models\Cat;
 use App\Models\NewsEvent;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
 
 class VisualFixesTest extends TestCase
@@ -71,11 +72,7 @@ class VisualFixesTest extends TestCase
 
         Cat::create(['cat_name' => 'Mochi', 'cat_image' => 'mochi.png', 'age' => 2, 'color' => 'White', 'breed' => 'Puspin', 'sex' => 'Male']);
 
-        $this->get(route('home'))
-            ->assertOk()
-            ->assertSee('<div class="cat-gallery" id="catGallery">', false)
-            ->assertDontSee('col-md-4 cat-card', false);
-
+        // The home page is a React page now; the Blade user dashboard still has the gallery.
         $this->actingAs(User::factory()->create())
             ->get(route('dashboard'))
             ->assertOk()
@@ -93,11 +90,18 @@ class VisualFixesTest extends TestCase
 
         Cat::create(['cat_name' => 'Nophoto', 'age' => 2, 'color' => 'Grey', 'breed' => 'Puspin', 'sex' => 'Male']);
 
-        foreach ([$this->get(route('home')), $this->actingAs(User::factory()->create())->get(route('dashboard'))] as $response) {
-            $response->assertOk()
-                ->assertSee('alt="No photo yet of Nophoto"', false)
-                ->assertDontSee('No image available');
-        }
+        // React home page: no image URL, so CatPhoto shows the placeholder with "No photo yet of Nophoto".
+        $this->get(route('home'))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->where('cats.0.name', 'Nophoto')
+                ->where('cats.0.image', null)
+                ->where('cats.0.placeholder', asset('images/placeholder.png')));
+
+        $this->actingAs(User::factory()->create())->get(route('dashboard'))
+            ->assertOk()
+            ->assertSee('alt="No photo yet of Nophoto"', false)
+            ->assertDontSee('No image available');
     }
 
     public function test_breeze_layouts_load_the_tailwind_build_and_not_bootstrap(): void
