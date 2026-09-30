@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Contact;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -28,6 +29,7 @@ class HandleInertiaRequests extends Middleware
     public function share(Request $request): array
     {
         $user = $request->user();
+        $isAdmin = $user?->role === 'admin';
 
         return [
             ...parent::share($request),
@@ -35,13 +37,22 @@ class HandleInertiaRequests extends Middleware
                 'user' => $user ? [
                     'id' => $user->id,
                     'name' => $user->name,
-                    'isAdmin' => $user->role === 'admin',
+                    'isAdmin' => $isAdmin,
                 ] : null,
             ],
             'flash' => [
                 'success' => fn () => $request->session()->get('success'),
                 'error' => fn () => $request->session()->get('error'),
+                // Breeze auth and profile messages, e.g. 'profile-updated' or a password reset notice.
+                'status' => fn () => $request->session()->get('status'),
             ],
+            // Admin-only data for the admin layout. Other visitors don't get the key at all.
+            ...($isAdmin ? [
+                'admin' => [
+                    // Same count as the Blade sidebar badge (view composer in AppServiceProvider).
+                    'unreadMessages' => fn () => Contact::unhandled()->count(),
+                ],
+            ] : []),
             // Most of the site is still Blade, so the React layout links to it by URL.
             'links' => fn () => [
                 'home' => route('home'),
