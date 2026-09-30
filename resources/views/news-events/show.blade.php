@@ -39,7 +39,7 @@
                 <div class="card-body p-4">
                     <h1>{{ $newsEvent->title }}</h1>
                     @if ($newsEvent->event_date)
-                        <p class="event-date">{{ \Illuminate\Support\Carbon::parse($newsEvent->event_date)->format('F j, Y') }}</p>
+                        <p class="event-date">{{ $newsEvent->event_date->format('F j, Y') }}</p>
                     @endif
                     <p class="event-description">{{ $newsEvent->description }}</p>
                 </div>
