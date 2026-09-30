@@ -12,7 +12,7 @@
                     <!-- Description with larger font size -->
                     <p class="card-text" style="font-size: 1.25rem; color: white;">{{ $newsEvent->description }}</p>
                     
-                    <p class="card-text" style="font-size: 1rem; color: white;"><strong>Date:</strong> {{ $newsEvent->event_date }}</p>
+                    <p class="card-text" style="font-size: 1rem; color: white;"><strong>Date:</strong> {{ $newsEvent->event_date?->format('Y-m-d') }}</p>
                 </div>
             </div>
             @if(!empty($newsEvent->eventimage) && file_exists(public_path('images/' . $newsEvent->eventimage)))

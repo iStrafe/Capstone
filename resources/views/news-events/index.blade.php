@@ -152,7 +152,7 @@
                     <tr>
                         <td>{{ $info->title }}</td>
                         <td>{{ $info->description }}</td>
-                        <td>{{ $info->event_date }}</td>
+                        <td>{{ $info->event_date?->format('Y-m-d') }}</td>
                         <td>
                             @if($info->eventimage)
                                 <img src="{{ asset('images/' . $info->eventimage) }}" alt="Image of {{ $info->title }}">

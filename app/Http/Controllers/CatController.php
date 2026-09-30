@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Enums\AdoptionStatus;
 use App\Http\Resources\CatResource;
+use App\Http\Resources\NewsEventResource;
 use App\Models\Cat;
 use App\Models\NewsEvent;
 use Illuminate\Http\Request;
@@ -20,16 +21,9 @@ class CatController extends Controller
     {
         return Inertia::render('Home', [
             'cats' => CatResource::collection(Cat::available()->latest('id')->get())->resolve(),
-            'events' => NewsEvent::query()
-                ->orderByDesc('event_date')
-                ->limit(3)
-                ->get()
-                ->map(fn (NewsEvent $event) => [
-                    'id' => $event->id,
-                    'title' => $event->title,
-                    'description' => $event->description,
-                    'date' => $event->event_date ? date('M j, Y', strtotime($event->event_date)) : null,
-                ]),
+            'events' => NewsEventResource::collection(
+                NewsEvent::query()->orderByDesc('event_date')->limit(3)->get()
+            )->resolve(),
         ]);
     }
 

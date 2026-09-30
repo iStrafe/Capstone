@@ -28,7 +28,7 @@
     <!-- Event Date Field -->
     <div class="mb-3">
         <label for="event_date" class="form-label">Event Date:</label>
-        <input type="date" name="event_date" id="event_date" value="{{ $newsEvent->event_date }}" class="form-control">
+        <input type="date" name="event_date" id="event_date" value="{{ $newsEvent->event_date?->format('Y-m-d') }}" class="form-control">
     </div>
 
     <!-- Submit Button -->
