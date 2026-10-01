@@ -7,6 +7,8 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
+use Inertia\Support\Header;
+use Symfony\Component\HttpFoundation\Response;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -50,5 +52,15 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
-        //
+        // A React form that hits an expired session (419) or a rate limit (429) goes back to
+        // the same page with a message, instead of Inertia showing the error page in a modal.
+        $exceptions->respond(function (Response $response, Throwable $e, Request $request) {
+            if (! $request->header(Header::INERTIA) || ! in_array($response->getStatusCode(), [419, 429], true)) {
+                return $response;
+            }
+
+            return back()->with('error', $response->getStatusCode() === 419
+                ? 'This page expired. Please try again.'
+                : 'Too many tries. Please wait a minute and try again.');
+        });
     })->create();

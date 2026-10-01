@@ -20,6 +20,16 @@ class LoginRequest extends FormRequest
     }
 
     /**
+     * Emails are stored in lowercase, so "Juan@Example.com" logs in as juan@example.com.
+     */
+    protected function prepareForValidation(): void
+    {
+        if (is_string($this->input('email'))) {
+            $this->merge(['email' => Str::lower(trim($this->input('email')))]);
+        }
+    }
+
+    /**
      * Get the validation rules that apply to the request.
      *
      * @return array<string, \Illuminate\Contracts\Validation\Rule|array|string>

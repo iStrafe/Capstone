@@ -53,7 +53,7 @@ class HandleInertiaRequests extends Middleware
                     'unreadMessages' => fn () => Contact::unhandled()->count(),
                 ],
             ] : []),
-            // URLs the React pages link or post to. Account and admin pages are still Blade, so links to them need a full page load.
+            // URLs the React pages link or post to. Admin pages and Google sign-in are not React, so links to them need a full page load.
             'links' => fn () => [
                 'home' => route('home'),
                 'adopt' => route('adoptCat'),
@@ -65,6 +65,11 @@ class HandleInertiaRequests extends Middleware
                 'donate' => route('paymongo.create'),
                 'login' => route('login'),
                 'register' => route('register'),
+                'google' => route('google-auth'),
+                'passwordRequest' => route('password.request'),
+                'passwordEmail' => route('password.email'),
+                'passwordStore' => route('password.store'),
+                'passwordUpdate' => route('password.update'),
                 'logout' => route('logout'),
                 'myRequests' => route('myRequest'),
                 'profile' => route('profile.edit'),

@@ -64,12 +64,12 @@ export default function SiteLayout({ title, active, children }) {
                             <UserMenu user={user} links={links} onLogout={logout} />
                         ) : (
                             <>
-                                <a href={links.register} className="font-semibold text-azure-700 hover:text-azure-900">
+                                <Link href={links.register} className="font-semibold text-azure-700 hover:text-azure-900">
                                     Register
-                                </a>
-                                <a href={links.login} className={buttonClasses({ variant: 'dark', size: 'sm' })}>
+                                </Link>
+                                <Link href={links.login} className={buttonClasses({ variant: 'dark', size: 'sm' })}>
                                     Log in
-                                </a>
+                                </Link>
                             </>
                         )}
                     </div>
@@ -97,7 +97,7 @@ export default function SiteLayout({ title, active, children }) {
                             {user && (
                                 <>
                                     <Link href={links.myRequests} className="border-b border-mist py-3.5 text-lg font-medium">My requests</Link>
-                                    <a href={links.profile} className="border-b border-mist py-3.5 text-lg font-medium">Profile</a>
+                                    <Link href={links.profile} className="border-b border-mist py-3.5 text-lg font-medium">Profile</Link>
                                     {user.isAdmin && <a href={links.admin} className="border-b border-mist py-3.5 text-lg font-medium">Admin dashboard</a>}
                                 </>
                             )}
@@ -112,8 +112,8 @@ export default function SiteLayout({ title, active, children }) {
                                 </button>
                             ) : (
                                 <>
-                                    <a href={links.login} className={buttonClasses({ variant: 'dark' })}>Log in</a>
-                                    <a href={links.register} className={buttonClasses({ variant: 'quiet' })}>Create an account</a>
+                                    <Link href={links.login} className={buttonClasses({ variant: 'dark' })}>Log in</Link>
+                                    <Link href={links.register} className={buttonClasses({ variant: 'quiet' })}>Create an account</Link>
                                 </>
                             )}
                         </div>
@@ -167,7 +167,7 @@ function UserMenu({ user, links, onLogout }) {
             {open && (
                 <div className="absolute right-0 top-full mt-2 w-56 overflow-hidden rounded-2xl border border-mist bg-white py-2 shadow-xl">
                     <Link href={links.myRequests} className="block px-4 py-2.5 hover:bg-azure-50">My requests</Link>
-                    <a href={links.profile} className="block px-4 py-2.5 hover:bg-azure-50">Profile</a>
+                    <Link href={links.profile} className="block px-4 py-2.5 hover:bg-azure-50">Profile</Link>
                     {user.isAdmin && <a href={links.admin} className="block px-4 py-2.5 hover:bg-azure-50">Admin dashboard</a>}
                     <button type="button" onClick={onLogout} className="block w-full border-t border-mist px-4 py-2.5 text-left hover:bg-azure-50">
                         Log out

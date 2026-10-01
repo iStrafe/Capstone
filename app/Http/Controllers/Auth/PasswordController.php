@@ -11,19 +11,23 @@ use Illuminate\Validation\Rules\Password;
 class PasswordController extends Controller
 {
     /**
-     * Update the user's password.
+     * Update the user's password, or set a first one for an account made with Google.
      */
     public function update(Request $request): RedirectResponse
     {
+        $user = $request->user();
+        $hadPassword = $user->hasPassword();
+
         $validated = $request->validateWithBag('updatePassword', [
-            'current_password' => ['required', 'current_password'],
+            // Google-only accounts have no current password to confirm.
+            ...($hadPassword ? ['current_password' => ['required', 'current_password']] : []),
             'password' => ['required', Password::defaults(), 'confirmed'],
         ]);
 
-        $request->user()->update([
+        $user->update([
             'password' => Hash::make($validated['password']),
         ]);
 
-        return back()->with('status', 'password-updated');
+        return back()->with('status', $hadPassword ? 'password-updated' : 'password-set');
     }
 }

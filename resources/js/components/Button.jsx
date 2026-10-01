@@ -8,6 +8,8 @@ const variants = {
     outline: 'border-[1.5px] border-mist-strong bg-white text-azure-800 hover:border-azure-500 hover:bg-azure-50',
     quiet: 'bg-azure-100 text-ink hover:bg-azure-200',
     onDark: 'bg-white text-azure-900 hover:bg-azure-100',
+    // Destructive actions such as deleting an account.
+    danger: 'bg-rejected text-white hover:bg-[#7f241d]',
     disabled: 'cursor-not-allowed bg-neutral-bg text-muted',
 };
 
@@ -19,7 +21,7 @@ const sizes = {
 
 export function buttonClasses({ variant = 'primary', size = 'md', className = '' } = {}) {
     return [
-        'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full font-semibold transition-colors',
+        'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-60',
         variants[variant],
         sizes[size],
         className,

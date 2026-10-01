@@ -5,6 +5,7 @@ namespace Tests\Feature\Auth;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Route;
+use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
 
 class AuthenticationTest extends TestCase
@@ -13,9 +14,9 @@ class AuthenticationTest extends TestCase
 
     public function test_login_screen_can_be_rendered(): void
     {
-        $response = $this->get('/login');
-
-        $response->assertStatus(200);
+        $this->get('/login')
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page->component('Auth/Login'));
     }
 
     public function test_users_can_authenticate_using_the_login_screen(): void
@@ -43,10 +44,11 @@ class AuthenticationTest extends TestCase
         $this->assertGuest();
     }
 
-    public function test_login_page_shows_why_sign_in_failed_and_keeps_the_email(): void
+    public function test_login_page_shows_why_sign_in_failed(): void
     {
         $user = User::factory()->create();
 
+        // The React form keeps what was typed; the server sends back the reason.
         $this->from('/login')
             ->followingRedirects()
             ->post('/login', [
@@ -54,8 +56,9 @@ class AuthenticationTest extends TestCase
                 'password' => 'wrong-password',
             ])
             ->assertOk()
-            ->assertSee(__('auth.failed'))
-            ->assertSee('value="'.$user->email.'"', false);
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Auth/Login')
+                ->where('errors.email', __('auth.failed')));
     }
 
     public function test_login_page_shows_the_status_message_and_forgot_password_link(): void
@@ -63,8 +66,11 @@ class AuthenticationTest extends TestCase
         $this->withSession(['status' => 'Your password has been reset.'])
             ->get('/login')
             ->assertOk()
-            ->assertSee('Your password has been reset.')
-            ->assertSee('href="'.route('password.request').'"', false);
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Auth/Login')
+                ->where('flash.status', 'Your password has been reset.')
+                ->where('links.passwordRequest', route('password.request'))
+                ->where('links.google', route('google-auth')));
     }
 
     public function test_login_returns_the_user_to_the_page_they_wanted(): void

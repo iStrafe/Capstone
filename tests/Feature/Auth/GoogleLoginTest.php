@@ -4,6 +4,8 @@ namespace Tests\Feature\Auth;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Laravel\Socialite\Contracts\Provider;
 use Laravel\Socialite\Facades\Socialite;
 use Laravel\Socialite\Two\User as SocialiteUser;
@@ -36,6 +38,7 @@ class GoogleLoginTest extends TestCase
 
         $user = User::where('email', 'juan@example.com')->sole();
         $this->assertAuthenticatedAs($user);
+        $this->assertFalse($user->hasPassword());
         $this->assertSame('google-123', $user->google_id);
         $this->assertNull($user->password);
         $this->assertNotNull($user->email_verified_at);
@@ -50,6 +53,48 @@ class GoogleLoginTest extends TestCase
 
         $this->assertAuthenticatedAs($existing);
         $this->assertSame('google-123', $existing->fresh()->google_id);
+        $this->assertSame(1, User::count());
+    }
+
+    public function test_linking_removes_a_password_set_by_someone_who_never_confirmed_the_email(): void
+    {
+        // Someone signed up with Juan's email first and set their own password.
+        $squatter = User::factory()->unverified()->create(['email' => 'juan@example.com', 'password' => 'squatter-password', 'remember_token' => 'old-token']);
+        config(['session.driver' => 'database']);
+        DB::table('sessions')->insert(['id' => 'squatter-session', 'user_id' => $squatter->id, 'payload' => '', 'last_activity' => time()]);
+
+        $this->fakeGoogleUser('juan@example.com');
+
+        $this->get('/auth/google/callbacks')
+            ->assertRedirect(route('home'))
+            ->assertSessionHas('success');
+
+        $squatter->refresh();
+        $this->assertAuthenticatedAs($squatter);
+        $this->assertNull($squatter->password, 'the squatter can no longer log in with their password');
+        $this->assertNotSame('old-token', $squatter->remember_token, '"keep me logged in" cookies stop working');
+        $this->assertNotNull($squatter->email_verified_at);
+        $this->assertSame(0, DB::table('sessions')->where('id', 'squatter-session')->count(), 'their other sessions end');
+    }
+
+    public function test_linking_keeps_the_password_of_a_confirmed_account(): void
+    {
+        $existing = User::factory()->create(['email' => 'juan@example.com', 'password' => 'my-password']);
+        $this->fakeGoogleUser('juan@example.com');
+
+        $this->get('/auth/google/callbacks')->assertRedirect(route('home'))->assertSessionMissing('success');
+
+        $this->assertTrue(Hash::check('my-password', $existing->fresh()->password));
+    }
+
+    public function test_google_emails_match_accounts_whatever_their_case(): void
+    {
+        $existing = User::factory()->create(['email' => 'juan@example.com']);
+        $this->fakeGoogleUser('Juan@Example.COM');
+
+        $this->get('/auth/google/callbacks')->assertRedirect(route('home'));
+
+        $this->assertAuthenticatedAs($existing);
         $this->assertSame(1, User::count());
     }
 

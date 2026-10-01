@@ -35,17 +35,20 @@ class VisualFixesTest extends TestCase
         $this->assertSame(1, substr_count($content, 'images/event.jpg'));
     }
 
-    public function test_login_and_register_are_full_documents_with_a_viewport_and_title(): void
+    public function test_login_and_register_are_full_documents_with_a_viewport(): void
     {
-        $pages = ['login' => '<title>Log in · AduCats</title>', 'register' => '<title>Register · AduCats</title>'];
+        // React pages now; the tab title ("Log in · AduCats") is set in the browser by <Head>.
+        $pages = ['login' => 'Auth/Login', 'register' => 'Auth/Register'];
 
-        foreach ($pages as $route => $title) {
-            $content = $this->get(route($route))->assertOk()->getContent();
+        foreach ($pages as $route => $component) {
+            $content = $this->get(route($route))
+                ->assertOk()
+                ->assertInertia(fn (Assert $page) => $page->component($component))
+                ->getContent();
 
             $this->assertStringStartsWith('<!DOCTYPE html>', ltrim($content));
             $this->assertStringContainsString('<meta name="viewport" content="width=device-width, initial-scale=1">', $content);
             $this->assertStringContainsString('<meta charset="utf-8">', $content);
-            $this->assertStringContainsString($title, $content);
             $this->assertSame(1, substr_count($content, '<body>'));
             $this->assertStringEndsWith('</html>', rtrim($content));
         }
@@ -90,21 +93,24 @@ class VisualFixesTest extends TestCase
                 ->where('cats.0.placeholder', asset('images/placeholder.png')));
     }
 
-    public function test_breeze_layouts_load_the_tailwind_build_and_not_bootstrap(): void
+    public function test_the_breeze_tailwind_3_build_is_gone(): void
     {
+        // Log in, register, the password pages and the profile are React pages styled by site.css.
         $vite = file_get_contents(base_path('vite.config.js'));
-        $this->assertStringContainsString("'resources/css/app.css'", $vite);
-        $this->assertStringContainsString("'resources/css/profile.css'", $vite);
+        $this->assertStringNotContainsString('resources/css/app.css', $vite);
+        $this->assertStringNotContainsString('resources/css/profile.css', $vite);
         $this->assertStringNotContainsString('breeze.js', $vite, 'the dead Breeze app layout script is gone');
 
-        $source = file_get_contents(resource_path('views/layouts/guest.blade.php'));
-        $this->assertStringContainsString('resources/css/app.css', $source, 'layouts/guest must load Tailwind');
-        $this->assertStringNotContainsString('resources/sass/app.scss', $source, 'layouts/guest must not load Bootstrap');
+        foreach (['tailwind.config.js', 'tailwind.profile.config.js', 'resources/css/app.css', 'resources/css/profile.css', 'resources/views/layouts/guest.blade.php', 'resources/views/components', 'resources/views/auth', 'resources/views/profile'] as $path) {
+            $this->assertFileDoesNotExist(base_path($path));
+        }
 
-        $this->assertStringContainsString("@vite('resources/css/profile.css')", file_get_contents(resource_path('views/profile/edit.blade.php')));
+        $packages = json_decode(file_get_contents(base_path('package.json')), true)['devDependencies'];
+        $this->assertArrayNotHasKey('alpinejs', $packages);
+        $this->assertArrayNotHasKey('@tailwindcss/forms', $packages);
 
         $this->get(route('password.request'))
             ->assertOk()
-            ->assertSee('w-20 h-20 fill-current text-gray-500', false);
+            ->assertInertia(fn (Assert $page) => $page->component('Auth/ForgotPassword'));
     }
 }
