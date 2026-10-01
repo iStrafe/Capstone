@@ -35,32 +35,26 @@ class SharedLayoutTest extends TestCase
 
         $this->get(route('adoptCat'))
             ->assertOk()
-            ->assertSee(asset('images/placeholder.png'), false)
+            ->assertInertia(fn (Assert $page) => $page->where('cats.0.placeholder', asset('images/placeholder.png')))
             ->assertDontSee('default_cat.png', false);
     }
 
-    public function test_blade_pages_include_the_adoption_contract_once(): void
+    public function test_the_adoption_contract_pop_up_is_gone_from_the_blade_navbar(): void
     {
-        // The contract modal still comes with the shared Blade navbar until its terms move to the adoption page.
-        $content = $this->actingAs(User::factory()->create())
-            ->get(route('myRequest'))
+        // Its 12 terms now sit on the adoption request page, where every applicant agrees to them.
+        $this->actingAs(User::factory()->create())
+            ->get(route('profile.edit'))
             ->assertOk()
-            ->getContent();
-
-        $this->assertSame(1, substr_count($content, 'id="modalId2"'));
+            ->assertDontSee('id="modalId2"', false);
     }
 
     public function test_blade_pages_no_longer_log_idle_users_out_after_five_minutes(): void
     {
         // Signing out after inactivity is left to the normal session lifetime (SESSION_LIFETIME).
-        $this->get(route('adoptCat'))
-            ->assertOk()
-            ->assertDontSee('timerIncrement', false)
-            ->assertDontSee('css/styles.css', false);
-
         $this->actingAs(User::factory()->create())
-            ->get(route('adoptCat'))
+            ->get(route('profile.edit'))
             ->assertOk()
+            ->assertDontSee('css/styles.css', false)
             ->assertDontSee('timerIncrement', false)
             ->assertDontSee('idleTime', false)
             ->assertSee('id="logout-form"', false);

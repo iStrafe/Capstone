@@ -45,6 +45,7 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
-        return redirect(route('home', absolute: false));
+        // Back to the cat they wanted to adopt, if they came from "Create an account" there.
+        return redirect()->intended(route('home', absolute: false));
     }
 }

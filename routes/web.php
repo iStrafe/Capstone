@@ -38,6 +38,8 @@ Route::get('auth/google/callbacks', [GoogleAuthController::class, 'callbackGoogl
 // Signed-in users
 Route::middleware('auth')->group(function () {
     // Adoption requests need an account so they can be tied to the applicant
+    // Guests who follow "Log in to adopt" land here after logging in or signing up.
+    Route::get('/cat/{cat}/adopt', [AdoptionController::class, 'start'])->whereNumber('cat')->name('adoption.start');
     Route::post('/AdoptionForm', [AdoptionController::class, 'create'])->middleware('throttle:10,1')->name('adoption.request');
     Route::get('/myRequest', [AdoptionController::class, 'showMyRequests'])->name('myRequest');
 

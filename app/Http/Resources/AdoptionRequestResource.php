@@ -34,7 +34,11 @@ class AdoptionRequestResource extends JsonResource
                 'id' => $this->cat->id,
                 'name' => $this->cat->cat_name,
                 'image' => $this->cat->cat_image ? asset('images/'.$this->cat->cat_image) : null,
+                'placeholder' => asset('images/placeholder.png'),
                 'url' => route('cats.show', $this->cat),
+                // Another applicant was approved for this cat (or already took it home). Load with
+                // withExists(... as is_reserved) to get it; My requests uses it to explain a long wait.
+                'reserved' => (bool) $this->cat->getAttribute('is_reserved'),
             ] : null),
             'applicant' => [
                 'name' => $this->name,

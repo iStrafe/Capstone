@@ -31,6 +31,8 @@ class CatResource extends JsonResource
             'placeholder' => asset('images/placeholder.png'),
             'clip' => $this->cat_clip ? asset('images/'.$this->cat_clip) : null,
             'url' => route('cats.show', $this->resource),
+            // The adoption request page; guests are sent to log in first and come back here.
+            'adoptUrl' => route('adoption.start', $this->resource),
         ];
     }
 

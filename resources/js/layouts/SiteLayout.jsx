@@ -23,7 +23,7 @@ export default function SiteLayout({ title, active, children }) {
 
     const nav = [
         // `inertia` marks pages that are already React; the rest are Blade and need a full page load.
-        { key: 'adopt', label: 'Adopt', href: links.adopt },
+        { key: 'adopt', label: 'Adopt', href: links.adopt, inertia: true },
         { key: 'events', label: 'News & events', href: links.events, inertia: true },
         { key: 'about', label: 'About', href: links.about, inertia: true },
         { key: 'contact', label: 'Contact', href: links.contact, inertia: true },
@@ -96,7 +96,7 @@ export default function SiteLayout({ title, active, children }) {
                             ))}
                             {user && (
                                 <>
-                                    <a href={links.myRequests} className="border-b border-mist py-3.5 text-lg font-medium">My requests</a>
+                                    <Link href={links.myRequests} className="border-b border-mist py-3.5 text-lg font-medium">My requests</Link>
                                     <a href={links.profile} className="border-b border-mist py-3.5 text-lg font-medium">Profile</a>
                                     {user.isAdmin && <a href={links.admin} className="border-b border-mist py-3.5 text-lg font-medium">Admin dashboard</a>}
                                 </>
@@ -166,7 +166,7 @@ function UserMenu({ user, links, onLogout }) {
             </button>
             {open && (
                 <div className="absolute right-0 top-full mt-2 w-56 overflow-hidden rounded-2xl border border-mist bg-white py-2 shadow-xl">
-                    <a href={links.myRequests} className="block px-4 py-2.5 hover:bg-azure-50">My requests</a>
+                    <Link href={links.myRequests} className="block px-4 py-2.5 hover:bg-azure-50">My requests</Link>
                     <a href={links.profile} className="block px-4 py-2.5 hover:bg-azure-50">Profile</a>
                     {user.isAdmin && <a href={links.admin} className="block px-4 py-2.5 hover:bg-azure-50">Admin dashboard</a>}
                     <button type="button" onClick={onLogout} className="block w-full border-t border-mist px-4 py-2.5 text-left hover:bg-azure-50">
@@ -195,8 +195,8 @@ function Footer({ links }) {
                     <div className="grid grid-cols-2 gap-10 sm:grid-cols-3 sm:gap-16">
                         <div className={column}>
                             <span className="font-bold text-white">Adopt</span>
-                            <a href={links.adopt} className={link}>Available cats</a>
-                            <a href={links.myRequests} className={link}>My requests</a>
+                            <Link href={links.adopt} className={link}>Available cats</Link>
+                            <Link href={links.myRequests} className={link}>My requests</Link>
                         </div>
                         <div className={column}>
                             <span className="font-bold text-white">AduCats</span>

@@ -53,10 +53,11 @@ class HandleInertiaRequests extends Middleware
                     'unreadMessages' => fn () => Contact::unhandled()->count(),
                 ],
             ] : []),
-            // Most of the site is still Blade, so the React layout links to it by URL.
+            // URLs the React pages link or post to. Account and admin pages are still Blade, so links to them need a full page load.
             'links' => fn () => [
                 'home' => route('home'),
                 'adopt' => route('adoptCat'),
+                'adoptionSend' => route('adoption.request'),
                 'about' => route('aboutus'),
                 'events' => route('news-events.events'),
                 'contact' => route('contactus'),

@@ -119,7 +119,4 @@
     </div>
 </nav>
 
-        <div data-bs-theme="dark">
-            @include('Services.adoptContract')
-        </div>
 
