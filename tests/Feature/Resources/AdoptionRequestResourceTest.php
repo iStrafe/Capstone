@@ -51,7 +51,9 @@ class AdoptionRequestResourceTest extends TestCase
             'id' => $cat->id,
             'name' => 'Mingming',
             'image' => asset('images/ming.png'),
+            'placeholder' => asset('images/placeholder.png'),
             'url' => route('cats.show', $cat),
+            'reserved' => false,
         ], $resolved['cat']);
         $this->assertSame([
             'name' => 'Juan Dela Cruz',

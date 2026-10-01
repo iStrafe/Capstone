@@ -5,9 +5,12 @@ namespace App\Http\Controllers;
 use App\Enums\AdoptionStatus;
 use App\Http\Requests\Admin\UpdateAdoptionStatusRequest;
 use App\Http\Requests\StoreAdoptionRequest;
+use App\Http\Resources\AdoptionRequestResource;
+use App\Http\Resources\CatResource;
 use App\Models\AdoptionRequest;
 use App\Models\Cat;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -15,6 +18,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class AdoptionController extends Controller
 {
@@ -37,10 +42,35 @@ class AdoptionController extends Controller
     }
 
     // The signed-in applicant's own requests
-    public function showMyRequests(Request $request): View
+    public function showMyRequests(Request $request): Response
     {
-        return view('myRequest', [
-            'adoption_request' => $request->user()->adoptionRequests()->with('cat')->latest('id')->get(),
+        $requests = $request->user()->adoptionRequests()
+            ->with(['cat' => fn ($cat) => $cat->withExists([
+                'adoptionRequests as is_reserved' => fn (Builder $requests) => $requests->whereIn('status', AdoptionStatus::reservingCat()),
+            ])])
+            ->latest('id')
+            ->get();
+
+        return Inertia::render('Requests/Mine', [
+            'requests' => AdoptionRequestResource::collection($requests)->resolve(),
+        ]);
+    }
+
+    // The adoption request page for one cat. Cats that can't take this request go back to their
+    // profile, which explains why (already asked, reserved, full, archived...).
+    public function start(Request $request, Cat $cat): Response|RedirectResponse
+    {
+        $user = $request->user();
+
+        if ($cat->requestRefusalFor($user) !== null) {
+            return redirect()->route('cats.show', $cat);
+        }
+
+        return Inertia::render('Adoption/Request', [
+            'cat' => (new CatResource($cat))->resolve(),
+            'applicant' => ['name' => $user->name, 'email' => $user->email],
+            // The server's today, so the calendar agrees with the date rule in StoreAdoptionRequest.
+            'today' => today()->toDateString(),
         ]);
     }
 
@@ -49,7 +79,7 @@ class AdoptionController extends Controller
     {
         $user = $request->user();
 
-        DB::transaction(function () use ($request, $user) {
+        $cat = DB::transaction(function () use ($request, $user) {
             // Lock the cat and check again, so a double submit or several applicants at once
             // can't slip past the one-open-request rule or the pending-request cap.
             $cat = Cat::lockForUpdate()->findOrFail($request->validated('cat_id'));
@@ -79,9 +109,12 @@ class AdoptionController extends Controller
                 'date_of_adoption' => $request->validated('date_of_adoption'),
                 'valid_id' => $valid_ids,
             ]);
+
+            return $cat;
         });
 
-        return redirect()->route('myRequest')->with('success', 'Adoption request submitted successfully.');
+        return redirect()->route('myRequest')
+            ->with('success', 'Your request to adopt '.$cat->cat_name.' was sent. A volunteer will review it and the answer will show up here.');
     }
 
     // View valid ids

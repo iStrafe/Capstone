@@ -44,7 +44,7 @@ export default function Home({ cats, events }) {
                         AduCats is a student volunteer group. We look after the cats living around campus and help each one find a person ready to take them home.
                     </p>
                     <div className="flex flex-col gap-3 sm:flex-row">
-                        <ButtonLink href={links.adopt} size="lg">
+                        <ButtonLink href={links.adopt} inertia size="lg">
                             Meet the cats <Icon name="arrowRight" size={18} />
                         </ButtonLink>
                         <ButtonLink href="#how-it-works" variant="outline" size="lg">
@@ -116,9 +116,9 @@ export default function Home({ cats, events }) {
                         </p>
                     )}
 
-                    <a href={links.adopt} className="flex items-center gap-2 self-start font-semibold text-azure-700 hover:text-azure-900">
+                    <Link href={links.adopt} className="flex items-center gap-2 self-start font-semibold text-azure-700 hover:text-azure-900">
                         Go to the adoption page <Icon name="arrowRight" size={18} />
-                    </a>
+                    </Link>
                 </div>
             </section>
 

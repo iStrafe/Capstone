@@ -34,17 +34,17 @@ class BladeFallbackTest extends TestCase
     public function test_inertia_visit_to_a_blade_page_asks_for_a_full_page_load(): void
     {
         $this->withHeaders($this->inertiaHeaders())
-            ->get('/adoptCat')
+            ->get('/login')
             ->assertStatus(409)
-            ->assertHeader('X-Inertia-Location', url('/adoptCat'));
+            ->assertHeader('X-Inertia-Location', url('/login'));
     }
 
     public function test_the_full_url_with_query_string_is_kept(): void
     {
         $this->withHeaders($this->inertiaHeaders())
-            ->get('/adoptCat?from=home')
+            ->get('/login?from=home')
             ->assertStatus(409)
-            ->assertHeader('X-Inertia-Location', url('/adoptCat?from=home'));
+            ->assertHeader('X-Inertia-Location', url('/login?from=home'));
     }
 
     public function test_inertia_visit_to_a_react_page_still_gets_the_page_json(): void
@@ -58,7 +58,7 @@ class BladeFallbackTest extends TestCase
 
     public function test_plain_browser_visits_to_blade_pages_are_untouched(): void
     {
-        $this->get('/adoptCat')
+        $this->get('/login')
             ->assertOk()
             ->assertHeaderMissing('X-Inertia-Location');
     }
@@ -107,25 +107,25 @@ class BladeFallbackTest extends TestCase
     public function test_flash_messages_survive_the_extra_full_page_load(): void
     {
         // A React form posts, the controller redirects back to a Blade page with a flash message.
-        $this->actingAs(User::factory()->create());
+        $this->actingAs(User::factory()->create(['role' => 'admin']));
 
         $this->withHeaders($this->inertiaHeaders())
-            ->from('/myRequest')
+            ->from('/admin/messages')
             ->post('/contact', [
                 'full_name' => 'Juan Dela Cruz',
                 'mobile_number' => '09171234567',
                 'message' => 'Hello!',
             ])
-            ->assertRedirect('/myRequest');
+            ->assertRedirect('/admin/messages');
 
         // Inertia follows the redirect over XHR and gets told to load the page in full...
         $this->withHeaders($this->inertiaHeaders())
-            ->get('/myRequest')
+            ->get('/admin/messages')
             ->assertStatus(409);
 
         // ...and the full page load still shows the message.
         $this->flushHeaders()
-            ->get('/myRequest')
+            ->get('/admin/messages')
             ->assertOk()
             ->assertSee('Your message reached the AduCats team.');
     }

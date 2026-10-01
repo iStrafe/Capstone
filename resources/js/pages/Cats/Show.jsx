@@ -13,7 +13,7 @@ export default function Show({ cat, medicalRecord, status, adoption, otherCats }
         <SiteLayout title={cat.name} active="adopt">
             <div className="mx-auto max-w-7xl px-4 sm:px-8">
                 <nav aria-label="Breadcrumb" className="flex items-center gap-2 pt-7 text-sm">
-                    <a href={links.adopt} className="font-medium text-azure-700 hover:text-azure-900">Adopt</a>
+                    <Link href={links.adopt} className="font-medium text-azure-700 hover:text-azure-900">Adopt</Link>
                     <Icon name="chevronRight" size={14} className="text-muted" />
                     <span aria-current="page" className="text-muted">{cat.name}</span>
                 </nav>
@@ -90,11 +90,13 @@ function Profile({ cat, medicalRecord, adoption, links }) {
 function AdoptPanel({ cat, adoption, links }) {
     const { auth } = usePage().props;
 
+    // Guests go through the request page's URL, so logging in or signing up brings them back to this cat.
+    // The log in and sign up pages are still Blade, so these stay plain links.
     if (!auth.user) {
         return (
-            <Panel title={`Want to adopt ${cat.name}?`} text="Adopting needs an account, so we can reach you about your request.">
-                <ButtonLink href={links.login} variant="onDark" size="lg">Log in to adopt</ButtonLink>
-                <a href={links.register} className="text-center font-semibold text-white underline underline-offset-4">
+            <Panel title={`Want to adopt ${cat.name}?`} text="Adopting needs an account, so we can reach you about your request. You'll come right back here.">
+                <ButtonLink href={cat.adoptUrl} variant="onDark" size="lg">Log in to adopt</ButtonLink>
+                <a href={`${cat.adoptUrl}?new=1`} className="text-center font-semibold text-white underline underline-offset-4">
                     New here? Create an account
                 </a>
             </Panel>
@@ -104,7 +106,7 @@ function AdoptPanel({ cat, adoption, links }) {
     if (adoption.alreadyRequested) {
         return (
             <Panel title="You already asked to adopt this cat" text={adoption.refusal}>
-                <ButtonLink href={links.myRequests} variant="onDark" size="lg">See my request</ButtonLink>
+                <ButtonLink href={links.myRequests} inertia variant="onDark" size="lg">See my request</ButtonLink>
             </Panel>
         );
     }
@@ -112,15 +114,14 @@ function AdoptPanel({ cat, adoption, links }) {
     if (adoption.refusal) {
         return (
             <Panel title="Not taking requests right now" text={adoption.refusal}>
-                <ButtonLink href={links.adopt} variant="onDark" size="lg">See other cats</ButtonLink>
+                <ButtonLink href={links.adopt} inertia variant="onDark" size="lg">See other cats</ButtonLink>
             </Panel>
         );
     }
 
     return (
         <Panel title={`Ready to adopt ${cat.name}?`} text="Tell us about yourself, add a valid ID and pick a pickup day. A volunteer reviews every request.">
-            {/* The adoption form still lives on the Blade adoption page; #adopt-{id} opens it for this cat. */}
-            <ButtonLink href={`${links.adopt}#adopt-${cat.id}`} variant="onDark" size="lg">
+            <ButtonLink href={cat.adoptUrl} inertia variant="onDark" size="lg">
                 Start adoption request <Icon name="arrowRight" size={18} />
             </ButtonLink>
         </Panel>
@@ -155,7 +156,7 @@ function Unavailable({ cat, status, links }) {
                     </div>
                 )}
 
-                <ButtonLink href={links.adopt} size="lg">See cats available for adoption</ButtonLink>
+                <ButtonLink href={links.adopt} inertia size="lg">See cats available for adoption</ButtonLink>
                 <Link href={links.home} className="font-semibold text-azure-700 hover:text-azure-900">Back to home</Link>
             </div>
         </section>

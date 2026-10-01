@@ -7,8 +7,10 @@ use App\Models\AdoptionRequest;
 use App\Models\Cat;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
 
 /**
@@ -47,6 +49,8 @@ class AdoptionRulesTest extends TestCase
             'address' => '123 Rizal St, Manila',
             'email' => 'juan@example.com',
             'date_of_adoption' => now()->addWeek()->toDateString(),
+            'valid_id' => [UploadedFile::fake()->image('school-id.jpg')],
+            'terms' => '1',
         ], $overrides);
     }
 
@@ -76,9 +80,19 @@ class AdoptionRulesTest extends TestCase
     private function assertListedEverywhere(string $name, bool $listed): void
     {
         foreach ([route('adoptCat'), route('home')] as $url) {
-            $response = $this->get($url)->assertOk();
-            $listed ? $response->assertSee($name) : $response->assertDontSee($name);
+            $this->get($url)->assertOk()->assertInertia(fn (Assert $page) => $page->where(
+                'cats',
+                fn ($cats) => collect($cats)->contains('name', $name) === $listed
+            ));
         }
+    }
+
+    /** The requestState the Adopt list gives the cat called $name, for whoever is signed in. */
+    private function requestStateOnList(string $name): ?string
+    {
+        $cats = $this->get(route('adoptCat'))->assertOk()->viewData('page')['props']['cats'];
+
+        return collect($cats)->firstWhere('name', $name)['requestState'] ?? null;
     }
 
     public function test_inactive_cats_are_hidden_and_cannot_be_requested(): void
@@ -178,7 +192,8 @@ class AdoptionRulesTest extends TestCase
         $this->assertSame(1, AdoptionRequest::where('user_id', $this->user->id)->count());
 
         // The listing shows the request is already in.
-        $this->actingAs($this->user)->get(route('adoptCat'))->assertOk()->assertSee('Request sent');
+        $this->actingAs($this->user);
+        $this->assertSame('requested', $this->requestStateOnList('Mingming'));
     }
 
     public function test_a_user_can_ask_again_after_a_rejection(): void
@@ -221,7 +236,8 @@ class AdoptionRulesTest extends TestCase
             ->assertSessionHasErrors(['cat_id' => 'Mingming already has 10 adoption requests waiting for a decision. Please choose another cat or try again later.']);
 
         $this->assertSame(10, AdoptionRequest::where('cat_id', $cat->id)->where('status', AdoptionStatus::Pending)->count());
-        $this->actingAs($this->user)->get(route('adoptCat'))->assertOk()->assertSee('Requests full')->assertDontSee('Proceed to Adopt');
+        $this->actingAs($this->user);
+        $this->assertSame('full', $this->requestStateOnList('Mingming'));
     }
 
     public function test_guests_also_see_when_a_cat_is_full(): void
@@ -232,10 +248,8 @@ class AdoptionRulesTest extends TestCase
         }
         $this->createCat(['cat_name' => 'Quiet']);
 
-        $this->get(route('adoptCat'))
-            ->assertOk()
-            ->assertSee('Requests full')
-            ->assertSee('Log in to adopt');
+        $this->assertSame('full', $this->requestStateOnList('Popular'));
+        $this->assertSame('open', $this->requestStateOnList('Quiet'));
     }
 
     public function test_adoption_date_cannot_be_in_the_past(): void
@@ -253,10 +267,11 @@ class AdoptionRulesTest extends TestCase
 
     public function test_date_picker_greys_out_past_days(): void
     {
-        $this->createCat();
+        $cat = $this->createCat();
 
-        $this->actingAs($this->user)->get(route('adoptCat'))
+        // The calendar crosses out every day before `today`, which comes from the server.
+        $this->actingAs($this->user)->get(route('adoption.start', $cat))
             ->assertOk()
-            ->assertSee('name="date_of_adoption" min="'.today()->toDateString().'"', false);
+            ->assertInertia(fn (Assert $page) => $page->where('today', today()->toDateString()));
     }
 }

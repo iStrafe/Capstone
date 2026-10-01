@@ -95,11 +95,16 @@ class ReactPagesTest extends TestCase
             ->assertHeader('X-Inertia-Location', 'https://pm.link/aducats/test/abc');
     }
 
-    public function test_the_cat_profile_links_to_the_adoption_form_for_that_cat(): void
+    public function test_the_cat_profile_links_to_the_adoption_page_for_that_cat(): void
     {
-        $page = file_get_contents(resource_path('js/pages/Cats/Show.jsx'));
-        $this->assertStringContainsString('#adopt-${cat.id}', $page);
+        $cat = Cat::create(['cat_name' => 'Mingming', 'sex' => 'Female']);
 
-        $this->assertStringContainsString('match(/^#adopt-(\\d+)$/)', file_get_contents(resource_path('views/cats/index.blade.php')));
+        $this->get(route('cats.show', $cat))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page->where('cat.adoptUrl', route('adoption.start', $cat)));
+
+        $page = file_get_contents(resource_path('js/pages/Cats/Show.jsx'));
+        $this->assertStringContainsString('href={cat.adoptUrl}', $page);
+        $this->assertStringContainsString('${cat.adoptUrl}?new=1', $page);
     }
 }

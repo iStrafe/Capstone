@@ -66,7 +66,7 @@ export default function Events({ events }) {
                             </div>
                             <h2 className="font-display text-3xl font-semibold leading-tight sm:text-4xl">{featured.title}</h2>
                             <p className="whitespace-pre-line text-[17px] leading-relaxed text-body">{featured.description}</p>
-                            <ButtonLink href={links.adopt} className="self-start">
+                            <ButtonLink href={links.adopt} inertia className="self-start">
                                 Meet the cats first <Icon name="arrowRight" size={18} />
                             </ButtonLink>
                         </div>

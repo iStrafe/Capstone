@@ -8,7 +8,6 @@ use App\Http\Resources\NewsEventResource;
 use App\Models\Cat;
 use App\Models\NewsEvent;
 use Illuminate\Http\Request;
-use Illuminate\View\View;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -27,15 +26,25 @@ class CatController extends Controller
         ]);
     }
 
-    public function index(Request $request): View
+    public function index(Request $request): Response
     {
-        return view('cats.index', [
-            'cats' => Cat::available()->withPendingRequestCount()->get(),
-            // Cats the signed-in user is already waiting on, so their Adopt button can say so.
-            'requestedCatIds' => $request->user()?->adoptionRequests()
-                ->whereIn('status', AdoptionStatus::open())
-                ->pluck('cat_id')
-                ->all() ?? [],
+        $cats = Cat::available()->withPendingRequestCount()->latest('id')->get();
+        // Cats the signed-in user is already waiting on, so their card can say so.
+        $requestedCatIds = $request->user()?->adoptionRequests()
+            ->whereIn('status', AdoptionStatus::open())
+            ->pluck('cat_id')
+            ->all() ?? [];
+
+        return Inertia::render('Cats/Index', [
+            // Worked out from the preloaded counts, so the list costs two queries however many cats there are.
+            'cats' => $cats->map(fn (Cat $cat) => [
+                ...(new CatResource($cat))->resolve(),
+                'requestState' => match (true) {
+                    in_array($cat->id, $requestedCatIds) => 'requested',
+                    ! $cat->hasRoomForRequests() => 'full',
+                    default => 'open',
+                },
+            ])->all(),
         ]);
     }
 

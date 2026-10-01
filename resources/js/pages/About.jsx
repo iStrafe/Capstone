@@ -27,7 +27,7 @@ export default function About({ photos }) {
                         AduCats is a non-profit group of Adamson University volunteers. We look after the cats around campus and connect each one with a loving adopter.
                     </p>
                     <div className="flex flex-col gap-3 sm:flex-row">
-                        <ButtonLink href={links.adopt} size="lg">
+                        <ButtonLink href={links.adopt} inertia size="lg">
                             Meet the cats <Icon name="arrowRight" size={18} />
                         </ButtonLink>
                         <DonateButton />

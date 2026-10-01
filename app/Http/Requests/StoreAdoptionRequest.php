@@ -19,8 +19,11 @@ class StoreAdoptionRequest extends FormRequest
             'phone' => ['nullable', 'string', 'max:255'],
             // The day the applicant wants to take the cat home, so it can't be in the past.
             'date_of_adoption' => ['required', 'date', 'after_or_equal:today'],
-            'valid_id' => ['nullable', 'array', 'max:2'],
+            // The first adoption term is "Provide a valid ID", so at least one photo is needed.
+            'valid_id' => ['required', 'array', 'min:1', 'max:2'],
             'valid_id.*' => ['image', 'mimes:jpeg,png,jpg', 'max:2048'],
+            // The applicant has read the adoption terms on the request page and agrees to them.
+            'terms' => ['accepted'],
         ];
     }
 
@@ -30,6 +33,13 @@ class StoreAdoptionRequest extends FormRequest
             'cat_id.required' => 'Choose a cat to adopt from the list.',
             'cat_id.integer' => 'That cat is no longer available for adoption.',
             'date_of_adoption.after_or_equal' => 'Choose today or a later date for the adoption.',
+            'valid_id.required' => 'Add a photo of at least one valid ID.',
+            'valid_id.min' => 'Add a photo of at least one valid ID.',
+            'valid_id.max' => 'You can add up to 2 ID photos.',
+            'valid_id.*.image' => 'Each ID must be a JPG or PNG photo.',
+            'valid_id.*.mimes' => 'Each ID must be a JPG or PNG photo.',
+            'valid_id.*.max' => 'Each ID photo must be 2 MB or smaller.',
+            'terms.accepted' => 'Please read the adoption terms and tick the box to agree.',
         ];
     }
 

@@ -6,6 +6,7 @@ use App\Http\Middleware\InertiaBladeFallback;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Http\Request;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -17,6 +18,12 @@ return Application::configure(basePath: dirname(__DIR__))
          $middleware->alias([
             'admin'=>admin::class,
         ]);
+
+        // "Create an account" on a cat profile links to the adoption page with ?new=1, so the
+        // guest signs up instead of logging in and still comes back to that cat afterwards.
+        $middleware->redirectGuestsTo(fn (Request $request) => $request->routeIs('adoption.start') && $request->boolean('new')
+            ? route('register')
+            : route('login'));
 
         // Serves the React pages (resources/js/pages) through Inertia. The fallback turns an
         // Inertia visit that lands on a Blade page into a full page load.

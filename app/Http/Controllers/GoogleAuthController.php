@@ -58,7 +58,7 @@ class GoogleAuthController extends Controller
 
                 Auth::login($user);
 
-                return redirect()->route('profile.edit');
+                return redirect()->intended(route('profile.edit'));
             }
         }
 
