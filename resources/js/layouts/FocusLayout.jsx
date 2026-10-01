@@ -19,7 +19,7 @@ export default function FocusLayout({ title, exit, children }) {
                     <Logo href={links.home} />
                     {exit && (
                         <Link href={exit.href} className="flex items-center gap-2 font-semibold text-azure-700 hover:text-azure-900">
-                            <Icon name="close" size={18} /> {exit.label}
+                            <Icon name={exit.icon ?? 'close'} size={18} /> {exit.label}
                         </Link>
                     )}
                 </div>

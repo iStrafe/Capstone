@@ -3,6 +3,7 @@
 namespace Tests\Feature\Auth;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
 
 class RegistrationTest extends TestCase
@@ -11,13 +12,14 @@ class RegistrationTest extends TestCase
 
     public function test_registration_screen_can_be_rendered(): void
     {
-        $response = $this->get('/register');
-
-        $response->assertStatus(200);
+        $this->get('/register')
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page->component('Auth/Register'));
     }
 
-    public function test_registration_form_keeps_name_and_email_after_an_error(): void
+    public function test_registration_errors_come_back_to_the_form(): void
     {
+        // The React form keeps the name and email; the server only sends back what's wrong.
         $this->from('/register')
             ->followingRedirects()
             ->post('/register', [
@@ -27,8 +29,9 @@ class RegistrationTest extends TestCase
                 'password_confirmation' => 'different',
             ])
             ->assertOk()
-            ->assertSee('value="Juan Dela Cruz"', false)
-            ->assertSee('value="juan@example.com"', false);
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Auth/Register')
+                ->has('errors.password'));
 
         $this->assertGuest();
     }

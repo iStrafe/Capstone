@@ -91,14 +91,13 @@ function AdoptPanel({ cat, adoption, links }) {
     const { auth } = usePage().props;
 
     // Guests go through the request page's URL, so logging in or signing up brings them back to this cat.
-    // The log in and sign up pages are still Blade, so these stay plain links.
     if (!auth.user) {
         return (
             <Panel title={`Want to adopt ${cat.name}?`} text="Adopting needs an account, so we can reach you about your request. You'll come right back here.">
-                <ButtonLink href={cat.adoptUrl} variant="onDark" size="lg">Log in to adopt</ButtonLink>
-                <a href={`${cat.adoptUrl}?new=1`} className="text-center font-semibold text-white underline underline-offset-4">
+                <ButtonLink href={cat.adoptUrl} inertia variant="onDark" size="lg">Log in to adopt</ButtonLink>
+                <Link href={`${cat.adoptUrl}?new=1`} className="text-center font-semibold text-white underline underline-offset-4">
                     New here? Create an account
-                </a>
+                </Link>
             </Panel>
         );
     }

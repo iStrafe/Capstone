@@ -33,18 +33,21 @@ class BladeFallbackTest extends TestCase
 
     public function test_inertia_visit_to_a_blade_page_asks_for_a_full_page_load(): void
     {
-        $this->withHeaders($this->inertiaHeaders())
-            ->get('/login')
+        // The admin pages are still Blade.
+        $this->actingAs(User::factory()->create(['role' => 'admin']))
+            ->withHeaders($this->inertiaHeaders())
+            ->get('/admin/messages')
             ->assertStatus(409)
-            ->assertHeader('X-Inertia-Location', url('/login'));
+            ->assertHeader('X-Inertia-Location', url('/admin/messages'));
     }
 
     public function test_the_full_url_with_query_string_is_kept(): void
     {
-        $this->withHeaders($this->inertiaHeaders())
-            ->get('/login?from=home')
+        $this->actingAs(User::factory()->create(['role' => 'admin']))
+            ->withHeaders($this->inertiaHeaders())
+            ->get('/admin/messages?page=2')
             ->assertStatus(409)
-            ->assertHeader('X-Inertia-Location', url('/login?from=home'));
+            ->assertHeader('X-Inertia-Location', url('/admin/messages?page=2'));
     }
 
     public function test_inertia_visit_to_a_react_page_still_gets_the_page_json(): void
@@ -58,7 +61,8 @@ class BladeFallbackTest extends TestCase
 
     public function test_plain_browser_visits_to_blade_pages_are_untouched(): void
     {
-        $this->get('/login')
+        $this->actingAs(User::factory()->create(['role' => 'admin']))
+            ->get('/admin/messages')
             ->assertOk()
             ->assertHeaderMissing('X-Inertia-Location');
     }

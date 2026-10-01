@@ -12,10 +12,6 @@ export default defineConfig({
                 // Bootstrap site pages, until each one is rebuilt in React
                 'resources/sass/app.scss',
                 'resources/js/app.js',
-                // Tailwind, loaded only by the Breeze guest layout (layouts/guest)
-                'resources/css/app.css',
-                // Tailwind utilities without preflight, scoped to the Breeze partials on /profile
-                'resources/css/profile.css',
             ],
             refresh: true,
         }),

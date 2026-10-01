@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
 
 class ProfileTest extends TestCase
@@ -12,19 +13,22 @@ class ProfileTest extends TestCase
 
     public function test_profile_page_is_displayed(): void
     {
-        $user = User::factory()->create();
+        $user = User::factory()->create(['name' => 'Juan', 'email' => 'juan@example.com']);
 
-        $response = $this
-            ->actingAs($user)
-            ->get('/profile');
-
-        // Rendered with the site head (which loads the Vite bundle with Alpine, so the
-        // delete confirmation opens) and the site navigation.
-        $response->assertOk()
+        $this->actingAs($user)
+            ->get('/profile')
+            ->assertOk()
             ->assertSee('<meta name="viewport"', false)
-            ->assertSee('id="logout-form"', false)
-            ->assertSee('href="'.route('profile.edit').'"', false)
-            ->assertSee('confirm-user-deletion', false);
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Profile/Edit')
+                ->where('account', [
+                    'name' => 'Juan',
+                    'email' => 'juan@example.com',
+                    'hasPassword' => true,
+                    'usesGoogle' => false,
+                ])
+                ->where('links.profile', route('profile.edit'))
+                ->where('links.passwordUpdate', route('password.update')));
     }
 
     public function test_profile_information_can_be_updated(): void

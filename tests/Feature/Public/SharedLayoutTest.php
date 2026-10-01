@@ -42,8 +42,8 @@ class SharedLayoutTest extends TestCase
     public function test_the_adoption_contract_pop_up_is_gone_from_the_blade_navbar(): void
     {
         // Its 12 terms now sit on the adoption request page, where every applicant agrees to them.
-        $this->actingAs(User::factory()->create())
-            ->get(route('profile.edit'))
+        $this->actingAs(User::factory()->create(['role' => 'admin']))
+            ->get('/analyzeImage')
             ->assertOk()
             ->assertDontSee('id="modalId2"', false);
     }
@@ -51,8 +51,8 @@ class SharedLayoutTest extends TestCase
     public function test_blade_pages_no_longer_log_idle_users_out_after_five_minutes(): void
     {
         // Signing out after inactivity is left to the normal session lifetime (SESSION_LIFETIME).
-        $this->actingAs(User::factory()->create())
-            ->get(route('profile.edit'))
+        $this->actingAs(User::factory()->create(['role' => 'admin']))
+            ->get('/analyzeImage')
             ->assertOk()
             ->assertDontSee('css/styles.css', false)
             ->assertDontSee('timerIncrement', false)
