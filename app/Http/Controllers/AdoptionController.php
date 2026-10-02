@@ -3,44 +3,20 @@
 namespace App\Http\Controllers;
 
 use App\Enums\AdoptionStatus;
-use App\Http\Requests\Admin\UpdateAdoptionStatusRequest;
 use App\Http\Requests\StoreAdoptionRequest;
 use App\Http\Resources\AdoptionRequestResource;
 use App\Http\Resources\CatResource;
-use App\Models\AdoptionRequest;
 use App\Models\Cat;
-use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
-use Illuminate\View\View;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class AdoptionController extends Controller
 {
-    // Show all, approved and rejected requests
-    public function showAdoptionRequest(): View
-    {
-        // Each table pages on its own query-string key; sharing ?page moved all three at once.
-        return view('admin.adoptionRequest', [
-            'adoption_request' => AdoptionRequest::latest('id')->paginate(10, ['*'], 'page'),
-            'approved_requests' => AdoptionRequest::where('status', AdoptionStatus::Approved)->latest('id')->paginate(5, ['*'], 'approved_page'),
-            'rejected_request' => AdoptionRequest::where('status', AdoptionStatus::Rejected)->latest('id')->paginate(5, ['*'], 'rejected_page'),
-        ]);
-    }
-
-    public function showReleased(): View
-    {
-        return view('admin.released', [
-            'released_request' => AdoptionRequest::where('status', AdoptionStatus::Released)->latest('id')->paginate(5),
-        ]);
-    }
-
     // The signed-in applicant's own requests
     public function showMyRequests(Request $request): Response
     {
@@ -115,72 +91,5 @@ class AdoptionController extends Controller
 
         return redirect()->route('myRequest')
             ->with('success', 'Your request to adopt '.$cat->cat_name.' was sent. A volunteer will review it and the answer will show up here.');
-    }
-
-    // View valid ids
-    public function viewValidIds(AdoptionRequest $adoptionRequest): View
-    {
-        return view('viewValidIDs', ['valid_ids' => $adoptionRequest->valid_id ?: []]);
-    }
-
-    // Serve one uploaded ID to an admin
-    public function showValidIdFile(string $filename)
-    {
-        $filename = basename($filename);
-
-        if (Storage::disk('local')->exists('valid-ids/'.$filename)) {
-            return Storage::disk('local')->response('valid-ids/'.$filename);
-        }
-
-        // IDs uploaded before they moved to private storage still live in public/images.
-        $legacy = public_path('images/'.$filename);
-        abort_unless(is_file($legacy), 404);
-
-        return response()->file($legacy);
-    }
-
-    // Update request status (admins change the status only; applicant details stay as submitted)
-    public function updateStatus(UpdateAdoptionStatusRequest $request, AdoptionRequest $adoptionRequest): JsonResponse
-    {
-        $status = $request->enum('status', AdoptionStatus::class);
-
-        $autoRejected = DB::transaction(function () use ($adoptionRequest, $status) {
-            $adoptionRequest->status = $status;
-            if ($status === AdoptionStatus::Approved) {
-                $adoptionRequest->approval_date = now();
-            }
-            if ($status === AdoptionStatus::Released) {
-                $adoptionRequest->Release_date = now();
-            }
-            $adoptionRequest->save();
-
-            // Once a cat goes home, the other applicants still waiting for it get their answer.
-            if ($status !== AdoptionStatus::Released || $adoptionRequest->cat_id === null) {
-                return 0;
-            }
-
-            return AdoptionRequest::where('cat_id', $adoptionRequest->cat_id)
-                ->whereKeyNot($adoptionRequest->getKey())
-                ->where('status', AdoptionStatus::Pending)
-                ->update(['status' => AdoptionStatus::Rejected]);
-        });
-
-        $message = 'Entry updated successfully.';
-        if ($autoRejected > 0) {
-            $message .= ' '.trans_choice(
-                '{1} The other pending request for this cat was rejected automatically.|[2,*] The other :count pending requests for this cat were rejected automatically.',
-                $autoRejected
-            );
-        }
-
-        return response()->json(['success' => true, 'message' => $message, 'auto_rejected' => $autoRejected]);
-    }
-
-    // Download one request as PDF
-    public function generatePDF(AdoptionRequest $adoptionRequest)
-    {
-        $pdf = Pdf::loadView('adoptionRequestPDF', ['request' => $adoptionRequest]);
-
-        return $pdf->download('adoption_request.pdf');
     }
 }

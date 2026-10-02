@@ -157,7 +157,7 @@ class AdoptionRulesTest extends TestCase
             ->assertJson([
                 'success' => true,
                 'auto_rejected' => 2,
-                'message' => 'Entry updated successfully. The other 2 pending requests for this cat were rejected automatically.',
+                'message' => 'Mingming went home with Maria Clara. The other 2 pending requests for this cat were rejected automatically.',
             ]);
 
         $this->assertSame(AdoptionStatus::Released, AdoptionRequest::find($winner)->status);
@@ -176,7 +176,7 @@ class AdoptionRulesTest extends TestCase
         $this->actingAs($this->admin())
             ->postJson("/update-status/{$first}", ['status' => 'Approved'])
             ->assertOk()
-            ->assertJson(['auto_rejected' => 0, 'message' => 'Entry updated successfully.']);
+            ->assertJson(['auto_rejected' => 0, 'message' => 'Approved Maria Clara to adopt Mingming.']);
 
         $this->assertSame(AdoptionStatus::Pending, AdoptionRequest::find($second)->status);
     }

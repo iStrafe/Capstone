@@ -33,8 +33,8 @@ export default function Button({ variant, size, className, type = 'button', ...p
 }
 
 /**
- * A link styled as a button. Pass `inertia` for links to other React pages; links to
- * Blade pages must stay plain anchors so the browser does a full page load.
+ * A link styled as a button. Pass `inertia` for links to other pages of the site; leave it off
+ * for downloads (like the adoption PDF) and other sites, which need a normal browser load.
  */
 export function ButtonLink({ variant, size, className, inertia = false, ...props }) {
     const Component = inertia ? Link : 'a';

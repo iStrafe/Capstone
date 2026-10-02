@@ -4,36 +4,33 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Concerns\StoresPublicImages;
 use App\Http\Requests\Admin\NewsEventRequest;
+use App\Http\Resources\AdminNewsEventResource;
 use App\Http\Resources\NewsEventResource;
 use App\Models\NewsEvent;
+use App\Support\Paginated;
+use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
+use Inertia\Response;
 
+/**
+ * News & events: the admin list with its editor panel, and the public events page.
+ */
 class NewsEventController extends Controller
 {
     use StoresPublicImages;
 
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    // The admin list. The editor panel opens on the right for a new or an existing post.
+    public function index(): Response
     {
-        $newsEvent = NewsEvent::all();
-
-        return view('news-events.index', compact('newsEvent'));
+        return $this->adminPage(null);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function create(): Response
     {
-        return view('news-events.create');
+        return $this->adminPage('new');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(NewsEventRequest $request)
+    public function store(NewsEventRequest $request): RedirectResponse
     {
         $data = $request->safe()->only(['title', 'description', 'event_date']);
 
@@ -43,56 +40,40 @@ class NewsEventController extends Controller
 
         NewsEvent::create($data);
 
-        return redirect()->route('news-events.index')->with('success', 'Event created successfully');
+        return redirect()->route('news-events.index')->with('success', 'Post published. It shows on the public News & events page.');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show($id)
+    // There is no separate admin page for one post; open it in the editor.
+    public function show(NewsEvent $newsEvent): RedirectResponse
     {
-        $newsEvent = NewsEvent::findorFail($id);
-
-        return view('news-events.show', compact('newsEvent'));
+        return redirect()->route('news-events.edit', $newsEvent);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit($id)
+    public function edit(NewsEvent $newsEvent): Response
     {
-        $newsEvent = NewsEvent::findOrFail($id);
-
-        return view('news-events.edit', compact('newsEvent'));
+        return $this->adminPage($newsEvent);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(NewsEventRequest $request, $id)
+    public function update(NewsEventRequest $request, NewsEvent $newsEvent): RedirectResponse
     {
-        $renew = NewsEvent::findOrFail($id);
-        $renew->fill($request->safe()->only(['title', 'description', 'event_date']));
+        $newsEvent->fill($request->safe()->only(['title', 'description', 'event_date']));
 
         if ($request->hasFile('eventimage')) {
-            $renew->eventimage = $this->moveToPublicImages($request->file('eventimage'));
+            $newsEvent->eventimage = $this->moveToPublicImages($request->file('eventimage'));
+        } elseif ($request->boolean('remove_image')) {
+            $newsEvent->eventimage = null;
         }
 
-        $renew->save();
+        $newsEvent->save();
 
-        return redirect()->route('news-events.index')->with('success', 'Event updated successfully.');
+        return redirect()->route('news-events.index')->with('success', 'Post updated.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy($id)
+    public function destroy(NewsEvent $newsEvent): RedirectResponse
     {
-        $newsEvent = NewsEvent::findOrFail($id);
         $newsEvent->delete();
 
-        return redirect()->route('news-events.index')
-            ->with('success', 'News Event deleted successfully.');
+        return redirect()->route('news-events.index')->with('success', 'Post deleted.');
     }
 
     // Cards for User Events
@@ -103,6 +84,23 @@ class NewsEventController extends Controller
             'events' => NewsEventResource::collection(
                 NewsEvent::orderByDesc('event_date')->orderByDesc('id')->get()
             )->resolve(),
+        ]);
+    }
+
+    /**
+     * @param  NewsEvent|'new'|null  $editing
+     */
+    private function adminPage(NewsEvent|string|null $editing): Response
+    {
+        $posts = NewsEvent::orderByDesc('event_date')->orderByDesc('id')->paginate(15);
+
+        return Inertia::render('Admin/News', [
+            'posts' => Paginated::make($posts, AdminNewsEventResource::class),
+            'editing' => $editing instanceof NewsEvent ? (new AdminNewsEventResource($editing))->resolve() : $editing,
+            'indexUrl' => route('news-events.index'),
+            'createUrl' => route('news-events.create'),
+            'storeUrl' => route('news-events.store'),
+            'publicUrl' => route('news-events.events'),
         ]);
     }
 }

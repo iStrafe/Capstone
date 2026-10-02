@@ -29,21 +29,18 @@ class NewsEventResourceTest extends TestCase
         $this->assertSame('2026-10-09', $event->fresh()->event_date->format('Y-m-d'));
     }
 
-    public function test_blade_news_pages_still_print_plain_dates_after_the_cast(): void
+    public function test_admin_editor_gets_the_date_for_the_date_input(): void
     {
         $event = NewsEvent::create(['title' => 'Adoption day', 'description' => 'Meet the cats', 'event_date' => '2026-10-09']);
         $admin = User::factory()->create(['role' => 'admin']);
 
         $this->actingAs($admin)->get(route('news-events.edit', $event->id))
             ->assertOk()
-            ->assertSee('value="2026-10-09"', false);
-        $this->actingAs($admin)->get(route('news-events.index'))
-            ->assertOk()
-            ->assertSee('<td>2026-10-09</td>', false);
-        $this->get(route('news-events.events'))
-            ->assertOk()
-            ->assertSee('2026-10-09')
-            ->assertDontSee('2026-10-09 00:00:00');
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Admin/News')
+                ->where('editing.isoDate', '2026-10-09')
+                ->where('editing.updateUrl', route('news-events.update', $event->id))
+                ->where('posts.data.0.date', 'Oct 9, 2026'));
     }
 
     public function test_resource_shape(): void

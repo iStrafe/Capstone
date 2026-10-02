@@ -18,8 +18,9 @@ class CatRequest extends FormRequest
             'breed' => ['nullable', 'string', 'max:100'],
             'sex' => ['required', 'in:Male,Female'],
             'Medical_Record' => ['nullable', 'string', 'max:255'],
-            // Status is only chosen when editing; new cats start Active.
-            'status' => [$this->isMethod('post') ? 'nullable' : 'required', 'in:Active,Inactive'],
+            // Status is only chosen when editing; new cats start Active, and archived cats stay
+            // archived until they're restored.
+            'status' => [$this->isMethod('post') || $this->route('cat')?->archived_at ? 'nullable' : 'required', 'in:Active,Inactive'],
         ];
     }
 }

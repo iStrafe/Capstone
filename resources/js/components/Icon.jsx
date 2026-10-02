@@ -86,6 +86,20 @@ const paths = {
     list: <path d="M9 6h11M9 12h11M9 18h11M4.5 6h.01M4.5 12h.01M4.5 18h.01" />,
     logOut: <path d="M15 4h3a2 2 0 012 2v12a2 2 0 01-2 2h-3M10 16l4-4-4-4M14 12H4" />,
     trash: <path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a1 1 0 001 1h8a1 1 0 001-1l1-12M9 7V4h6v3" />,
+    inbox: <path d="M4 13l2.5-8h11L20 13M4 13v6h16v-6M4 13h4.5l1 2.5h5l1-2.5H20" />,
+    cat: <path d="M5 20v-9l-1-6 4.5 3h7L20 5l-1 6v9zM9.5 13.5h.01M14.5 13.5h.01M10.5 16.5h3" />,
+    news: <path d="M5 5h11v14H6a1 1 0 01-1-1zM16 9h3v9a1 1 0 01-1 1h-2M8 9h5M8 12h5M8 15h3" />,
+    spark: <path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5L18 18M6 18l2.5-2.5M15.5 8.5L18 6" />,
+    archive: <path d="M4 5h16v4H4zM5 9v10h14V9M10 13h4" />,
+    edit: <path d="M4 20h4L19 9l-4-4L4 16zM13.5 6.5l4 4" />,
+    eye: (
+        <>
+            <path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z" />
+            <circle cx="12" cy="12" r="3" />
+        </>
+    ),
+    restore: <path d="M4 12a8 8 0 108-8 8 8 0 00-6 2.7M4 4v4h4" />,
+    plus: <path d="M12 5v14M5 12h14" />,
     lock: (
         <>
             <rect x="5" y="11" width="14" height="9" rx="2" />

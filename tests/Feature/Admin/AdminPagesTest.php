@@ -8,6 +8,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Inertia\Testing\AssertableInertia as Assert;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
@@ -51,8 +52,16 @@ class AdminPagesTest extends TestCase
     public static function adminOnlyPages(): array
     {
         return [
-            'adoption requests' => ['/AdoptionRequest'],
-            'released requests' => ['/ReleasedRequest'],
+            'adoption requests' => ['/admin/requests'],
+            'released requests' => ['/admin/requests?status=released'],
+            'cats' => ['/adminDashboard/cats'],
+            'inactive cats' => ['/adminDashboard/cats?status=inactive'],
+            'archived cats' => ['/adminDashboard/cats?status=archived'],
+            'add a cat' => ['/adminDashboard/cats/create'],
+            'messages' => ['/admin/messages'],
+            'news and events' => ['/news-events'],
+            'new post' => ['/news-events/create'],
+            'breed helper' => ['/analyzeImage'],
         ];
     }
 
@@ -71,9 +80,13 @@ class AdminPagesTest extends TestCase
         $id = $this->createAdoptionRequest(['valid_id' => json_encode([basename($path)])]);
         $admin = $this->admin();
 
-        $this->actingAs($admin)->get('/view-valid-ids/'.$id)
+        // The old page now redirects to the request, which shows the IDs.
+        $this->actingAs($admin)->get('/view-valid-ids/'.$id)->assertRedirect(route('admin.requests.show', $id));
+        $this->actingAs($admin)->get(route('admin.requests.show', $id))
             ->assertOk()
-            ->assertSee(route('validIdFile', ['filename' => basename($path)]), false);
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Admin/Requests/Show')
+                ->where('validIds.0.url', route('validIdFile', ['filename' => basename($path)])));
 
         $this->actingAs($admin)->get('/valid-ids/'.basename($path))->assertOk();
         $this->actingAs($admin)->get('/valid-ids/missing.jpg')->assertNotFound();
@@ -85,8 +98,15 @@ class AdminPagesTest extends TestCase
 
         $this->actingAs($this->admin())
             ->get('/AdoptionRequest')
+            ->assertRedirect(route('admin.requests.index'));
+
+        $this->actingAs($this->admin())
+            ->get(route('admin.requests.index'))
             ->assertOk()
-            ->assertSee('Maria Clara');
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Admin/Requests/Index')
+                ->where('requests.data.0.applicant.name', 'Maria Clara')
+                ->where('counts.pending', 1));
     }
 
     public function test_admin_can_approve_a_request(): void
@@ -101,8 +121,9 @@ class AdminPagesTest extends TestCase
                 'name_of_cat' => 'Mingming',
                 'status' => 'Approved',
             ])
-            ->assertOk()
-            ->assertJson(['success' => true]);
+            ->assertRedirect()
+            ->assertSessionHasNoErrors()
+            ->assertSessionHas('success', 'Approved Juan Dela Cruz to adopt Mingming.');
 
         $request = DB::table('adoption_request')->find($id);
         $this->assertSame('Approved', $request->status);
@@ -121,8 +142,9 @@ class AdminPagesTest extends TestCase
                 'name_of_cat' => 'Mingming',
                 'status' => 'Released',
             ])
-            ->assertOk()
-            ->assertJson(['success' => true]);
+            ->assertRedirect()
+            ->assertSessionHasNoErrors()
+            ->assertSessionHas('success', 'Mingming went home with Juan Dela Cruz.');
 
         $request = DB::table('adoption_request')->find($id);
         $this->assertSame('Released', $request->status);
@@ -141,15 +163,19 @@ class AdminPagesTest extends TestCase
             ->assertDontSee('Muning');
     }
 
-    public function test_direct_create_show_and_edit_cat_urls_redirect_to_the_inventory(): void
+    public function test_cat_editor_pages_open_for_new_and_existing_cats(): void
     {
         $cat = $this->createCat();
         $admin = $this->admin();
 
-        // These are modals on the index page; the bare fragments are not pages.
-        $this->actingAs($admin)->get(route('admin.cats.create'))->assertRedirect(route('admin.cats.index'));
-        $this->actingAs($admin)->get(route('admin.cats.show', $cat))->assertRedirect(route('admin.cats.index'));
-        $this->actingAs($admin)->get(route('admin.cats.edit', $cat))->assertRedirect(route('admin.cats.index'));
+        $this->actingAs($admin)->get(route('admin.cats.create'))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page->component('Admin/Cats/Edit')->where('cat', null)->where('submitUrl', route('admin.cats.store')));
+        $this->actingAs($admin)->get(route('admin.cats.edit', $cat))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page->component('Admin/Cats/Edit')->where('cat.id', $cat->id)->where('submitUrl', route('admin.cats.update', $cat)));
+        // There is no separate view page; it opens the editor.
+        $this->actingAs($admin)->get(route('admin.cats.show', $cat))->assertRedirect(route('admin.cats.edit', $cat));
     }
 
     public function test_admin_can_add_a_cat(): void
@@ -198,9 +224,10 @@ class AdminPagesTest extends TestCase
         $this->assertNotNull($cat->archived_at);
         $this->assertSame('ARCHIVED', $cat->status);
 
+        $this->actingAs($admin)->get(route('admin.cats.archived'))->assertRedirect(route('admin.cats.index', ['status' => 'archived']));
         $this->actingAs($admin)
-            ->get(route('admin.cats.archived'))
+            ->get(route('admin.cats.index', ['status' => 'archived']))
             ->assertOk()
-            ->assertSee($cat->cat_name);
+            ->assertInertia(fn (Assert $page) => $page->where('cats.data.0.name', $cat->cat_name)->where('cats.data.0.state', 'archived'));
     }
 }

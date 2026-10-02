@@ -28,4 +28,20 @@ enum AdoptionStatus: string
     {
         return [self::Pending, self::Approved];
     }
+
+    /**
+     * Where an admin can move a request from here. Released is final; a rejected request can be
+     * reopened (back to Pending) if it was rejected by mistake.
+     *
+     * @return list<self>
+     */
+    public function next(): array
+    {
+        return match ($this) {
+            self::Pending => [self::Approved, self::Rejected],
+            self::Approved => [self::Released, self::Rejected],
+            self::Rejected => [self::Pending],
+            self::Released => [],
+        };
+    }
 }

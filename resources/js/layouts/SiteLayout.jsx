@@ -22,11 +22,10 @@ export default function SiteLayout({ title, active, children }) {
     useEffect(() => router.on('navigate', () => setMenuOpen(false)), []);
 
     const nav = [
-        // `inertia` marks pages that are already React; the rest are Blade and need a full page load.
-        { key: 'adopt', label: 'Adopt', href: links.adopt, inertia: true },
-        { key: 'events', label: 'News & events', href: links.events, inertia: true },
-        { key: 'about', label: 'About', href: links.about, inertia: true },
-        { key: 'contact', label: 'Contact', href: links.contact, inertia: true },
+        { key: 'adopt', label: 'Adopt', href: links.adopt },
+        { key: 'events', label: 'News & events', href: links.events },
+        { key: 'about', label: 'About', href: links.about },
+        { key: 'contact', label: 'Contact', href: links.contact },
     ];
 
     const logout = () => router.post(links.logout);
@@ -98,7 +97,7 @@ export default function SiteLayout({ title, active, children }) {
                                 <>
                                     <Link href={links.myRequests} className="border-b border-mist py-3.5 text-lg font-medium">My requests</Link>
                                     <Link href={links.profile} className="border-b border-mist py-3.5 text-lg font-medium">Profile</Link>
-                                    {user.isAdmin && <a href={links.admin} className="border-b border-mist py-3.5 text-lg font-medium">Admin dashboard</a>}
+                                    {user.isAdmin && <Link href={links.admin} className="border-b border-mist py-3.5 text-lg font-medium">Admin dashboard</Link>}
                                 </>
                             )}
                         </nav>
@@ -135,7 +134,7 @@ export default function SiteLayout({ title, active, children }) {
 }
 
 function NavLink({ item, ...props }) {
-    return item.inertia ? <Link href={item.href} {...props} /> : <a href={item.href} {...props} />;
+    return <Link href={item.href} {...props} />;
 }
 
 function UserMenu({ user, links, onLogout }) {
@@ -168,7 +167,7 @@ function UserMenu({ user, links, onLogout }) {
                 <div className="absolute right-0 top-full mt-2 w-56 overflow-hidden rounded-2xl border border-mist bg-white py-2 shadow-xl">
                     <Link href={links.myRequests} className="block px-4 py-2.5 hover:bg-azure-50">My requests</Link>
                     <Link href={links.profile} className="block px-4 py-2.5 hover:bg-azure-50">Profile</Link>
-                    {user.isAdmin && <a href={links.admin} className="block px-4 py-2.5 hover:bg-azure-50">Admin dashboard</a>}
+                    {user.isAdmin && <Link href={links.admin} className="block px-4 py-2.5 hover:bg-azure-50">Admin dashboard</Link>}
                     <button type="button" onClick={onLogout} className="block w-full border-t border-mist px-4 py-2.5 text-left hover:bg-azure-50">
                         Log out
                     </button>

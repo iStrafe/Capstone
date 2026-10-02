@@ -2,12 +2,14 @@
 
 namespace Tests\Feature\Admin;
 
+use App\Http\Controllers\OpenAIController;
 use App\Models\User;
 use Illuminate\Foundation\Http\Middleware\ValidateCsrfToken;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
+use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
 
 class AnalyzeImageTest extends TestCase
@@ -43,12 +45,35 @@ class AnalyzeImageTest extends TestCase
         ]);
 
         $this->analyze()
-            ->assertOk()
-            ->assertSee('Analysis Result:')
-            ->assertSee('Breed: Puspin')
-            ->assertSee('id="aiResponse"', false);
+            ->assertRedirect('/analyzeImage')
+            ->assertSessionHas('analysis', "Color: Orange\nBreed: Puspin\n- short coat");
 
         Storage::disk('public')->assertDirectoryEmpty('uploads');
+    }
+
+    public function test_the_result_is_shown_on_the_page_as_breed_color_and_traits(): void
+    {
+        $admin = User::factory()->make()->forceFill(['id' => 1, 'role' => 'admin']);
+
+        $this->actingAs($admin)
+            ->withSession(['analysis' => "**Color:** Orange and white\n**Breed:** Puspin\n**List of 5 characteristics:**\n1. **Short coat** that lies flat\n2. Lean build\n- Almond eyes"])
+            ->get('/analyzeImage')
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Admin/BreedHelper')
+                ->where('result.breed', 'Puspin')
+                ->where('result.color', 'Orange and white')
+                ->where('result.traits', ['Short coat that lies flat', 'Lean build', 'Almond eyes'])
+                ->where('error', null)
+                ->where('addCatUrl', route('admin.cats.create')));
+    }
+
+    public function test_an_answer_without_the_format_is_shown_as_text(): void
+    {
+        $this->assertSame(
+            ['breed' => null, 'color' => null, 'traits' => [], 'text' => "Sorry, this doesn't look like a cat."],
+            OpenAIController::parse("Sorry, this doesn't look like a cat.\n"),
+        );
     }
 
     public function test_an_api_error_shows_a_friendly_message_and_removes_the_upload(): void
@@ -57,7 +82,7 @@ class AnalyzeImageTest extends TestCase
 
         $this->analyze()
             ->assertRedirect('/analyzeImage')
-            ->assertSessionHas('error', self::FAILURE_MESSAGE);
+            ->assertSessionHas('analysis_error', self::FAILURE_MESSAGE);
 
         Storage::disk('public')->assertDirectoryEmpty('uploads');
     }
@@ -68,7 +93,7 @@ class AnalyzeImageTest extends TestCase
 
         $this->analyze()
             ->assertRedirect('/analyzeImage')
-            ->assertSessionHas('error', self::FAILURE_MESSAGE);
+            ->assertSessionHas('analysis_error', self::FAILURE_MESSAGE);
 
         Storage::disk('public')->assertDirectoryEmpty('uploads');
     }
@@ -80,7 +105,7 @@ class AnalyzeImageTest extends TestCase
 
         $this->analyze()
             ->assertRedirect('/analyzeImage')
-            ->assertSessionHas('error', self::FAILURE_MESSAGE);
+            ->assertSessionHas('analysis_error', self::FAILURE_MESSAGE);
 
         Http::assertNothingSent();
         $this->assertSame([], Storage::disk('public')->allFiles());
@@ -91,10 +116,9 @@ class AnalyzeImageTest extends TestCase
         $admin = User::factory()->make()->forceFill(['id' => 1, 'role' => 'admin']);
 
         $this->actingAs($admin)
-            ->withSession(['error' => self::FAILURE_MESSAGE])
+            ->withSession(['analysis_error' => self::FAILURE_MESSAGE])
             ->get('/analyzeImage')
             ->assertOk()
-            ->assertSee(self::FAILURE_MESSAGE)
-            ->assertDontSee('id="aiResponse"', false);
+            ->assertInertia(fn (Assert $page) => $page->where('error', self::FAILURE_MESSAGE)->where('result', null));
     }
 }

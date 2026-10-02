@@ -6,7 +6,9 @@ use App\Models\Cat;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\File;
+use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
 
 class CatInventoryTest extends TestCase
@@ -65,28 +67,57 @@ class CatInventoryTest extends TestCase
         $this->actingAs($this->admin())->get(route('admin.cats.index'))->assertOk();
     }
 
-    public function test_edit_modal_submits_to_the_update_route(): void
+    public function test_editor_gets_the_cat_with_public_image_and_clip_urls(): void
     {
-        $cat = $this->createCat();
+        $cat = $this->createCat(['cat_clip' => 'clip.mp4', 'cat_image' => 'photo.jpg', 'Medical_Record' => 'Vaccinated', 'age' => 0]);
 
-        // The modal is shared by every card, so the script builds the action from this template.
         $this->actingAs($this->admin())
-            ->get(route('admin.cats.index'))
+            ->get(route('admin.cats.edit', $cat))
             ->assertOk()
-            ->assertSee(json_encode(route('admin.cats.update', '__CAT__')), false)
-            ->assertDontSee("'/admin/cats/' + catId", false);
-
-        $this->assertNotNull($cat);
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Admin/Cats/Edit')
+                ->where('cat.clip', asset('images/clip.mp4'))
+                ->where('cat.image', asset('images/photo.jpg'))
+                ->where('cat.medicalRecord', 'Vaccinated')
+                ->where('cat.ageLabel', 'Under 1 year')
+                ->where('cat.updateUrl', route('admin.cats.update', $cat))
+                ->where('cat.archiveUrl', route('admin.cats.archive', $cat)));
     }
 
-    public function test_card_video_uses_the_public_images_url(): void
+    public function test_breed_helper_guess_fills_in_a_new_cat(): void
     {
-        $this->createCat(['cat_clip' => 'clip.mp4']);
+        $this->actingAs($this->admin())
+            ->get(route('admin.cats.create', ['breed' => 'Puspin', 'color' => 'Orange']))
+            ->assertInertia(fn (Assert $page) => $page->where('defaults', ['breed' => 'Puspin', 'color' => 'Orange']));
+    }
+
+    public function test_an_update_sent_as_a_form_post_with_the_put_override_works(): void
+    {
+        // The React editor sends files, so it posts with _method=put.
+        $cat = $this->createCat();
 
         $this->actingAs($this->admin())
-            ->get(route('admin.cats.index'))
-            ->assertSee(asset('images/clip.mp4'), false)
-            ->assertDontSee('public\\images', false);
+            ->post(route('admin.cats.update', $cat), $this->updatePayload(['_method' => 'put', 'cat_name' => 'Mingming Jr.', 'status' => 'Inactive']))
+            ->assertRedirect(route('admin.cats.index'))
+            ->assertSessionHas('success', 'Saved the changes to Mingming Jr..');
+
+        $this->assertSame('Inactive', $cat->fresh()->status);
+    }
+
+    public function test_an_archived_cat_can_be_edited_and_stays_archived(): void
+    {
+        $cat = $this->createCat();
+        $cat->forceFill(['archived_at' => now(), 'status' => Cat::STATUS_ARCHIVED])->save();
+
+        $this->actingAs($this->admin())
+            ->put(route('admin.cats.update', $cat), Arr::except($this->updatePayload(['color' => 'Calico']), 'status'))
+            ->assertSessionHasNoErrors()
+            ->assertRedirect(route('admin.cats.index', ['status' => 'archived']));
+
+        $cat->refresh();
+        $this->assertSame('Calico', $cat->color);
+        $this->assertSame(Cat::STATUS_ARCHIVED, $cat->status);
+        $this->assertNotNull($cat->archived_at);
     }
 
     public function test_updating_a_cat_saves_the_new_video(): void

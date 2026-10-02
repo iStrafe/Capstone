@@ -2,7 +2,6 @@
 
 use App\Http\Middleware\admin;
 use App\Http\Middleware\HandleInertiaRequests;
-use App\Http\Middleware\InertiaBladeFallback;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -27,11 +26,9 @@ return Application::configure(basePath: dirname(__DIR__))
             ? route('register')
             : route('login'));
 
-        // Serves the React pages (resources/js/pages) through Inertia. The fallback turns an
-        // Inertia visit that lands on a Blade page into a full page load.
+        // Serves the React pages (resources/js/pages) through Inertia.
         $middleware->web(append: [
             HandleInertiaRequests::class,
-            InertiaBladeFallback::class,
         ]);
 
         // Laravel's default priority list, with the admin check moved ahead of route model

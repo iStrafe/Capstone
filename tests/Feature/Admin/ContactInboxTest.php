@@ -5,6 +5,7 @@ namespace Tests\Feature\Admin;
 use App\Models\Contact;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
 
 /**
@@ -40,7 +41,7 @@ class ContactInboxTest extends TestCase
     public function test_inbox_lists_messages_newest_first_with_their_details(): void
     {
         $this->message(['full_name' => 'Older Sender', 'created_at' => now()->subDays(2)]);
-        $this->message([
+        $newer = $this->message([
             'full_name' => 'Newer Sender',
             'email' => 'newer@example.com',
             'mobile_number' => '09998887777',
@@ -51,12 +52,28 @@ class ContactInboxTest extends TestCase
         $this->actingAs($this->admin())
             ->get(route('admin.messages.index'))
             ->assertOk()
-            ->assertSeeInOrder(['Newer Sender', 'Older Sender'])
-            ->assertSee('href="mailto:newer@example.com"', false)
-            ->assertSee('09998887777')
-            ->assertSee('Can I volunteer on weekends?')
-            ->assertSee(now()->subDay()->format('M j, Y'))
-            ->assertSee('2 messages are not handled yet.');
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Admin/Messages')
+                ->where('filter', 'open')
+                ->where('counts.open', 2)
+                ->where('messages.data.0.name', 'Newer Sender')
+                ->where('messages.data.1.name', 'Older Sender')
+                // The newest message opens by default.
+                ->where('selected.id', $newer->id)
+                ->where('selected.email', 'newer@example.com')
+                ->where('selected.phone', '09998887777')
+                ->where('selected.message', 'Can I volunteer on weekends?')
+                ->where('selected.receivedAtFull', fn ($date) => str_starts_with($date, now()->subDay()->format('M j, Y'))));
+    }
+
+    public function test_admin_can_open_a_message_from_the_list(): void
+    {
+        $first = $this->message(['full_name' => 'First Sender', 'created_at' => now()->subDays(2)]);
+        $this->message(['full_name' => 'Second Sender', 'created_at' => now()->subDay()]);
+
+        $this->actingAs($this->admin())
+            ->get(route('admin.messages.index', ['message' => $first->id]))
+            ->assertInertia(fn (Assert $page) => $page->where('selected.name', 'First Sender'));
     }
 
     public function test_inbox_is_paginated(): void
@@ -68,20 +85,48 @@ class ContactInboxTest extends TestCase
         $admin = $this->admin();
         $this->actingAs($admin)->get(route('admin.messages.index'))
             ->assertOk()
-            ->assertSee('Sender 16')
-            ->assertDontSee('Sender 1<', false)
-            ->assertViewHas('messages', fn ($paginator) => $paginator->total() === 16 && $paginator->count() === 15);
+            ->assertInertia(fn (Assert $page) => $page
+                ->has('messages.data', 15)
+                ->where('messages.data.0.name', 'Sender 16')
+                ->where('messages.meta.total', 16)
+                ->where('messages.links.next', fn ($url) => str_contains($url, 'page=2')));
 
         $this->actingAs($admin)->get(route('admin.messages.index', ['page' => 2]))
             ->assertOk()
-            ->assertSee('Sender 1<', false);
+            ->assertInertia(fn (Assert $page) => $page
+                ->has('messages.data', 1)
+                ->where('messages.data.0.name', 'Sender 1'));
+    }
+
+    public function test_inbox_filters_handled_messages(): void
+    {
+        $this->message(['full_name' => 'Waiting']);
+        $this->message(['full_name' => 'Answered', 'handled_at' => now()]);
+        $admin = $this->admin();
+
+        $this->actingAs($admin)->get(route('admin.messages.index'))
+            ->assertInertia(fn (Assert $page) => $page
+                ->has('messages.data', 1)
+                ->where('messages.data.0.name', 'Waiting')
+                ->where('counts', ['open' => 1, 'handled' => 1]));
+
+        $this->actingAs($admin)->get(route('admin.messages.index', ['filter' => 'handled']))
+            ->assertInertia(fn (Assert $page) => $page
+                ->has('messages.data', 1)
+                ->where('messages.data.0.name', 'Answered')
+                ->where('messages.data.0.handled', true));
+
+        $this->actingAs($admin)->get(route('admin.messages.index', ['filter' => 'all']))
+            ->assertInertia(fn (Assert $page) => $page->has('messages.data', 2));
     }
 
     public function test_inbox_shows_when_no_email_was_given(): void
     {
         $this->message(['email' => null]);
 
-        $this->actingAs($this->admin())->get(route('admin.messages.index'))->assertOk()->assertSee('Not given');
+        $this->actingAs($this->admin())->get(route('admin.messages.index'))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page->where('selected.email', null));
     }
 
     public function test_admin_can_mark_a_message_handled_and_back(): void
@@ -92,34 +137,34 @@ class ContactInboxTest extends TestCase
         $this->actingAs($admin)
             ->from(route('admin.messages.index'))
             ->patch(route('admin.messages.handled', $contact), ['handled' => 1])
-            ->assertRedirect(route('admin.messages.index'))
+            ->assertRedirect(route('admin.messages.index', ['message' => $contact->id]))
             ->assertSessionHas('success', 'Message marked as handled.');
         $this->assertNotNull($contact->fresh()->handled_at);
 
-        $this->actingAs($admin)->get(route('admin.messages.index'))
-            ->assertSee('Handled')
-            ->assertSee('Mark as unhandled')
-            ->assertSee('Nothing is waiting for a reply.');
+        $this->actingAs($admin)->get(route('admin.messages.index', ['message' => $contact->id]))
+            ->assertInertia(fn (Assert $page) => $page
+                ->where('counts.open', 0)
+                ->has('messages.data', 0)
+                // It stays open after leaving the "to handle" list.
+                ->where('selected.handled', true)
+                ->whereType('selected.handledAt', 'string'));
 
         $this->actingAs($admin)
-            ->from(route('admin.messages.index'))
+            ->from(route('admin.messages.index', ['filter' => 'handled', 'page' => 1]))
             ->patch(route('admin.messages.handled', $contact), ['handled' => 0])
-            ->assertRedirect(route('admin.messages.index'));
+            ->assertRedirect(route('admin.messages.index', ['message' => $contact->id, 'filter' => 'handled', 'page' => 1]))
+            ->assertSessionHas('success', 'Message moved back to unhandled.');
         $this->assertNull($contact->fresh()->handled_at);
     }
 
-    public function test_admin_can_delete_a_message_after_confirming(): void
+    public function test_admin_can_delete_a_message(): void
     {
         $contact = $this->message();
-        $admin = $this->admin();
 
-        $this->actingAs($admin)->get(route('admin.messages.index'))
-            ->assertSee("onsubmit=\"return confirm('Delete this message? This cannot be undone.')\"", false);
-
-        $this->actingAs($admin)
-            ->from(route('admin.messages.index'))
-            ->delete(route('admin.messages.destroy', $contact))
-            ->assertRedirect(route('admin.messages.index'))
+        $this->actingAs($this->admin())
+            ->from(route('admin.messages.index', ['filter' => 'all', 'message' => $contact->id]))
+            ->delete(route('admin.messages.destroy', $contact).'?filter=all')
+            ->assertRedirect(route('admin.messages.index', ['filter' => 'all']))
             ->assertSessionHas('success', 'Message deleted.');
 
         $this->assertModelMissing($contact);
@@ -134,8 +179,9 @@ class ContactInboxTest extends TestCase
         $this->actingAs($this->admin())
             ->get(route('admin.cats.index'))
             ->assertOk()
-            ->assertSee('href="'.route('admin.messages.index').'"', false)
-            ->assertSee('title="Messages not handled yet">2</span>', false);
+            ->assertInertia(fn (Assert $page) => $page
+                ->where('admin.links.messages', route('admin.messages.index'))
+                ->where('admin.unreadMessages', 2));
     }
 
     public function test_regular_users_cannot_use_the_inbox(): void

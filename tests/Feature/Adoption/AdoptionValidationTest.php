@@ -7,6 +7,7 @@ use App\Models\AdoptionRequest;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
+use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
 
 class AdoptionValidationTest extends TestCase
@@ -79,16 +80,18 @@ class AdoptionValidationTest extends TestCase
         $this->assertDatabaseHas('adoption_request', ['id' => $id, 'status' => 'Pending']);
     }
 
-    public function test_rejected_requests_appear_in_the_rejected_table(): void
+    public function test_rejected_requests_appear_in_the_rejected_tab(): void
     {
         $id = $this->createRequest();
         $this->actingAs($this->admin())->postJson("/update-status/{$id}", ['status' => 'Rejected'])->assertOk();
 
         $this->actingAs($this->admin())
-            ->get('/AdoptionRequest')
+            ->get(route('admin.requests.index', ['status' => 'rejected']))
             ->assertOk()
-            ->assertViewHas('rejected_request', fn ($paginator) => $paginator->total() === 1)
-            ->assertViewHas('approved_requests', fn ($paginator) => $paginator->total() === 0);
+            ->assertInertia(fn (Assert $page) => $page
+                ->where('counts.rejected', 1)
+                ->where('counts.approved', 0)
+                ->where('requests.data.0.id', $id));
     }
 
     public function test_pdf_for_a_missing_request_returns_404(): void
@@ -105,12 +108,17 @@ class AdoptionValidationTest extends TestCase
             ->assertHeader('content-type', 'application/pdf');
     }
 
-    public function test_request_tables_page_independently(): void
+    public function test_request_list_pages_keep_the_tab_and_search(): void
     {
+        foreach (range(1, 16) as $i) {
+            $this->createRequest(['name' => "Applicant {$i}", 'created_at' => now()->subMinutes(100 - $i)]);
+        }
+
         $this->actingAs($this->admin())
-            ->get('/AdoptionRequest?approved_page=2')
-            ->assertOk()
-            ->assertViewHas('adoption_request', fn ($paginator) => $paginator->currentPage() === 1)
-            ->assertViewHas('approved_requests', fn ($paginator) => $paginator->currentPage() === 2);
+            ->get(route('admin.requests.index', ['status' => 'pending', 'q' => 'applicant']))
+            ->assertInertia(fn (Assert $page) => $page
+                ->where('requests.meta.total', 16)
+                ->where('requests.meta.lastPage', 2)
+                ->where('requests.links.next', fn ($url) => str_contains($url, 'status=pending') && str_contains($url, 'q=applicant') && str_contains($url, 'page=2')));
     }
 }

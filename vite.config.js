@@ -7,11 +7,8 @@ export default defineConfig({
     plugins: [
         laravel({
             input: [
-                // React + Inertia pages (resources/js/pages). New pages go here.
+                // React + Inertia pages (resources/js/pages)
                 'resources/js/app.jsx',
-                // Bootstrap site pages, until each one is rebuilt in React
-                'resources/sass/app.scss',
-                'resources/js/app.js',
             ],
             refresh: true,
         }),

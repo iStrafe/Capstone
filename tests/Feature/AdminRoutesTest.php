@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\User;
+use Illuminate\Foundation\Http\Middleware\ValidateCsrfToken;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
@@ -47,7 +48,7 @@ class AdminRoutesTest extends TestCase
     #[DataProvider('adminRoutes')]
     public function test_non_admin_users_are_forbidden(string $method, string $uri): void
     {
-        $this->withoutMiddleware(\Illuminate\Foundation\Http\Middleware\ValidateCsrfToken::class)
+        $this->withoutMiddleware(ValidateCsrfToken::class)
             ->actingAs($this->userWithRole('user'))
             ->{$method}($uri)
             ->assertForbidden();
@@ -56,7 +57,7 @@ class AdminRoutesTest extends TestCase
     #[DataProvider('adminRoutes')]
     public function test_guests_are_sent_to_login(string $method, string $uri): void
     {
-        $this->withoutMiddleware(\Illuminate\Foundation\Http\Middleware\ValidateCsrfToken::class)
+        $this->withoutMiddleware(ValidateCsrfToken::class)
             ->{$method}($uri)
             ->assertRedirect(route('login'));
     }
@@ -64,8 +65,8 @@ class AdminRoutesTest extends TestCase
     public function test_admins_can_reach_admin_pages(): void
     {
         $this->actingAs($this->userWithRole('admin'))
-            ->get('/adminDashboard/cats/create')
-            ->assertRedirect(route('admin.cats.index'));
+            ->get('/adminDashboard')
+            ->assertRedirect('/adminDashboard/cats');
     }
 
     // Unsaved users keep these tests off the database; the middleware only reads the role.
