@@ -65,8 +65,8 @@ class OpenAIController extends Controller
         $request->validate([
             'image' => 'required|image|mimes:jpg,jpeg,png,webp|max:10240',
         ], [
-            // PHP drops a file over its upload_max_filesize before Laravel sees it.
-            'image.uploaded' => 'The photo didn’t upload. This server takes files up to '.UploadLimit::label(UploadLimit::perFile()).', set by upload_max_filesize in php.ini.',
+            // PHP drops a failed upload before Laravel sees it; say why.
+            'image.uploaded' => UploadLimit::failure($request->file('image'), 'photo'),
             'image.max' => 'The photo can be up to 10 MB.',
         ]);
 
