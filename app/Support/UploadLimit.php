@@ -1,0 +1,57 @@
+<?php
+
+namespace App\Support;
+
+/**
+ * PHP's own upload limits from php.ini. A file over upload_max_filesize arrives as a failed
+ * upload, and a form over post_max_size is refused before Laravel sees it (413), so the admin
+ * editors check against these before sending.
+ */
+class UploadLimit
+{
+    /** The biggest single file PHP accepts, in bytes. */
+    public static function perFile(): int
+    {
+        return min(self::bytes((string) ini_get('upload_max_filesize')), self::total());
+    }
+
+    /** The biggest whole form PHP accepts, in bytes. */
+    public static function total(): int
+    {
+        return self::bytes((string) ini_get('post_max_size'));
+    }
+
+    /** A size like "2 MB" for messages. */
+    public static function label(int $bytes): string
+    {
+        if ($bytes >= 1024 * 1024) {
+            return rtrim(rtrim(number_format($bytes / 1024 / 1024, 1, '.', ''), '0'), '.').' MB';
+        }
+
+        return max(1, (int) round($bytes / 1024)).' KB';
+    }
+
+    /** For the editors in the admin pages. */
+    public static function toArray(): array
+    {
+        return ['file' => self::perFile(), 'total' => self::total()];
+    }
+
+    /** Turns php.ini shorthand such as "2M" or "1G" into bytes. 0 or empty means no limit. */
+    public static function bytes(string $value): int
+    {
+        $value = trim($value);
+        $number = (int) $value;
+
+        if ($number <= 0) {
+            return PHP_INT_MAX;
+        }
+
+        return match (strtolower(substr($value, -1))) {
+            'g' => $number * 1024 ** 3,
+            'm' => $number * 1024 ** 2,
+            'k' => $number * 1024,
+            default => $number,
+        };
+    }
+}

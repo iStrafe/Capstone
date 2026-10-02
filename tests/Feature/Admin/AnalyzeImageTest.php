@@ -51,6 +51,15 @@ class AnalyzeImageTest extends TestCase
         Storage::disk('public')->assertDirectoryEmpty('uploads');
     }
 
+    public function test_the_photo_is_sent_with_its_own_type(): void
+    {
+        Http::fake(['api.openai.com/*' => Http::response(['choices' => [['message' => ['content' => 'Breed: Puspin']]]])]);
+
+        $this->analyze()->assertSessionHas('analysis');
+
+        Http::assertSent(fn ($request) => str_starts_with(data_get($request->data(), 'messages.0.content.3.image_url.url'), 'data:image/png;base64,'));
+    }
+
     public function test_the_result_is_shown_on_the_page_as_breed_color_and_traits(): void
     {
         $admin = User::factory()->make()->forceFill(['id' => 1, 'role' => 'admin']);

@@ -7,6 +7,7 @@ A Laravel app for a cat shelter: public cat listings and adoption requests, news
 - PHP 8.3 or newer, Composer
 - Node 20 or newer, npm
 - PostgreSQL 16 (the default connection)
+- In php.ini, `upload_max_filesize = 10M` and `post_max_size = 40M`. PHP's default of 2 MB per file turns away most phone photos, and admins can upload photos up to 10 MB and clips up to 25 MB.
 
 ## Setup
 

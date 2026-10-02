@@ -2,12 +2,29 @@ import { Link, useForm } from '@inertiajs/react';
 import Button, { buttonClasses } from '../../components/Button';
 import Icon from '../../components/Icon';
 import AdminLayout, { AdminCard, AdminHeader } from '../../layouts/AdminLayout';
+import { PHOTO_MAX, formatSize, maxSize, sizeProblem, useUploadLimit } from '../../lib/uploads';
 import useObjectUrl from '../../lib/useObjectUrl';
 
 // Upload a photo and get a breed guess from OpenAI, with the reasons. Useful when adding a cat.
 export default function BreedHelper({ result, error, analyzeUrl, addCatUrl }) {
     const form = useForm({ image: null });
     const photo = useObjectUrl(form.data.image);
+    const limit = useUploadLimit();
+
+    const choose = (event) => {
+        const file = event.target.files[0] ?? null;
+        const problem = sizeProblem(file, PHOTO_MAX, limit, 'photo');
+        // Lets the same file be chosen again after it was refused.
+        event.target.value = '';
+
+        if (problem) {
+            form.setError('image', problem);
+
+            return;
+        }
+        form.clearErrors('image');
+        form.setData('image', file);
+    };
 
     const submit = (event) => {
         event.preventDefault();
@@ -30,15 +47,15 @@ export default function BreedHelper({ result, error, analyzeUrl, addCatUrl }) {
                         ) : (
                             <label className="flex h-72 cursor-pointer flex-col items-center justify-center gap-2 rounded-2xl border-[1.5px] border-dashed border-mist-strong bg-cloud text-center font-semibold text-azure-800 has-focus-visible:outline-3 has-focus-visible:outline-azure-300">
                                 <Icon name="upload" size={26} /> Choose a photo of the cat
-                                <span className="text-[13px] font-medium text-muted">JPG or PNG, up to 2 MB</span>
-                                <input type="file" accept="image/jpeg,image/png" className="sr-only" onChange={(event) => form.setData('image', event.target.files[0] ?? null)} />
+                                <span className="text-[13px] font-medium text-muted">JPG, PNG or WebP, up to {formatSize(maxSize(PHOTO_MAX, limit))}</span>
+                                <input type="file" accept="image/jpeg,image/png,image/webp" className="sr-only" onChange={choose} />
                             </label>
                         )}
                         <div className="flex flex-wrap gap-2.5">
                             {photo && (
                                 <label className={`${buttonClasses({ variant: 'quiet', size: 'sm' })} cursor-pointer has-focus-visible:outline-3 has-focus-visible:outline-azure-300`}>
                                     Choose another photo
-                                    <input type="file" accept="image/jpeg,image/png" className="sr-only" onChange={(event) => form.setData('image', event.target.files[0] ?? null)} />
+                                    <input type="file" accept="image/jpeg,image/png,image/webp" className="sr-only" onChange={choose} />
                                 </label>
                             )}
                             <Button type="submit" variant="dark" size="sm" disabled={!form.data.image || form.processing}>

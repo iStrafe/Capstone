@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Support\UploadLimit;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
@@ -62,7 +63,11 @@ class OpenAIController extends Controller
     {
         // Validate the uploaded image
         $request->validate([
-            'image' => 'required|image|mimes:jpg,jpeg,png|max:2048',
+            'image' => 'required|image|mimes:jpg,jpeg,png,webp|max:10240',
+        ], [
+            // PHP drops a file over its upload_max_filesize before Laravel sees it.
+            'image.uploaded' => 'The photo didn’t upload. This server takes files up to '.UploadLimit::label(UploadLimit::perFile()).', set by upload_max_filesize in php.ini.',
+            'image.max' => 'The photo can be up to 10 MB.',
         ]);
 
         $apiKey = config('services.openai.key');
@@ -79,6 +84,7 @@ class OpenAIController extends Controller
 
         // Encode the image to base64
         $base64Image = base64_encode(Storage::disk('public')->get($imagePath));
+        $mimeType = $image->getMimeType();
 
         // Prepare the payload for OpenAI API
         $payload = [
@@ -105,7 +111,7 @@ class OpenAIController extends Controller
                         [
                             'type' => 'image_url',
                             'image_url' => [
-                                'url' => "data:image/jpeg;base64,{$base64Image}",
+                                'url' => "data:{$mimeType};base64,{$base64Image}",
                             ],
                         ],
                     ],
