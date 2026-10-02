@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use App\Enums\AdoptionStatus;
 use App\Models\AdoptionRequest;
 use App\Models\Contact;
+use App\Support\UploadLimit;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -61,6 +62,8 @@ class HandleInertiaRequests extends Middleware
                         'news' => route('news-events.index'),
                         'breedHelper' => route('analyze.form'),
                     ],
+                    // PHP's upload limits, so the editors can refuse a file that's too big before sending it.
+                    'uploadLimit' => UploadLimit::toArray(),
                 ],
             ] : []),
             // URLs the React pages link or post to. Admin pages and Google sign-in are not React, so links to them need a full page load.

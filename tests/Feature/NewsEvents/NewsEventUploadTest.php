@@ -4,6 +4,7 @@ namespace Tests\Feature\NewsEvents;
 
 use App\Models\NewsEvent;
 use App\Models\User;
+use App\Support\UploadLimit;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\File;
@@ -140,5 +141,38 @@ class NewsEventUploadTest extends TestCase
             ->assertSessionHas('success', 'Post updated.');
 
         $this->assertNull($event->fresh()->eventimage);
+    }
+
+    public function test_webp_images_are_accepted(): void
+    {
+        $this->actingAs($this->admin())
+            ->post(route('news-events.store'), [
+                'title' => 'Adoption day',
+                'description' => 'Meet the cats',
+                'event_date' => '2026-10-01',
+                'eventimage' => UploadedFile::fake()->image('poster.webp'),
+            ])
+            ->assertSessionHasNoErrors();
+
+        $this->assertStringEndsWith('.webp', NewsEvent::sole()->eventimage);
+    }
+
+    public function test_an_image_php_dropped_explains_the_server_limit(): void
+    {
+        $path = tempnam(sys_get_temp_dir(), 'news');
+
+        $this->actingAs($this->admin())
+            ->post(route('news-events.store'), [
+                'title' => 'Adoption day',
+                'description' => 'Meet the cats',
+                'event_date' => '2026-10-01',
+                'eventimage' => new UploadedFile($path, 'poster.jpg', 'image/jpeg', UPLOAD_ERR_INI_SIZE, true),
+            ])
+            ->assertSessionHasErrors([
+                'eventimage' => 'The image didn’t upload. This server takes files up to '.UploadLimit::label(UploadLimit::perFile()).', set by upload_max_filesize in php.ini.',
+            ]);
+
+        @unlink($path);
+        $this->assertDatabaseCount('news_events', 0);
     }
 }

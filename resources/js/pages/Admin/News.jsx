@@ -7,6 +7,7 @@ import Icon from '../../components/Icon';
 import Pagination from '../../components/Pagination';
 import StatusBadge from '../../components/StatusBadge';
 import AdminLayout, { AdminHeader } from '../../layouts/AdminLayout';
+import { PHOTO_MAX, formatSize, maxSize, sizeProblem, useUploadLimit } from '../../lib/uploads';
 import useObjectUrl from '../../lib/useObjectUrl';
 
 // News & events posts: the list, with the editor panel beside it for a new or an existing post.
@@ -130,6 +131,7 @@ function Editor({ post, storeUrl, indexUrl }) {
         form.setData(field, value);
         form.clearErrors(field);
     };
+    const limit = useUploadLimit();
     const chosen = useObjectUrl(data.eventimage);
     const image = chosen ?? (data.remove_image ? null : post?.image);
 
@@ -174,9 +176,22 @@ function Editor({ post, storeUrl, indexUrl }) {
                             {image ? 'Replace' : 'Choose an image'}
                             <input
                                 type="file"
-                                accept="image/jpeg,image/png,image/gif"
+                                accept="image/jpeg,image/png,image/gif,image/webp"
                                 className="sr-only"
-                                onChange={(event) => form.setData((current) => ({ ...current, eventimage: event.target.files[0] ?? null, remove_image: false }))}
+                                onChange={(event) => {
+                                    const file = event.target.files[0] ?? null;
+                                    const problem = sizeProblem(file, PHOTO_MAX, limit, 'image');
+                                    // Lets the same file be chosen again after it was refused.
+                                    event.target.value = '';
+
+                                    if (problem) {
+                                        form.setError('eventimage', problem);
+
+                                        return;
+                                    }
+                                    form.clearErrors('eventimage');
+                                    form.setData((current) => ({ ...current, eventimage: file, remove_image: false }));
+                                }}
                             />
                         </label>
                         {image && (
@@ -189,7 +204,7 @@ function Editor({ post, storeUrl, indexUrl }) {
                             </Button>
                         )}
                     </div>
-                    <p className="text-[13px] text-muted">JPG, PNG or GIF, up to 2 MB. Optional.</p>
+                    <p className="text-[13px] text-muted">JPG, PNG, GIF or WebP, up to {formatSize(maxSize(PHOTO_MAX, limit))}. Optional.</p>
                     {errors.eventimage && <p className="text-[13px] font-medium text-rejected">{errors.eventimage}</p>}
                 </div>
 

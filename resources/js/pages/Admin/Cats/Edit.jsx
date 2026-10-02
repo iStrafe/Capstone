@@ -6,6 +6,7 @@ import Field from '../../../components/Field';
 import Icon from '../../../components/Icon';
 import StatusBadge from '../../../components/StatusBadge';
 import AdminLayout, { AdminCard, AdminHeader } from '../../../layouts/AdminLayout';
+import { CLIP_MAX, PHOTO_MAX, formatSize, maxSize, sizeProblem, totalProblem, useUploadLimit } from '../../../lib/uploads';
 import useObjectUrl from '../../../lib/useObjectUrl';
 
 // One page to add a cat or edit one, with a preview of the public card.
@@ -34,6 +35,17 @@ export default function Edit({ cat, defaults, submitUrl, indexUrl, placeholder }
         form.setData(field, value);
         form.clearErrors(field);
     };
+    const limit = useUploadLimit();
+    // A file over the limit would only fail after the whole upload, so it's refused here instead.
+    const pick = (field, file, siteMax, noun) => {
+        const problem = sizeProblem(file, siteMax, limit, noun);
+
+        if (problem) {
+            form.setError(field, problem);
+        } else {
+            set(field, file);
+        }
+    };
 
     const photo = useObjectUrl(data.cat_image) ?? cat?.image ?? null;
     const clip = useObjectUrl(data.cat_clip) ?? cat?.clip ?? null;
@@ -42,6 +54,13 @@ export default function Edit({ cat, defaults, submitUrl, indexUrl, placeholder }
 
     const submit = (event) => {
         event.preventDefault();
+        const problem = totalProblem([data.cat_image, data.cat_clip], limit);
+
+        if (problem) {
+            form.setError(data.cat_clip ? 'cat_clip' : 'cat_image', problem);
+
+            return;
+        }
         form.post(submitUrl, { forceFormData: true, preserveScroll: true });
     };
 
@@ -94,8 +113,8 @@ export default function Edit({ cat, defaults, submitUrl, indexUrl, placeholder }
                                 </div>
                                 <FileButton
                                     label={photo ? 'Replace photo' : 'Choose a photo'}
-                                    accept="image/jpeg,image/png,image/gif"
-                                    onChange={(file) => set('cat_image', file)}
+                                    accept="image/jpeg,image/png,image/gif,image/webp"
+                                    onChange={(file) => pick('cat_image', file, PHOTO_MAX, 'photo')}
                                     fileName={data.cat_image?.name}
                                     error={errors.cat_image}
                                 />
@@ -116,13 +135,13 @@ export default function Edit({ cat, defaults, submitUrl, indexUrl, placeholder }
                                 <FileButton
                                     label={clip ? 'Replace clip' : 'Add a short clip'}
                                     accept="video/mp4,video/quicktime,video/x-msvideo,video/x-ms-wmv,video/x-flv"
-                                    onChange={(file) => set('cat_clip', file)}
+                                    onChange={(file) => pick('cat_clip', file, CLIP_MAX, 'clip')}
                                     fileName={data.cat_clip?.name}
                                     error={errors.cat_clip}
                                 />
                             </div>
                         </div>
-                        <p className="text-[13px] text-muted">Photos: JPG, PNG or GIF. SVG isn’t accepted. Clips: MP4, MOV, AVI, WMV or FLV, up to 25 MB. Without a photo the site shows the neutral placeholder.</p>
+                        <p className="text-[13px] text-muted">Photos: JPG, PNG, GIF or WebP, up to {formatSize(maxSize(PHOTO_MAX, limit))}. Clips: MP4, MOV, AVI, WMV or FLV, up to {formatSize(maxSize(CLIP_MAX, limit))}. Without a photo the site shows the neutral placeholder.</p>
                     </AdminCard>
 
                     <AdminCard title="Details">
@@ -237,7 +256,16 @@ function FileButton({ label, accept, onChange, fileName, error }) {
         <div>
             <label className={`${buttonClasses({ variant: 'quiet', size: 'sm' })} cursor-pointer has-focus-visible:outline-3 has-focus-visible:outline-azure-300`}>
                 <Icon name="upload" size={16} /> {label}
-                <input type="file" accept={accept} className="sr-only" onChange={(event) => onChange(event.target.files[0] ?? null)} />
+                <input
+                    type="file"
+                    accept={accept}
+                    className="sr-only"
+                    onChange={(event) => {
+                        onChange(event.target.files[0] ?? null);
+                        // Lets the same file be chosen again after it was refused.
+                        event.target.value = '';
+                    }}
+                />
             </label>
             {fileName && <p className="mt-1.5 truncate text-[13px] text-muted">{fileName}</p>}
             {error && <p className="mt-1.5 text-[13px] font-medium text-rejected">{error}</p>}

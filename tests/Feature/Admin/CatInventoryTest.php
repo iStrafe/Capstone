@@ -4,6 +4,7 @@ namespace Tests\Feature\Admin;
 
 use App\Models\Cat;
 use App\Models\User;
+use App\Support\UploadLimit;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Arr;
@@ -153,6 +154,55 @@ class CatInventoryTest extends TestCase
         $images = Cat::pluck('cat_image');
         $this->assertCount(2, $images->unique());
         $images->each(fn ($image) => $this->assertFileExists($this->publicPath.'/images/'.$image));
+    }
+
+    public function test_webp_photos_are_accepted(): void
+    {
+        $this->actingAs($this->admin())->post(route('admin.cats.store'), [
+            'cat_name' => 'Mochi',
+            'sex' => 'Female',
+            'cat_image' => UploadedFile::fake()->image('mochi.webp'),
+        ])->assertRedirect(route('admin.cats.index'));
+
+        $this->assertStringEndsWith('.webp', Cat::sole()->cat_image);
+    }
+
+    public function test_photos_over_10_mb_are_refused(): void
+    {
+        $this->actingAs($this->admin())->post(route('admin.cats.store'), [
+            'cat_name' => 'Mochi',
+            'sex' => 'Female',
+            'cat_image' => UploadedFile::fake()->image('huge.jpg')->size(10241),
+        ])->assertSessionHasErrors(['cat_image' => 'The photo can be up to 10 MB.']);
+
+        $this->assertDatabaseCount('cats', 0);
+    }
+
+    public function test_a_photo_php_dropped_explains_the_server_limit(): void
+    {
+        // What PHP hands over when a file is bigger than upload_max_filesize.
+        $path = tempnam(sys_get_temp_dir(), 'cat');
+        $dropped = new UploadedFile($path, 'phone-photo.jpg', 'image/jpeg', UPLOAD_ERR_INI_SIZE, true);
+
+        $this->actingAs($this->admin())->post(route('admin.cats.store'), [
+            'cat_name' => 'Mochi',
+            'sex' => 'Female',
+            'cat_image' => $dropped,
+        ])->assertSessionHasErrors([
+            'cat_image' => 'The photo didn’t upload. This server takes files up to '.UploadLimit::label(UploadLimit::perFile()).', set by upload_max_filesize in php.ini.',
+        ]);
+
+        @unlink($path);
+        $this->assertDatabaseCount('cats', 0);
+    }
+
+    public function test_the_editor_gets_the_server_upload_limit(): void
+    {
+        $this->actingAs($this->admin())
+            ->get(route('admin.cats.create'))
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Admin/Cats/Edit')
+                ->where('admin.uploadLimit', UploadLimit::toArray()));
     }
 
     public function test_missing_cats_return_404(): void
