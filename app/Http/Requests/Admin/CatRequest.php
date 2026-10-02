@@ -27,14 +27,11 @@ class CatRequest extends FormRequest
 
     public function messages(): array
     {
-        // PHP drops a file over its upload_max_filesize before Laravel sees it, which would
-        // otherwise read as a bare "failed to upload".
-        $tooBig = 'didn’t upload. This server takes files up to '.UploadLimit::label(UploadLimit::perFile()).', set by upload_max_filesize in php.ini.';
-
         return [
-            'cat_image.uploaded' => 'The photo '.$tooBig,
+            // PHP drops a failed upload before Laravel sees it; say why instead of a bare "failed to upload".
+            'cat_image.uploaded' => UploadLimit::failure($this->file('cat_image'), 'photo'),
             'cat_image.max' => 'The photo can be up to 10 MB.',
-            'cat_clip.uploaded' => 'The clip '.$tooBig,
+            'cat_clip.uploaded' => UploadLimit::failure($this->file('cat_clip'), 'clip'),
             'cat_clip.max' => 'The clip can be up to 25 MB.',
         ];
     }

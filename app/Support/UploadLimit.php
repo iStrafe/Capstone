@@ -2,6 +2,8 @@
 
 namespace App\Support;
 
+use Illuminate\Http\UploadedFile;
+
 /**
  * PHP's own upload limits from php.ini. A file over upload_max_filesize arrives as a failed
  * upload, and a form over post_max_size is refused before Laravel sees it (413), so the admin
@@ -29,6 +31,19 @@ class UploadLimit
         }
 
         return max(1, (int) round($bytes / 1024)).' KB';
+    }
+
+    /** Why PHP dropped an upload, from its error code, for the "uploaded" validation message. */
+    public static function failure(mixed $file, string $noun): string
+    {
+        $error = $file instanceof UploadedFile ? $file->getError() : UPLOAD_ERR_INI_SIZE;
+
+        return match ($error) {
+            UPLOAD_ERR_INI_SIZE, UPLOAD_ERR_FORM_SIZE => "The {$noun} didn’t upload. This server takes files up to ".self::label(self::perFile()).', set by upload_max_filesize in php.ini.',
+            UPLOAD_ERR_PARTIAL => "The {$noun} only partly uploaded. Please try again.",
+            UPLOAD_ERR_NO_TMP_DIR, UPLOAD_ERR_CANT_WRITE => "The {$noun} didn’t upload because PHP couldn’t save it in its temporary folder. Set upload_tmp_dir in php.ini to a folder PHP can write to.",
+            default => "The {$noun} didn’t upload (PHP upload error {$error}). Please try again.",
+        };
     }
 
     /** For the editors in the admin pages. */

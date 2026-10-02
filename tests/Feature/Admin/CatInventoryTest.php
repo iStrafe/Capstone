@@ -196,6 +196,24 @@ class CatInventoryTest extends TestCase
         $this->assertDatabaseCount('cats', 0);
     }
 
+    public function test_a_photo_php_could_not_save_explains_the_temporary_folder(): void
+    {
+        // What PHP hands over when it has no writable temporary folder, as on Windows without TEMP.
+        $path = tempnam(sys_get_temp_dir(), 'cat');
+        $dropped = new UploadedFile($path, 'small.jpg', 'image/jpeg', UPLOAD_ERR_CANT_WRITE, true);
+
+        $this->actingAs($this->admin())->post(route('admin.cats.store'), [
+            'cat_name' => 'Mochi',
+            'sex' => 'Female',
+            'cat_image' => $dropped,
+        ])->assertSessionHasErrors([
+            'cat_image' => 'The photo didn’t upload because PHP couldn’t save it in its temporary folder. Set upload_tmp_dir in php.ini to a folder PHP can write to.',
+        ]);
+
+        @unlink($path);
+        $this->assertDatabaseCount('cats', 0);
+    }
+
     public function test_the_editor_gets_the_server_upload_limit(): void
     {
         $this->actingAs($this->admin())
