@@ -62,8 +62,8 @@ export default function News({ posts, editing, indexUrl, createUrl, storeUrl, pu
                                             <Link href={post.editUrl} preserveScroll className="min-w-0 flex-1 truncate font-semibold hover:text-azure-800 hover:underline">
                                                 {post.title}
                                             </Link>
-                                            <span className="flex items-center gap-3 text-sm text-body">
-                                                <time dateTime={post.isoDate}>{post.date}</time>
+                                            <span className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-body">
+                                                <time dateTime={post.isoDate} className="whitespace-nowrap">{post.date}</time>
                                                 <StatusBadge status={post.isUpcoming ? 'approved' : 'inactive'}>{post.isUpcoming ? 'Upcoming' : 'Past'}</StatusBadge>
                                             </span>
                                         </div>
