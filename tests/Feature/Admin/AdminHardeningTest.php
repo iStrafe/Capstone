@@ -106,6 +106,13 @@ class AdminHardeningTest extends TestCase
 
         $this->get('/adminDashboard/cats?q=_')
             ->assertInertia(fn (Assert $page) => $page->has('cats.data', 0));
+
+        // The escape character itself is searched literally too.
+        $this->cat(['cat_name' => 'Hi! Kitty']);
+        $this->get('/adminDashboard/cats?q=i!')
+            ->assertInertia(fn (Assert $page) => $page->has('cats.data', 1)->where('cats.data.0.name', 'Hi! Kitty'));
+        $this->get('/adminDashboard/cats?q=%5C')
+            ->assertInertia(fn (Assert $page) => $page->has('cats.data', 0));
     }
 
     public function test_a_page_past_the_end_goes_to_the_last_page(): void

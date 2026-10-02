@@ -18,9 +18,12 @@ class QueryText
         return is_string($value) ? Str::limit(trim($value), $limit, '') : '';
     }
 
-    /** A LIKE pattern that finds the text anywhere, with % and _ matched literally. Use with ESCAPE '\'. */
+    /**
+     * A LIKE pattern that finds the text anywhere, with % and _ matched literally. Use with ESCAPE '!'.
+     * Not a backslash: PHP 8.3's PDO reads '\' as an unfinished string and loses the placeholders after it.
+     */
     public static function like(string $text): string
     {
-        return '%'.addcslashes(Str::lower($text), '\\%_').'%';
+        return '%'.str_replace(['!', '%', '_'], ['!!', '!%', '!_'], Str::lower($text)).'%';
     }
 }

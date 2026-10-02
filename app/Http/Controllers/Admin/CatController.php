@@ -39,9 +39,9 @@ class CatController extends Controller
             ->when($search !== '', function (Builder $query) use ($search) {
                 $term = QueryText::like($search);
                 $query->where(fn (Builder $match) => $match
-                    ->whereRaw("LOWER(cat_name) LIKE ? ESCAPE '\\'", [$term])
-                    ->orWhereRaw("LOWER(color) LIKE ? ESCAPE '\\'", [$term])
-                    ->orWhereRaw("LOWER(breed) LIKE ? ESCAPE '\\'", [$term]));
+                    ->whereRaw("LOWER(cat_name) LIKE ? ESCAPE '!'", [$term])
+                    ->orWhereRaw("LOWER(color) LIKE ? ESCAPE '!'", [$term])
+                    ->orWhereRaw("LOWER(breed) LIKE ? ESCAPE '!'", [$term]));
             })
             ->when($sex !== '', fn (Builder $query) => $query->where('sex', $sex))
             ->orderByDesc($tab === 'archived' ? 'archived_at' : 'updated_at')

@@ -47,9 +47,9 @@ class AdoptionRequestController extends Controller
             ->when($search !== '', function (Builder $query) use ($search) {
                 $term = QueryText::like($search);
                 $query->where(fn (Builder $match) => $match
-                    ->whereRaw("LOWER(name) LIKE ? ESCAPE '\\'", [$term])
-                    ->orWhereRaw("LOWER(email) LIKE ? ESCAPE '\\'", [$term])
-                    ->orWhereRaw("LOWER(name_of_cat) LIKE ? ESCAPE '\\'", [$term]));
+                    ->whereRaw("LOWER(name) LIKE ? ESCAPE '!'", [$term])
+                    ->orWhereRaw("LOWER(email) LIKE ? ESCAPE '!'", [$term])
+                    ->orWhereRaw("LOWER(name_of_cat) LIKE ? ESCAPE '!'", [$term]));
             })
             ->orderBy('created_at', $sort === 'oldest' ? 'asc' : 'desc')
             ->orderBy('id', $sort === 'oldest' ? 'asc' : 'desc')
