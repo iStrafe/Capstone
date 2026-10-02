@@ -8,6 +8,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Inertia\Testing\AssertableInertia as Assert;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
@@ -51,8 +52,8 @@ class AdminPagesTest extends TestCase
     public static function adminOnlyPages(): array
     {
         return [
-            'adoption requests' => ['/AdoptionRequest'],
-            'released requests' => ['/ReleasedRequest'],
+            'adoption requests' => ['/admin/requests'],
+            'released requests' => ['/admin/requests?status=released'],
         ];
     }
 
@@ -71,9 +72,13 @@ class AdminPagesTest extends TestCase
         $id = $this->createAdoptionRequest(['valid_id' => json_encode([basename($path)])]);
         $admin = $this->admin();
 
-        $this->actingAs($admin)->get('/view-valid-ids/'.$id)
+        // The old page now redirects to the request, which shows the IDs.
+        $this->actingAs($admin)->get('/view-valid-ids/'.$id)->assertRedirect(route('admin.requests.show', $id));
+        $this->actingAs($admin)->get(route('admin.requests.show', $id))
             ->assertOk()
-            ->assertSee(route('validIdFile', ['filename' => basename($path)]), false);
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Admin/Requests/Show')
+                ->where('validIds.0.url', route('validIdFile', ['filename' => basename($path)])));
 
         $this->actingAs($admin)->get('/valid-ids/'.basename($path))->assertOk();
         $this->actingAs($admin)->get('/valid-ids/missing.jpg')->assertNotFound();
@@ -85,8 +90,15 @@ class AdminPagesTest extends TestCase
 
         $this->actingAs($this->admin())
             ->get('/AdoptionRequest')
+            ->assertRedirect(route('admin.requests.index'));
+
+        $this->actingAs($this->admin())
+            ->get(route('admin.requests.index'))
             ->assertOk()
-            ->assertSee('Maria Clara');
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Admin/Requests/Index')
+                ->where('requests.data.0.applicant.name', 'Maria Clara')
+                ->where('counts.pending', 1));
     }
 
     public function test_admin_can_approve_a_request(): void
@@ -101,8 +113,9 @@ class AdminPagesTest extends TestCase
                 'name_of_cat' => 'Mingming',
                 'status' => 'Approved',
             ])
-            ->assertOk()
-            ->assertJson(['success' => true]);
+            ->assertRedirect()
+            ->assertSessionHasNoErrors()
+            ->assertSessionHas('success', 'Approved Juan Dela Cruz to adopt Mingming.');
 
         $request = DB::table('adoption_request')->find($id);
         $this->assertSame('Approved', $request->status);
@@ -121,8 +134,9 @@ class AdminPagesTest extends TestCase
                 'name_of_cat' => 'Mingming',
                 'status' => 'Released',
             ])
-            ->assertOk()
-            ->assertJson(['success' => true]);
+            ->assertRedirect()
+            ->assertSessionHasNoErrors()
+            ->assertSessionHas('success', 'Mingming went home with Juan Dela Cruz.');
 
         $request = DB::table('adoption_request')->find($id);
         $this->assertSame('Released', $request->status);

@@ -9,6 +9,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
+use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
 
 class AdminPageFixesTest extends TestCase
@@ -91,7 +92,7 @@ class AdminPageFixesTest extends TestCase
             ->assertSee("closest('.card .actions')", false);
     }
 
-    public function test_released_page_shows_the_release_date_not_the_approval_date(): void
+    public function test_released_tab_shows_the_release_date_not_the_approval_date(): void
     {
         $this->createAdoptionRequest([
             'status' => 'Released',
@@ -100,23 +101,28 @@ class AdminPageFixesTest extends TestCase
         ]);
 
         $this->actingAs($this->admin())
-            ->get('/ReleasedRequest')
+            ->get(route('admin.requests.index', ['status' => 'released']))
             ->assertOk()
-            ->assertSee('value="2026-02-01"', false)
-            ->assertDontSee('value="2026-01-01"', false);
+            ->assertInertia(fn (Assert $page) => $page
+                ->where('requests.data.0.releasedAt', 'Feb 1, 2026')
+                ->where('requests.data.0.approvedAt', 'Jan 1, 2026'));
     }
 
-    public function test_adoption_requests_page_sorts_by_request_date_without_missing_helpers(): void
+    public function test_adoption_requests_sort_by_the_date_they_were_sent(): void
     {
-        $this->createAdoptionRequest(['created_at' => '2026-03-04 08:00:00']);
+        $this->createAdoptionRequest(['name' => 'Earlier', 'created_at' => '2026-03-04 08:00:00']);
+        $this->createAdoptionRequest(['name' => 'Later', 'created_at' => '2026-03-05 08:00:00']);
+        $admin = $this->admin();
 
-        $this->actingAs($this->admin())
-            ->get('/AdoptionRequest')
-            ->assertOk()
-            ->assertSee('Requested On')
-            ->assertSee('data-requested-at="2026-03-04T08:00:00', false)
-            ->assertSee('value="2026-03-04"', false)
-            ->assertDontSee('displayTable', false);
+        // Pending requests are worked first come, first served.
+        $this->actingAs($admin)->get(route('admin.requests.index'))
+            ->assertInertia(fn (Assert $page) => $page
+                ->where('filters.sort', 'oldest')
+                ->where('requests.data.0.applicant.name', 'Earlier')
+                ->where('requests.data.0.sentAt', 'Mar 4, 2026'));
+
+        $this->actingAs($admin)->get(route('admin.requests.index', ['sort' => 'newest']))
+            ->assertInertia(fn (Assert $page) => $page->where('requests.data.0.applicant.name', 'Later'));
     }
 
     public function test_admin_sees_cat_created_message(): void

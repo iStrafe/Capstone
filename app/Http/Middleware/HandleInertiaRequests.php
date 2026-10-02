@@ -2,6 +2,8 @@
 
 namespace App\Http\Middleware;
 
+use App\Enums\AdoptionStatus;
+use App\Models\AdoptionRequest;
 use App\Models\Contact;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
@@ -51,6 +53,15 @@ class HandleInertiaRequests extends Middleware
                 'admin' => [
                     // Same count as the Blade sidebar badge (view composer in AppServiceProvider).
                     'unreadMessages' => fn () => Contact::unhandled()->count(),
+                    'pendingRequests' => fn () => AdoptionRequest::where('status', AdoptionStatus::Pending)->count(),
+                    // The admin sidebar. Cats, news and the breed helper are still Blade pages.
+                    'links' => [
+                        'cats' => route('admin.cats.index'),
+                        'requests' => route('admin.requests.index'),
+                        'messages' => route('admin.messages.index'),
+                        'news' => route('news-events.index'),
+                        'breedHelper' => url('analyzeImage'),
+                    ],
                 ],
             ] : []),
             // URLs the React pages link or post to. Admin pages and Google sign-in are not React, so links to them need a full page load.

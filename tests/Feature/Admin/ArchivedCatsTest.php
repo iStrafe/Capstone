@@ -8,6 +8,7 @@ use App\Models\Cat;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
+use Inertia\Testing\AssertableInertia;
 use Tests\TestCase;
 
 /**
@@ -164,6 +165,10 @@ class ArchivedCatsTest extends TestCase
         $this->assertSame('Mingming', $request->name_of_cat);
 
         // The admin tables still list it by the saved cat name.
-        $this->actingAs($this->admin())->get('/AdoptionRequest')->assertOk()->assertSee('Mingming');
+        $this->actingAs($this->admin())->get(route('admin.requests.index', ['status' => 'all']))
+            ->assertOk()
+            ->assertInertia(fn (AssertableInertia $page) => $page
+                ->where('requests.data.0.catName', 'Mingming')
+                ->where('requests.data.0.cat', null));
     }
 }

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AdoptionRequestController as AdminAdoptionRequestController;
 use App\Http\Controllers\Admin\CatController as AdminCatController;
 use App\Http\Controllers\Admin\ContactMessageController;
 use App\Http\Controllers\AdoptionController;
@@ -53,13 +54,15 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/analyzeImage', [OpenAIController::class, 'showUploadForm']);
     Route::post('/analyzeImage', [OpenAIController::class, 'analyzeImage'])->name('analyze.image');
 
-    Route::get('/AdoptionRequest', [AdoptionController::class, 'showAdoptionRequest'])->name('AdoptionRequest');
-    Route::get('/ReleasedRequest', [AdoptionController::class, 'showReleased'])->name('ReleasedRequest');
-    Route::post('/update-status/{adoptionRequest}', [AdoptionController::class, 'updateStatus'])->name('adoption-request.status');
-
-    Route::get('/view-valid-ids/{adoptionRequest}', [AdoptionController::class, 'viewValidIds'])->name('viewValidIds');
-    Route::get('/valid-ids/{filename}', [AdoptionController::class, 'showValidIdFile'])->name('validIdFile');
-    Route::get('/adoption-request/pdf/{adoptionRequest}', [AdoptionController::class, 'generatePDF'])->name('adoption-request.pdf');
+    // Adoption requests: tabs by status, one page per request with its valid IDs
+    Route::get('/admin/requests', [AdminAdoptionRequestController::class, 'index'])->name('admin.requests.index');
+    Route::get('/admin/requests/{adoptionRequest}', [AdminAdoptionRequestController::class, 'show'])->name('admin.requests.show');
+    Route::post('/update-status/{adoptionRequest}', [AdminAdoptionRequestController::class, 'updateStatus'])->name('adoption-request.status');
+    Route::get('/valid-ids/{filename}', [AdminAdoptionRequestController::class, 'showValidIdFile'])->name('validIdFile');
+    Route::get('/adoption-request/pdf/{adoptionRequest}', [AdminAdoptionRequestController::class, 'generatePDF'])->name('adoption-request.pdf');
+    Route::get('/AdoptionRequest', [AdminAdoptionRequestController::class, 'legacyList'])->name('AdoptionRequest');
+    Route::get('/ReleasedRequest', [AdminAdoptionRequestController::class, 'legacyReleased'])->name('ReleasedRequest');
+    Route::get('/view-valid-ids/{adoptionRequest}', [AdminAdoptionRequestController::class, 'legacyValidIds'])->name('viewValidIds');
 
     // Cat inventory
     Route::get('/adminDashboard', [AdminCatController::class, 'index']);
