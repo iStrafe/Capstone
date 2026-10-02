@@ -2,10 +2,12 @@
 
 use App\Http\Middleware\admin;
 use App\Http\Middleware\HandleInertiaRequests;
+use App\Http\Middleware\StripNullBytes;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
+use Inertia\EncryptHistoryMiddleware;
 use Inertia\Support\Header;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -16,7 +18,9 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-         $middleware->alias([
+        $middleware->append(StripNullBytes::class);
+
+        $middleware->alias([
             'admin'=>admin::class,
         ]);
 
@@ -27,8 +31,11 @@ return Application::configure(basePath: dirname(__DIR__))
             : route('login'));
 
         // Serves the React pages (resources/js/pages) through Inertia.
+        // EncryptHistoryMiddleware: pages kept in the browser's history are encrypted, and logging
+        // out clears the key, so Back after logout can't show the last user's profile or requests.
         $middleware->web(append: [
             HandleInertiaRequests::class,
+            EncryptHistoryMiddleware::class,
         ]);
 
         // Laravel's default priority list, with the admin check moved ahead of route model

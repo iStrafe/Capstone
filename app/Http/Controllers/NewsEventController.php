@@ -57,6 +57,7 @@ class NewsEventController extends Controller
     public function update(NewsEventRequest $request, NewsEvent $newsEvent): RedirectResponse
     {
         $newsEvent->fill($request->safe()->only(['title', 'description', 'event_date']));
+        $oldImage = $newsEvent->eventimage;
 
         if ($request->hasFile('eventimage')) {
             $newsEvent->eventimage = $this->moveToPublicImages($request->file('eventimage'));
@@ -66,12 +67,17 @@ class NewsEventController extends Controller
 
         $newsEvent->save();
 
+        if ($oldImage !== $newsEvent->eventimage) {
+            $this->deleteUnusedPublicImages($oldImage);
+        }
+
         return redirect()->route('news-events.index')->with('success', 'Post updated.');
     }
 
     public function destroy(NewsEvent $newsEvent): RedirectResponse
     {
         $newsEvent->delete();
+        $this->deleteUnusedPublicImages($newsEvent->eventimage);
 
         return redirect()->route('news-events.index')->with('success', 'Post deleted.');
     }

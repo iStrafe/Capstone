@@ -13,8 +13,18 @@ use Throwable;
 
 class GoogleAuthController extends Controller
 {
+    /** Whether Google sign-in is set up. Without keys, Google would only show its own error page. */
+    public static function enabled(): bool
+    {
+        return filled(config('services.google.client_id')) && filled(config('services.google.client_secret'));
+    }
+
     public function redirect()
     {
+        if (! self::enabled()) {
+            return redirect()->route('login')->with('error', 'Google sign-in isn’t available right now. Please log in with your email and password.');
+        }
+
         return Socialite::driver('google')->redirect();
     }
 
@@ -24,7 +34,7 @@ class GoogleAuthController extends Controller
             $googleUser = Socialite::driver('google')->user();
         } catch (Throwable $e) {
             // Cancelled consent, an expired state or a Google outage all land here.
-            Log::warning('Google sign-in failed', ['error' => $e->getMessage()]);
+            Log::warning('Google sign-in failed', ['error' => $e::class, 'message' => $e->getMessage()]);
 
             return redirect()->route('login')->withErrors(['email' => 'Google sign-in did not complete. Please try again.']);
         }

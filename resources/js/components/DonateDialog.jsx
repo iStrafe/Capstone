@@ -1,5 +1,5 @@
 import { useForm, usePage } from '@inertiajs/react';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Button from './Button';
 import Field from './Field';
 import Icon from './Icon';
@@ -14,11 +14,15 @@ export default function DonateDialog({ open, onClose }) {
     const dialog = useRef(null);
     const { links } = usePage().props;
     const form = useForm({ amount: '250', description: 'Donation for the AduCats campus cats' });
+    // When PayMongo can't make the link, the server sends the visitor back with a message. The page
+    // shows it too, but under this dialog's backdrop, so the dialog repeats it.
+    const [failure, setFailure] = useState(null);
 
     useEffect(() => {
         const el = dialog.current;
 
         if (open && !el.open) {
+            setFailure(null);
             el.showModal();
         } else if (!open && el.open) {
             el.close();
@@ -27,7 +31,8 @@ export default function DonateDialog({ open, onClose }) {
 
     const submit = (event) => {
         event.preventDefault();
-        form.post(links.donate);
+        setFailure(null);
+        form.post(links.donate, { preserveScroll: true, onSuccess: (page) => setFailure(page.props.flash?.error ?? null) });
     };
 
     return (
@@ -78,6 +83,7 @@ export default function DonateDialog({ open, onClose }) {
                     label="Or enter an amount"
                     type="number"
                     min="1"
+                    max="100000"
                     step="0.01"
                     inputMode="decimal"
                     required
@@ -95,6 +101,11 @@ export default function DonateDialog({ open, onClose }) {
                     error={form.errors.description}
                 />
 
+                {failure && (
+                    <p role="alert" className="rounded-2xl bg-rejected-bg px-4 py-3 text-[15px] font-medium text-rejected">
+                        {failure}
+                    </p>
+                )}
                 <Button type="submit" size="lg" disabled={form.processing}>
                     {form.processing ? 'Opening PayMongo…' : 'Continue to payment'}
                 </Button>

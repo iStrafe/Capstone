@@ -46,6 +46,9 @@
 @layer base {
     body {
         @apply bg-cloud font-sans text-ink antialiased;
+        /* Names, reasons and messages come from people and can be one long unbroken word.
+           "anywhere" lets them wrap instead of pushing buttons and columns off the screen. */
+        overflow-wrap: anywhere;
     }
 
     :focus-visible {

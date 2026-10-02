@@ -14,17 +14,17 @@ export default function Show({ request, validIds, account, otherRequests, action
     return (
         <AdminLayout title={`Request for ${catName}`} active="requests">
             <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-sm">
-                <Link href={listUrl} className="font-semibold text-azure-700 hover:underline">
+                <Link href={listUrl} className="shrink-0 font-semibold text-azure-700 hover:underline">
                     Adoption requests
                 </Link>
                 <Icon name="chevronRight" size={14} className="text-muted" />
-                <span className="text-muted">{request.applicant.name}</span>
+                <span className="min-w-0 truncate text-muted">{request.applicant.name}</span>
             </nav>
 
             <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
-                <div className="flex items-center gap-4">
+                <div className="flex min-w-0 items-center gap-4">
                     {request.cat && <CatPhoto cat={request.cat} className="size-16 shrink-0 rounded-[18px] sm:size-18" />}
-                    <div>
+                    <div className="min-w-0">
                         <div className="flex flex-wrap items-center gap-3">
                             <h1 className="font-display text-[30px] font-semibold leading-tight sm:text-[40px]">Request for {catName}</h1>
                             <StatusBadge status={request.statusKey} />
@@ -35,8 +35,8 @@ export default function Show({ request, validIds, account, otherRequests, action
                     </div>
                 </div>
                 {request.cat && (
-                    <ButtonLink href={request.cat.url} inertia variant="outline" size="sm" className="self-start sm:self-auto">
-                        View {catName}’s profile
+                    <ButtonLink href={request.cat.url} inertia variant="outline" size="sm" className="max-w-full min-w-0 self-start sm:max-w-xs sm:self-auto">
+                        <span className="truncate">View {catName}’s profile</span>
                     </ButtonLink>
                 )}
             </div>
@@ -44,7 +44,7 @@ export default function Show({ request, validIds, account, otherRequests, action
             <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
                 <div className="flex min-w-0 flex-1 flex-col gap-5">
                     <AdminCard title="Applicant">
-                        <dl className="grid gap-x-6 gap-y-3 text-[15px] sm:grid-cols-[150px_1fr]">
+                        <dl className="grid gap-x-6 gap-y-3 text-[15px] sm:grid-cols-[150px_minmax(0,1fr)]">
                             <Row label="Name"><span className="font-semibold">{request.applicant.name}</span></Row>
                             <Row label="Email">
                                 {request.applicant.email ? <a href={`mailto:${request.applicant.email}`} className="text-azure-700 hover:underline">{request.applicant.email}</a> : 'Not given'}
@@ -124,7 +124,7 @@ function Row({ label, children }) {
     return (
         <>
             <dt className="text-muted">{label}</dt>
-            <dd className="break-words">{children}</dd>
+            <dd className="min-w-0 wrap-anywhere">{children}</dd>
         </>
     );
 }
@@ -183,9 +183,9 @@ function Decision({ request, catName, actions, otherPendingCount, statusUrl }) {
                                     variant={action.refusal ? 'disabled' : button.variant}
                                     disabled={Boolean(action.refusal) || form.processing}
                                     onClick={() => setConfirming(action.status)}
-                                    className="w-full"
+                                    className="w-full min-w-0"
                                 >
-                                    {button.icon && <Icon name={button.icon} size={18} />} {button.label(first)}
+                                    {button.icon && <Icon name={button.icon} size={18} className="shrink-0" />} <span className="truncate">{button.label(first)}</span>
                                 </Button>
                                 {action.refusal && <p className="text-[13px] text-muted">{action.refusal}</p>}
                             </div>

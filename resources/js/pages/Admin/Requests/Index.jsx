@@ -97,7 +97,7 @@ export default function Index({ requests, filters, counts }) {
 
                     <table className="hidden w-full text-[15px] md:table">
                         <thead>
-                            <tr className="bg-cloud text-left text-[13px] text-muted">
+                            <tr className="bg-cloud text-left text-[13px] whitespace-nowrap text-muted">
                                 <th scope="col" className="px-4 py-3 font-semibold">Applicant</th>
                                 <th scope="col" className="px-4 py-3 font-semibold">Cat</th>
                                 <th scope="col" className="px-4 py-3 font-semibold">Sent</th>
@@ -109,7 +109,7 @@ export default function Index({ requests, filters, counts }) {
                         <tbody>
                             {requests.data.map((request) => (
                                 <tr key={request.id} className="border-t border-mist">
-                                    <td className="px-4 py-3.5">
+                                    <td className="max-w-xs px-4 py-3.5">
                                         <Link href={request.url} className="font-bold hover:text-azure-800 hover:underline">
                                             {request.applicant.name}
                                         </Link>
@@ -117,21 +117,21 @@ export default function Index({ requests, filters, counts }) {
                                             {request.validIdCount === 1 ? '1 ID attached' : `${request.validIdCount} IDs attached`}
                                         </div>
                                     </td>
-                                    <td className="px-4 py-3.5">
+                                    <td className="max-w-xs px-4 py-3.5">
                                         <div className="flex items-center gap-2.5">
                                             <RequestCat request={request} small />
-                                            <div>
+                                            <div className="min-w-0">
                                                 <div className="font-semibold">{catName(request)}</div>
                                                 <CatNote request={request} />
                                             </div>
                                         </div>
                                     </td>
-                                    <td className="px-4 py-3.5 text-body">{request.sentAt}</td>
-                                    <td className="px-4 py-3.5 text-body">{request.pickupDate}</td>
-                                    <td className="px-4 py-3.5">
+                                    <td className="px-4 py-3.5 whitespace-nowrap text-body">{request.sentAt}</td>
+                                    <td className="px-4 py-3.5 whitespace-nowrap text-body">{request.pickupDate}</td>
+                                    <td className="px-4 py-3.5 whitespace-nowrap">
                                         <StatusBadge status={request.statusKey} />
                                     </td>
-                                    <td className="px-4 py-3.5 text-right">
+                                    <td className="px-4 py-3.5 text-right whitespace-nowrap">
                                         <Link href={request.url} className={buttonClasses({ variant: request.statusKey === 'pending' ? 'dark' : 'outline', size: 'sm' })}>
                                             {request.statusKey === 'pending' ? 'Review' : 'Open'}
                                             <span className="sr-only"> {request.applicant.name}'s request</span>

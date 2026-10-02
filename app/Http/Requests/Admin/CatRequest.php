@@ -35,4 +35,15 @@ class CatRequest extends FormRequest
             'cat_clip.max' => 'The clip can be up to 25 MB.',
         ];
     }
+
+    // Field names as the editor labels them, for the validation messages.
+    public function attributes(): array
+    {
+        return [
+            'cat_name' => 'name',
+            'cat_image' => 'photo',
+            'cat_clip' => 'clip',
+            'Medical_Record' => 'health notes',
+        ];
+    }
 }

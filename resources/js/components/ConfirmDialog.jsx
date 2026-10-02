@@ -36,8 +36,8 @@ export default function ConfirmDialog({ open, title, children, confirmLabel, can
                     <Button variant="outline" size="sm" onClick={onClose}>
                         {cancelLabel}
                     </Button>
-                    <Button variant={tone === 'danger' ? 'danger' : 'dark'} size="sm" onClick={onConfirm} disabled={processing || confirmDisabled}>
-                        {confirmLabel}
+                    <Button variant={tone === 'danger' ? 'danger' : 'dark'} size="sm" onClick={onConfirm} disabled={processing || confirmDisabled} className="min-w-0">
+                        <span className="truncate">{confirmLabel}</span>
                     </Button>
                 </div>
             </div>
