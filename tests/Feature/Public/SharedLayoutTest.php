@@ -41,8 +41,9 @@ class SharedLayoutTest extends TestCase
 
     public function test_no_page_loads_bootstrap_or_jquery_any_more(): void
     {
-        // Every HTML page is React now; the adoption contract PDF is the only Blade view left.
-        $this->assertSame(['adoptionRequestPDF.blade.php', 'app.blade.php'], collect(glob(resource_path('views/*')))->map(fn ($path) => basename($path))->sort()->values()->all());
+        // Every HTML page is React now. The Blade views left are the adoption contract PDF and the
+        // error pages, which can't rely on the React app.
+        $this->assertSame(['adoptionRequestPDF.blade.php', 'app.blade.php', 'errors'], collect(glob(resource_path('views/*')))->map(fn ($path) => basename($path))->sort()->values()->all());
 
         $content = $this->actingAs(User::factory()->create(['role' => 'admin']))
             ->get('/analyzeImage')

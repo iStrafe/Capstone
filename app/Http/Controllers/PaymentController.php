@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Http\Client\RequestException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -16,8 +17,10 @@ class PaymentController extends Controller
     {
         // Validate the request inputs
         $request->validate([
-            'amount' => 'required|numeric|min:1|decimal:0,2',
+            'amount' => 'required|numeric|min:1|max:100000|decimal:0,2',
             'description' => 'required|string|max:255',
+        ], [
+            'amount.max' => 'For gifts over ₱100,000, please contact us directly.',
         ]);
 
         // Get the user's input
@@ -51,8 +54,8 @@ class PaymentController extends Controller
                         ],
                     ],
                 ]);
-        } catch (ConnectionException $e) {
-            // DNS failure, timeout or refused connection
+        } catch (ConnectionException|RequestException $e) {
+            // DNS failure, timeout, refused connection, or a proxy answering with an error
             Log::error('PayMongo payment link failed: could not connect', ['message' => $e->getMessage()]);
 
             return $this->failed();

@@ -159,6 +159,7 @@ function Editor({ post, storeUrl, indexUrl }) {
                     value={data.description}
                     onChange={(e) => set('description', e.target.value)}
                     error={errors.description}
+                    maxLength={10000}
                     required
                 />
 

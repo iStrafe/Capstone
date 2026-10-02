@@ -9,6 +9,7 @@ use App\Http\Resources\AdminAdoptionRequestResource;
 use App\Models\AdoptionRequest;
 use App\Models\Cat;
 use App\Support\Paginated;
+use App\Support\QueryText;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
@@ -32,7 +33,7 @@ class AdoptionRequestController extends Controller
     public function index(Request $request): Response
     {
         $tab = in_array($request->query('status'), self::TABS, true) ? $request->query('status') : 'pending';
-        $search = trim((string) $request->query('q', ''));
+        $search = QueryText::get($request, 'q');
         // Pending requests are worked first come, first served; the other tabs show the latest first.
         $sort = in_array($request->query('sort'), ['newest', 'oldest'], true)
             ? $request->query('sort')
@@ -44,11 +45,11 @@ class AdoptionRequestController extends Controller
             ])])
             ->when($tab !== 'all', fn (Builder $query) => $query->where('status', AdoptionStatus::from(ucfirst($tab))))
             ->when($search !== '', function (Builder $query) use ($search) {
-                $term = '%'.Str::lower($search).'%';
+                $term = QueryText::like($search);
                 $query->where(fn (Builder $match) => $match
-                    ->whereRaw('LOWER(name) LIKE ?', [$term])
-                    ->orWhereRaw('LOWER(email) LIKE ?', [$term])
-                    ->orWhereRaw('LOWER(name_of_cat) LIKE ?', [$term]));
+                    ->whereRaw("LOWER(name) LIKE ? ESCAPE '\\'", [$term])
+                    ->orWhereRaw("LOWER(email) LIKE ? ESCAPE '\\'", [$term])
+                    ->orWhereRaw("LOWER(name_of_cat) LIKE ? ESCAPE '\\'", [$term]));
             })
             ->orderBy('created_at', $sort === 'oldest' ? 'asc' : 'desc')
             ->orderBy('id', $sort === 'oldest' ? 'asc' : 'desc')
@@ -183,7 +184,7 @@ class AdoptionRequestController extends Controller
     {
         $pdf = Pdf::loadView('adoptionRequestPDF', ['request' => $adoptionRequest]);
 
-        return $pdf->download('adoption_request.pdf');
+        return $pdf->download('adoption-request-'.$adoptionRequest->id.'-'.Str::slug((string) $adoptionRequest->name_of_cat ?: 'cat').'.pdf');
     }
 
     // Old URLs, kept so bookmarks still work.

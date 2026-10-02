@@ -7,6 +7,7 @@ import Field from '../../components/Field';
 import Icon from '../../components/Icon';
 import FocusLayout from '../../layouts/FocusLayout';
 import { ADOPTION_TERMS } from '../../lib/adoptionTerms';
+import { formatSize } from '../../lib/uploads';
 
 const steps = ['Your details', 'ID and pickup day', 'Review and send'];
 
@@ -26,7 +27,7 @@ const stepOfField = (field) => {
 const looksLikeEmail = (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 
 // The adoption request for one cat: three steps on one page, sent together at the end.
-export default function Request({ cat, applicant, today }) {
+export default function Request({ cat, applicant, today, latestPickup }) {
     const { links } = usePage().props;
     const [step, setStep] = useState(0);
     const headingRef = useRef(null);
@@ -109,7 +110,7 @@ export default function Request({ cat, applicant, today }) {
                         </div>
 
                         {step === 0 && <DetailsStep form={form} />}
-                        {step === 1 && <IdAndDayStep form={form} cat={cat} today={today} idError={idError} />}
+                        {step === 1 && <IdAndDayStep form={form} cat={cat} today={today} latestPickup={latestPickup} idError={idError} />}
                         {step === 2 && <ReviewStep form={form} cat={cat} onEdit={setStep} />}
 
                         <div className="flex flex-col-reverse gap-3 border-t border-mist pt-7 sm:flex-row sm:items-center sm:justify-between">
@@ -211,7 +212,7 @@ function DetailsStep({ form }) {
                 type="tel"
                 autoComplete="tel"
                 placeholder="09XX XXX XXXX"
-                maxLength={255}
+                maxLength={20}
                 help="Volunteers may text you to arrange the pickup."
                 value={form.data.phone}
                 onChange={set('phone')}
@@ -233,7 +234,7 @@ function DetailsStep({ form }) {
     );
 }
 
-function IdAndDayStep({ form, cat, today, idError }) {
+function IdAndDayStep({ form, cat, today, latestPickup, idError }) {
     const ids = useId();
     const [dragging, setDragging] = useState(false);
     const inputRef = useRef(null);
@@ -243,17 +244,23 @@ function IdAndDayStep({ form, cat, today, idError }) {
         const incoming = Array.from(list);
         const bad = incoming.find((file) => !ID_TYPES.includes(file.type));
         const big = incoming.find((file) => file.size > MAX_ID_BYTES);
+        const empty = incoming.find((file) => file.size === 0);
         const room = MAX_IDS - files.length;
 
         form.clearErrors('valid_id', 'valid_id.0', 'valid_id.1');
         if (bad) return form.setError('valid_id', `${bad.name} isn't a JPG or PNG photo.`);
         if (big) return form.setError('valid_id', `${big.name} is larger than 2 MB. Try a smaller photo.`);
+        if (empty) return form.setError('valid_id', `${empty.name} is empty. Choose the photo again.`);
         if (incoming.length > room) form.setError('valid_id', `You can add up to ${MAX_IDS} ID photos.`);
 
         form.setData('valid_id', [...files, ...incoming.slice(0, Math.max(room, 0))]);
     };
 
-    const remove = (index) => form.setData('valid_id', files.filter((_, position) => position !== index));
+    const remove = (index) => {
+        form.setData('valid_id', files.filter((_, position) => position !== index));
+        // "Up to 2" and similar no longer apply once a photo is taken out.
+        form.clearErrors('valid_id', 'valid_id.0', 'valid_id.1');
+    };
 
     return (
         <div className="flex flex-col gap-9">
@@ -332,12 +339,13 @@ function IdAndDayStep({ form, cat, today, idError }) {
                         form.clearErrors('date_of_adoption');
                     }}
                     min={today}
+                    max={latestPickup}
                     labelledBy={`${ids}-day`}
                     describedBy={`${ids}-day-help`}
                     invalid={Boolean(form.errors.date_of_adoption)}
                 />
                 <p id={`${ids}-day-help`} className="text-sm text-muted" aria-live="polite">
-                    {form.data.date_of_adoption ? `You picked ${formatLong(form.data.date_of_adoption)}.` : 'Past days are crossed out. Today is outlined.'}
+                    {form.data.date_of_adoption ? `You picked ${formatLong(form.data.date_of_adoption)}.` : 'Past days are crossed out. Today is outlined. You can pick a day up to 3 months ahead.'}
                 </p>
                 {form.errors.date_of_adoption && (
                     <p className="text-[13px] font-medium text-rejected" role="alert">
@@ -358,7 +366,7 @@ function FileRow({ file, onRemove }) {
             <img src={preview} alt="" className="size-12 shrink-0 rounded-lg object-cover" />
             <span className="flex min-w-0 flex-1 flex-col">
                 <span className="truncate font-semibold">{file.name}</span>
-                <span className="text-[13px] text-muted">{(file.size / 1024 / 1024).toFixed(1)} MB</span>
+                <span className="text-[13px] text-muted">{formatSize(file.size)}</span>
             </span>
             <button
                 type="button"
@@ -448,7 +456,7 @@ function ReviewBox({ title, onEdit, children }) {
                     Edit<span className="sr-only"> {title.toLowerCase()}</span>
                 </button>
             </div>
-            <dl className="grid grid-cols-[80px_1fr] gap-x-3 gap-y-2 text-[15px]">{children}</dl>
+            <dl className="grid grid-cols-[80px_minmax(0,1fr)] gap-x-3 gap-y-2 text-[15px]">{children}</dl>
         </div>
     );
 }

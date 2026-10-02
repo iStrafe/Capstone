@@ -23,14 +23,16 @@ export function formatLong(iso) {
 
 /**
  * A month calendar for picking one day. Days before `min` are crossed out and can't be chosen;
- * `min` itself (today) is outlined.
+ * `min` itself (today) is outlined. Days after `max`, when given, can't be chosen either.
  */
-export default function DatePicker({ value, onChange, min, labelledBy, describedBy, invalid = false }) {
+export default function DatePicker({ value, onChange, min, max, labelledBy, describedBy, invalid = false }) {
     const minDate = parseDate(min);
+    const maxDate = max ? parseDate(max) : null;
     const start = value ? parseDate(value) : minDate;
     const [month, setMonth] = useState(new Date(start.getFullYear(), start.getMonth(), 1));
 
     const atFirstMonth = month.getFullYear() === minDate.getFullYear() && month.getMonth() === minDate.getMonth();
+    const atLastMonth = maxDate !== null && month.getFullYear() === maxDate.getFullYear() && month.getMonth() === maxDate.getMonth();
     const daysInMonth = new Date(month.getFullYear(), month.getMonth() + 1, 0).getDate();
     const blanks = month.getDay();
     const days = Array.from({ length: daysInMonth }, (_, index) => new Date(month.getFullYear(), month.getMonth(), index + 1));
@@ -59,8 +61,9 @@ export default function DatePicker({ value, onChange, min, labelledBy, described
                 <button
                     type="button"
                     onClick={() => shift(1)}
+                    disabled={atLastMonth}
                     aria-label="Next month"
-                    className="flex size-10 items-center justify-center rounded-full border border-mist-strong bg-white hover:border-azure-500"
+                    className="flex size-10 items-center justify-center rounded-full border border-mist-strong bg-white hover:border-azure-500 disabled:cursor-not-allowed disabled:opacity-40"
                 >
                     <Icon name="chevronRight" size={16} />
                 </button>
@@ -78,14 +81,15 @@ export default function DatePicker({ value, onChange, min, labelledBy, described
                 {days.map((day) => {
                     const iso = toIso(day);
                     const past = day < minDate;
+                    const tooFar = maxDate !== null && day > maxDate;
                     const label = day.toLocaleDateString('en-PH', { weekday: 'long', month: 'long', day: 'numeric' });
 
-                    if (past) {
+                    if (past || tooFar) {
                         return (
                             <span
                                 key={iso}
-                                className="flex h-11 items-center justify-center rounded-xl text-[15px] text-[#a9b3c3] line-through"
-                                aria-label={`${label}, already past`}
+                                className={`flex h-11 items-center justify-center rounded-xl text-[15px] text-[#a9b3c3] ${past ? 'line-through' : ''}`}
+                                aria-label={`${label}, ${past ? 'already past' : 'too far ahead'}`}
                                 role="img"
                             >
                                 {day.getDate()}

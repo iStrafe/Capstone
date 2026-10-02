@@ -74,7 +74,7 @@ export default function Edit({ cat, defaults, submitUrl, indexUrl, placeholder }
             <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-sm">
                 <Link href={indexUrl} className="font-semibold text-azure-700 hover:underline">Cats</Link>
                 <Icon name="chevronRight" size={14} className="text-muted" />
-                <span className="text-muted">{title}</span>
+                <span className="min-w-0 truncate text-muted">{title}</span>
             </nav>
 
             <AdminHeader
@@ -200,8 +200,8 @@ export default function Edit({ cat, defaults, submitUrl, indexUrl, placeholder }
                                     <p className="text-body">
                                         Archived {cat.archivedAt}. {cat.archiveReason ? `Visitors see: “${cat.archiveReason}”` : 'No reason was given.'}
                                     </p>
-                                    <Button variant="quiet" size="sm" onClick={restore} disabled={restoring} className="self-start">
-                                        <Icon name="restore" size={16} /> Restore {cat.name}
+                                    <Button variant="quiet" size="sm" onClick={restore} disabled={restoring} className="max-w-full self-start">
+                                        <Icon name="restore" size={16} /> <span className="truncate">Restore {cat.name}</span>
                                     </Button>
                                 </>
                             ) : (
@@ -238,8 +238,8 @@ export default function Edit({ cat, defaults, submitUrl, indexUrl, placeholder }
                     </section>
 
                     {editing && !archived && (
-                        <Button variant="danger" size="sm" onClick={() => setArchiving(cat)} className="self-start">
-                            <Icon name="archive" size={16} /> Archive {cat.name}
+                        <Button variant="danger" size="sm" onClick={() => setArchiving(cat)} className="max-w-full self-start">
+                            <Icon name="archive" size={16} /> <span className="truncate">Archive {cat.name}</span>
                         </Button>
                     )}
                 </aside>

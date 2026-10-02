@@ -64,11 +64,18 @@ class AdoptionRequest extends Model
         if (! in_array($status, $from->next(), true)) {
             return $from === AdoptionStatus::Released
                 ? 'This cat already went home. A released request can\'t be changed.'
-                : 'A '.strtolower($from->value).' request can\'t be marked '.strtolower($status->value).'.';
+                : ($from === AdoptionStatus::Approved ? 'An ' : 'A ').strtolower($from->value).' request can\'t be marked '.strtolower($status->value).'.';
         }
 
-        if ($this->cat === null || $status === AdoptionStatus::Rejected) {
+        if ($status === AdoptionStatus::Rejected) {
             return null;
+        }
+
+        // No linked cat: either an old request from before requests were tied to a cat, which can
+        // still be decided, or the cat was deleted. Deleting a cat rejects its open requests
+        // (Admin\CatController::destroy), and they can't be reopened for a cat that's gone.
+        if ($this->cat === null) {
+            return $status === AdoptionStatus::Pending ? $catName.' is no longer on the site, so this request can\'t be reopened.' : null;
         }
 
         if ($this->cat->archived_at !== null && $status !== AdoptionStatus::Released) {

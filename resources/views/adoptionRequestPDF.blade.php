@@ -21,40 +21,33 @@
     </style>
 </head>
 <body>
-    <h2>Approved Request</h2>
+    <h2>Adoption request: {{ $request->status?->value ?? 'Pending' }}</h2>
     <table>
-        <tr>
-            <th>Name</th>
-            <td>{{ $request->name }}</td>
-        </tr>
-        <tr>
-            <th>Address</th>
-            <td>{{ $request->address }}</td>
-        </tr>
-        <tr>
-            <th>Email</th>
-            <td>{{ $request->email }}</td>
-        </tr>
-        <tr>
-            <th>Mobile Phone</th>
-            <td>{{ $request->mobile_phone }}</td>
-        </tr>
-        <tr>
-            <th>Valid ID</th>
-            <td>{{ count($request->valid_id ?? []) }} file(s)</td>
-        </tr>
-        <tr>
-            <th>Name of Cat</th>
-            <td>{{ $request->name_of_cat }}</td>
-        </tr>
-        <tr>
-            <th>Status</th>
-            <td>{{ $request->status }}</td>
-        </tr>
-        <tr>
-            <th>Approval Date</th>
-            <td>{{ $request->approval_date }}</td>
-        </tr>
+        @foreach ([
+            'Name' => $request->name,
+            'Address' => $request->address,
+            'Email' => $request->email,
+            'Mobile phone' => $request->mobile_phone,
+            'Home phone' => $request->home_phone,
+            'Valid ID' => count($request->valid_id ?? []).' file(s)',
+            'Cat' => $request->name_of_cat,
+            'Breed' => $request->breed,
+            'Age' => $request->approximate_age,
+            'Sex' => $request->sex,
+            'Color' => $request->color,
+            'Pickup date' => $request->date_of_adoption?->format('F j, Y'),
+            'Requested on' => $request->created_at?->format('F j, Y'),
+            'Status' => $request->status?->value,
+            'Approved on' => $request->approval_date?->format('F j, Y'),
+            'Released on' => $request->Release_date?->format('F j, Y'),
+        ] as $label => $value)
+            @if (filled($value))
+                <tr>
+                    <th>{{ $label }}</th>
+                    <td>{{ $value }}</td>
+                </tr>
+            @endif
+        @endforeach
     </table>
 </body>
 </html>

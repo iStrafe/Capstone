@@ -9,11 +9,11 @@ use App\Http\Requests\Admin\CatRequest;
 use App\Http\Resources\AdminCatResource;
 use App\Models\Cat;
 use App\Support\Paginated;
+use App\Support\QueryText;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -29,7 +29,7 @@ class CatController extends Controller
     public function index(Request $request): Response
     {
         $tab = in_array($request->query('status'), self::TABS, true) ? $request->query('status') : 'active';
-        $search = trim((string) $request->query('q', ''));
+        $search = QueryText::get($request, 'q');
         $sex = in_array($request->query('sex'), ['Male', 'Female'], true) ? $request->query('sex') : '';
 
         $cats = $this->withAdminState(Cat::query())
@@ -37,11 +37,11 @@ class CatController extends Controller
             ->when($tab === 'inactive', fn (Builder $query) => $query->notArchived()->where('status', '!=', Cat::STATUS_ACTIVE))
             ->when($tab === 'archived', fn (Builder $query) => $query->whereNotNull('archived_at'))
             ->when($search !== '', function (Builder $query) use ($search) {
-                $term = '%'.Str::lower($search).'%';
+                $term = QueryText::like($search);
                 $query->where(fn (Builder $match) => $match
-                    ->whereRaw('LOWER(cat_name) LIKE ?', [$term])
-                    ->orWhereRaw('LOWER(color) LIKE ?', [$term])
-                    ->orWhereRaw('LOWER(breed) LIKE ?', [$term]));
+                    ->whereRaw("LOWER(cat_name) LIKE ? ESCAPE '\\'", [$term])
+                    ->orWhereRaw("LOWER(color) LIKE ? ESCAPE '\\'", [$term])
+                    ->orWhereRaw("LOWER(breed) LIKE ? ESCAPE '\\'", [$term]));
             })
             ->when($sex !== '', fn (Builder $query) => $query->where('sex', $sex))
             ->orderByDesc($tab === 'archived' ? 'archived_at' : 'updated_at')
@@ -66,8 +66,8 @@ class CatController extends Controller
             'cat' => null,
             // The breed helper links here with its guess filled in.
             'defaults' => [
-                'breed' => Str::limit((string) $request->query('breed', ''), 100, ''),
-                'color' => Str::limit((string) $request->query('color', ''), 50, ''),
+                'breed' => QueryText::get($request, 'breed', 100),
+                'color' => QueryText::get($request, 'color', 50),
             ],
             'submitUrl' => route('admin.cats.store'),
             'indexUrl' => route('admin.cats.index'),
@@ -121,6 +121,7 @@ class CatController extends Controller
         }
 
         $cat->fill(Arr::except($request->validated(), $except));
+        $old = [$cat->cat_image, $cat->cat_clip];
 
         if ($request->hasFile('cat_image')) {
             $cat->cat_image = $this->moveToPublicImages($request->file('cat_image'));
@@ -131,6 +132,7 @@ class CatController extends Controller
         }
 
         $cat->save();
+        $this->deleteUnusedPublicImages(...array_diff($old, [$cat->cat_image, $cat->cat_clip]));
 
         return redirect()->route('admin.cats.index', $cat->archived_at ? ['status' => 'archived'] : [])
             ->with('success', 'Saved the changes to '.$cat->cat_name.'.');
@@ -139,7 +141,10 @@ class CatController extends Controller
     // Adoption requests for the cat are kept: their cat_id becomes NULL and they still carry the cat's name.
     public function destroy(Cat $cat): RedirectResponse
     {
+        // Applicants still waiting for this cat get their answer; a deleted cat can't be adopted.
+        $cat->adoptionRequests()->whereIn('status', AdoptionStatus::open())->update(['status' => AdoptionStatus::Rejected]);
         $cat->delete();
+        $this->deleteUnusedPublicImages($cat->cat_image, $cat->cat_clip);
 
         return redirect()->route('admin.cats.index', $cat->archived_at ? ['status' => 'archived'] : [])
             ->with('success', $cat->cat_name.' was deleted.');
@@ -150,6 +155,11 @@ class CatController extends Controller
         $validated = $request->validate([
             'archive_reason' => ['nullable', 'string', 'max:255'],
         ]);
+
+        // Archiving twice would overwrite the date and the reason visitors see.
+        if ($cat->archived_at !== null) {
+            return back()->with('error', $cat->cat_name.' is already archived.');
+        }
 
         $cat->archived_at = now();
         $cat->archive_reason = $validated['archive_reason'] ?? null;
@@ -168,6 +178,11 @@ class CatController extends Controller
     // Back into the inventory as Active; the public list still follows Cat::available().
     public function restore(Cat $cat): RedirectResponse
     {
+        // Restoring sets the cat Active, which would quietly publish an Inactive cat.
+        if ($cat->archived_at === null) {
+            return back()->with('error', $cat->cat_name.' isn\'t archived.');
+        }
+
         $cat->archived_at = null;
         $cat->archive_reason = null;
         $cat->status = Cat::STATUS_ACTIVE;

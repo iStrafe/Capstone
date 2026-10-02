@@ -47,6 +47,7 @@ class AdoptionController extends Controller
             'applicant' => ['name' => $user->name, 'email' => $user->email],
             // The server's today, so the calendar agrees with the date rule in StoreAdoptionRequest.
             'today' => today()->toDateString(),
+            'latestPickup' => StoreAdoptionRequest::latestPickup(),
         ]);
     }
 

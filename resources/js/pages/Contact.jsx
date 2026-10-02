@@ -42,7 +42,7 @@ export default function Contact() {
                             autoComplete="tel"
                             placeholder="09XX XXX XXXX"
                             required
-                            maxLength={15}
+                            maxLength={20}
                             value={form.data.mobile_number}
                             onChange={(event) => form.setData('mobile_number', event.target.value)}
                             error={form.errors.mobile_number}
@@ -66,6 +66,7 @@ export default function Contact() {
                         rows={6}
                         required
                         placeholder="How can we help?"
+                        maxLength={5000}
                         value={form.data.message}
                         onChange={(event) => form.setData('message', event.target.value)}
                         error={form.errors.message}

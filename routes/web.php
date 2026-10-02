@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Route;
 // Public pages
 Route::get('/', [CatController::class, 'home'])->name('home');
 Route::get('adoptCat', [CatController::class, 'index'])->name('adoptCat');
-Route::get('/cat/{cat}', [CatController::class, 'show'])->whereNumber('cat')->name('cats.show');
+Route::get('/cat/{cat}', [CatController::class, 'show'])->name('cats.show');
 // The old user dashboard duplicated Home's gallery; old links, bookmarks and intended URLs land on Home.
 Route::redirect('userDashboard', '/')->name('dashboard');
 
@@ -40,7 +40,7 @@ Route::get('auth/google/callbacks', [GoogleAuthController::class, 'callbackGoogl
 Route::middleware('auth')->group(function () {
     // Adoption requests need an account so they can be tied to the applicant
     // Guests who follow "Log in to adopt" land here after logging in or signing up.
-    Route::get('/cat/{cat}/adopt', [AdoptionController::class, 'start'])->whereNumber('cat')->name('adoption.start');
+    Route::get('/cat/{cat}/adopt', [AdoptionController::class, 'start'])->name('adoption.start');
     Route::post('/AdoptionForm', [AdoptionController::class, 'create'])->middleware('throttle:10,1')->name('adoption.request');
     Route::get('/myRequest', [AdoptionController::class, 'showMyRequests'])->name('myRequest');
 
