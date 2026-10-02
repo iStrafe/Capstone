@@ -3,9 +3,10 @@ import Button from './Button';
 
 /**
  * A native <dialog> that asks before an action that's hard to undo. `children` is the explanation;
- * `confirmLabel` names the action ("Delete message"). `tone="danger"` makes the button red.
+ * `confirmLabel` names the action ("Delete message"). `tone="danger"` makes the button red, and
+ * `confirmDisabled` holds it until the admin has done what the dialog asks (like typing a name).
  */
-export default function ConfirmDialog({ open, title, children, confirmLabel, cancelLabel = 'Cancel', tone = 'primary', processing = false, onConfirm, onClose }) {
+export default function ConfirmDialog({ open, title, children, confirmLabel, cancelLabel = 'Cancel', tone = 'primary', processing = false, confirmDisabled = false, onConfirm, onClose }) {
     const dialog = useRef(null);
 
     useEffect(() => {
@@ -35,7 +36,7 @@ export default function ConfirmDialog({ open, title, children, confirmLabel, can
                     <Button variant="outline" size="sm" onClick={onClose}>
                         {cancelLabel}
                     </Button>
-                    <Button variant={tone === 'danger' ? 'danger' : 'dark'} size="sm" onClick={onConfirm} disabled={processing}>
+                    <Button variant={tone === 'danger' ? 'danger' : 'dark'} size="sm" onClick={onConfirm} disabled={processing || confirmDisabled}>
                         {confirmLabel}
                     </Button>
                 </div>

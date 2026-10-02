@@ -51,7 +51,7 @@ Route::middleware('auth')->group(function () {
 
 // Admin
 Route::middleware(['auth', 'admin'])->group(function () {
-    Route::get('/analyzeImage', [OpenAIController::class, 'showUploadForm']);
+    Route::get('/analyzeImage', [OpenAIController::class, 'showUploadForm'])->name('analyze.form');
     Route::post('/analyzeImage', [OpenAIController::class, 'analyzeImage'])->name('analyze.image');
 
     // Adoption requests: tabs by status, one page per request with its valid IDs
@@ -65,8 +65,9 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/view-valid-ids/{adoptionRequest}', [AdminAdoptionRequestController::class, 'legacyValidIds'])->name('viewValidIds');
 
     // Cat inventory
-    Route::get('/adminDashboard', [AdminCatController::class, 'index']);
-    Route::get('/cat', [AdminCatController::class, 'index'])->name('cats.index');
+    // Old entry points to the inventory
+    Route::redirect('/adminDashboard', '/adminDashboard/cats');
+    Route::redirect('/cat', '/adminDashboard/cats')->name('cats.index');
     Route::patch('/admin/cats/{cat}/archive', [AdminCatController::class, 'archive'])->name('admin.cats.archive');
     Route::get('/admin/cats/archived', [AdminCatController::class, 'archived'])->name('admin.cats.archived');
     Route::patch('/admin/cats/{cat}/restore', [AdminCatController::class, 'restore'])->name('admin.cats.restore');

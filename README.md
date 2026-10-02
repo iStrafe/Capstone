@@ -40,19 +40,16 @@ Optional services read their keys from `.env`: `GOOGLE_CLIENT_ID`, `GOOGLE_CLIEN
 
 ## Frontend
 
-The site is moving from Blade (Bootstrap + jQuery) to React, one page at a time. Both kinds of page run side by side:
+Every page is React, served with [Inertia](https://inertiajs.com): a controller returns `Inertia::render('Cats/Show', [...])` instead of `view(...)`, and the page lives in `resources/js/pages`. Pages are plain JavaScript (`.jsx`), styled with Tailwind CSS 4 using the Azure theme in `resources/css/site.css`. Public pages share `resources/js/layouts/SiteLayout.jsx`, admin pages share `resources/js/layouts/AdminLayout.jsx`, and both use the components in `resources/js/components`. The only Blade view left is the adoption contract PDF (`resources/views/adoptionRequestPDF.blade.php`).
 
-- **React pages** live in `resources/js/pages` and are served with [Inertia](https://inertiajs.com): the controller returns `Inertia::render('Cats/Show', [...])` instead of `view(...)`. They're plain JavaScript (`.jsx`), styled with Tailwind CSS 4 using the Azure theme in `resources/css/site.css`, and share the layout in `resources/js/layouts/SiteLayout.jsx` and the components in `resources/js/components`.
-- **Blade pages** keep their own layouts until they're rebuilt.
-
-Converted so far: the home page and the cat profile (`/cat/{id}`). While you work on the frontend, run Vite next to the PHP server so changes reload instantly:
+While you work on the frontend, run Vite next to the PHP server so changes reload instantly:
 
 ```bash
 npm run dev
 php artisan serve
 ```
 
-Links from a React page to a Blade page must be plain `<a href>` tags, not Inertia's `<Link>`, so the browser does a full page load.
+Use Inertia's `<Link>` for links between pages. Keep a plain `<a href>` for downloads such as the PDF and for other sites.
 
 ## Tests
 

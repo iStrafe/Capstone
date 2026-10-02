@@ -13,7 +13,7 @@ class VisualFixesTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_news_event_page_shows_the_event_once(): void
+    public function test_a_news_post_link_opens_it_in_the_admin_editor(): void
     {
         $admin = User::factory()->create(['role' => 'admin']);
         $event = NewsEvent::create([
@@ -23,16 +23,12 @@ class VisualFixesTest extends TestCase
             'eventimage' => 'event.jpg',
         ]);
 
-        $content = $this->actingAs($admin)
-            ->get(route('news-events.show', $event->id))
-            ->assertOk()
-            ->assertSee('October 9, 2026')
-            ->assertSee(route('news-events.index'), false)
-            ->getContent();
-
-        $this->assertSame(1, substr_count($content, 'Adoption Day at the Park'));
-        $this->assertSame(1, substr_count($content, 'Meet our cats at the city park.'));
-        $this->assertSame(1, substr_count($content, 'images/event.jpg'));
+        $this->actingAs($admin)->get(route('news-events.show', $event->id))->assertRedirect(route('news-events.edit', $event->id));
+        $this->actingAs($admin)->get(route('news-events.edit', $event->id))
+            ->assertInertia(fn (Assert $page) => $page
+                ->where('editing.title', 'Adoption Day at the Park')
+                ->where('editing.image', asset('images/event.jpg'))
+                ->has('posts.data', 1));
     }
 
     public function test_login_and_register_are_full_documents_with_a_viewport(): void
@@ -52,26 +48,6 @@ class VisualFixesTest extends TestCase
             $this->assertSame(1, substr_count($content, '<body>'));
             $this->assertStringEndsWith('</html>', rtrim($content));
         }
-    }
-
-    public function test_shared_head_no_longer_clears_bootstrap_button_backgrounds(): void
-    {
-        $partial = file_get_contents(resource_path('views/scripts.blade.php'));
-
-        // The pasted Tailwind block made every [type=submit]/[type=button] transparent, including .btn-primary.
-        $this->assertStringNotContainsString('tailwindcss v3.4.1', $partial);
-        $this->assertStringNotContainsString('[type=button],[type=reset],[type=submit],button{-webkit-appearance:button;background-color:transparent', $partial);
-        $this->assertStringContainsString(':not(.btn, .btn-close:empty)', $partial);
-
-        $this->get(route('home'))
-            ->assertOk()
-            ->assertDontSee('tailwindcss v3.4.1', false);
-    }
-
-    public function test_gallery_grid_is_scoped_to_the_cat_gallery(): void
-    {
-        $partial = file_get_contents(resource_path('views/scripts.blade.php'));
-        $this->assertDoesNotMatchRegularExpression('/(^|[\s}])\.row\s*\{[^}]*display:\s*grid/', $partial);
     }
 
     public function test_cats_without_a_photo_show_the_generic_placeholder_in_the_gallery(): void

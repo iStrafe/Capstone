@@ -7,15 +7,54 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class OpenAIController extends Controller
 {
     private const FAILURE_MESSAGE = 'Image analysis is unavailable right now. Please try again later.';
 
-     // Show the image upload form
-    public function showUploadForm()
+    // The breed helper page, with the last analysis (or why it failed) when there is one.
+    public function showUploadForm(): Response
     {
-        return view('analyzeImage');
+        $analysis = session('analysis');
+
+        return Inertia::render('Admin/BreedHelper', [
+            'result' => is_string($analysis) ? self::parse($analysis) : null,
+            'error' => session('analysis_error'),
+            'analyzeUrl' => route('analyze.image'),
+            'addCatUrl' => route('admin.cats.create'),
+        ]);
+    }
+
+    /**
+     * Pull the breed, color and listed traits out of the model's answer. The prompt asks for
+     * "Color:", "Breed:" and a bulleted list, but the answer is free text, so anything that
+     * doesn't fit is still shown as plain text.
+     *
+     * @return array{breed: ?string, color: ?string, traits: list<string>, text: string}
+     */
+    public static function parse(string $text): array
+    {
+        $field = function (string $label) use ($text): ?string {
+            if (! preg_match('/^[\W_]*'.$label.'[\W_]*?:\s*(.+)$/mi', $text, $match)) {
+                return null;
+            }
+
+            $value = trim(str_replace(['**', '__'], '', $match[1]), " \t*_");
+
+            return $value === '' ? null : Str::limit($value, 100, '');
+        };
+
+        preg_match_all('/^\s*(?:[-*•]|\d+[.)])\s+(.+)$/mu', $text, $bullets);
+        $traits = collect($bullets[1])
+            ->map(fn (string $line) => trim(str_replace(['**', '__'], '', $line)))
+            ->reject(fn (string $line) => $line === '' || preg_match('/^(color|breed)\s*:/i', $line))
+            ->values()
+            ->all();
+
+        return ['breed' => $field('Breed'), 'color' => $field('Colou?r'), 'traits' => $traits, 'text' => trim($text)];
     }
 
     // Handle image upload and send it to OpenAI API
@@ -31,7 +70,7 @@ class OpenAIController extends Controller
         if (blank($apiKey)) {
             Log::warning('Image analysis skipped: OPENAI_API_KEY is not set');
 
-            return back()->with('error', self::FAILURE_MESSAGE);
+            return redirect()->route('analyze.form')->with('analysis_error', self::FAILURE_MESSAGE);
         }
 
         // Store the uploaded image
@@ -43,36 +82,36 @@ class OpenAIController extends Controller
 
         // Prepare the payload for OpenAI API
         $payload = [
-            "model" => "gpt-4o-mini",
-            "messages" => [
+            'model' => 'gpt-4o-mini',
+            'messages' => [
                 [
-                    "role" => "user",
-                    "content" => [
+                    'role' => 'user',
+                    'content' => [
                         [
-                            "type" => "text",
-                            "text" => "Predict what cat breed is this. List down aleast 5 characteristics why you think so."
+                            'type' => 'text',
+                            'text' => 'Predict what cat breed is this. List down aleast 5 characteristics why you think so.',
                         ],
                         [
-                            "type" => "text",
-                            "text" => "Use this format: 
+                            'type' => 'text',
+                            'text' => 'Use this format: 
                                     Color:
                                     Breed:
-                                    List of 5 characteristics(In bullet form):"
+                                    List of 5 characteristics(In bullet form):',
                         ],
                         [
-                            "type" => "text",
-                            "text" => "Reject the image if it is not a cat."
+                            'type' => 'text',
+                            'text' => 'Reject the image if it is not a cat.',
                         ],
                         [
-                            "type" => "image_url",
-                            "image_url" => [
-                                "url" => "data:image/jpeg;base64,{$base64Image}"
-                            ]
-                        ]
-                    ]
-                ]
+                            'type' => 'image_url',
+                            'image_url' => [
+                                'url' => "data:image/jpeg;base64,{$base64Image}",
+                            ],
+                        ],
+                    ],
+                ],
             ],
-            "max_tokens" => 2000
+            'max_tokens' => 2000,
         ];
 
         // Send the request to OpenAI API; the upload is removed whatever happens
@@ -99,10 +138,9 @@ class OpenAIController extends Controller
                 ]);
             }
 
-            return back()->with('error', self::FAILURE_MESSAGE);
+            return redirect()->route('analyze.form')->with('analysis_error', self::FAILURE_MESSAGE);
         }
 
-        // Pass only the analysis text to the view
-        return view('analyzeImage', ['analysis' => $analysis]);
+        return redirect()->route('analyze.form')->with('analysis', $analysis);
     }
 }

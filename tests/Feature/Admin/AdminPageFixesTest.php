@@ -49,49 +49,6 @@ class AdminPageFixesTest extends TestCase
         ], $overrides));
     }
 
-    public function test_donate_modal_is_rendered_outside_the_fixed_sidebar(): void
-    {
-        $html = $this->actingAs($this->admin())->get('/adminDashboard')->assertOk()->getContent();
-
-        $sidebarEnd = strpos($html, '</div>', strpos($html, 'id="sidebar"'));
-        $sidebar = substr($html, strpos($html, 'id="sidebar"'), $sidebarEnd - strpos($html, 'id="sidebar"'));
-
-        // The Donate button stays in the sidebar, the modal it opens does not.
-        $this->assertStringContainsString('data-bs-target="#modalId"', $html);
-        $this->assertStringNotContainsString('id="modalId"', $sidebar);
-        $this->assertStringContainsString('id="modalId"', $html);
-        // The modal can always be dismissed and no longer builds its own instance.
-        $this->assertStringNotContainsString('data-bs-backdrop="static"', $html);
-        $this->assertStringNotContainsString('new bootstrap.Modal', $html);
-        $this->assertStringContainsString('for="description">Description', $html);
-    }
-
-    public function test_admin_logo_uses_an_absolute_url_on_nested_pages(): void
-    {
-        $this->actingAs($this->admin())
-            ->get('/news-events/create')
-            ->assertOk()
-            ->assertSee('src="'.asset('images/adu logo.png').'"', false);
-    }
-
-    public function test_each_cat_card_carries_its_own_details_for_the_view_popup(): void
-    {
-        $this->createCat(['cat_name' => 'Mingming', 'color' => 'Orange', 'Medical_Record' => 'Vaccinated']);
-        $this->createCat(['cat_name' => 'Muning', 'color' => 'Black', 'age' => null, 'cat_image' => 'muning.jpg']);
-
-        $this->actingAs($this->admin())
-            ->get(route('admin.cats.index'))
-            ->assertOk()
-            ->assertSee('data-cat-name="Mingming"', false)
-            ->assertSee('data-cat-name="Muning"', false)
-            ->assertSee('data-cat-medical-record="Vaccinated"', false)
-            ->assertSee('data-cat-age="Unknown"', false)
-            ->assertSee('data-cat-image-url="'.asset('images/muning.jpg').'"', false)
-            ->assertSee("showCatModal.addEventListener('show.bs.modal'", false)
-            // Clicks on Edit/Archive must not also open the View popup.
-            ->assertSee("closest('.card .actions')", false);
-    }
-
     public function test_released_tab_shows_the_release_date_not_the_approval_date(): void
     {
         $this->createAdoptionRequest([
@@ -130,13 +87,12 @@ class AdminPageFixesTest extends TestCase
         $this->withoutPublicImageWrites();
 
         $this->actingAs($this->admin())
-            ->followingRedirects()
             ->post(route('admin.cats.store'), [
                 'cat_name' => 'Garfield',
                 'sex' => 'Male',
             ])
-            ->assertOk()
-            ->assertSee('Pet created successfully.');
+            ->assertRedirect(route('admin.cats.index'))
+            ->assertSessionHas('success', 'Garfield was added. The profile is live on the adoption list.');
     }
 
     public function test_admin_sees_why_a_cat_upload_was_rejected(): void
@@ -144,40 +100,30 @@ class AdminPageFixesTest extends TestCase
         $this->withoutPublicImageWrites();
         $svg = UploadedFile::fake()->createWithContent('cat.svg', '<svg xmlns="http://www.w3.org/2000/svg"></svg>');
 
-        $html = $this->actingAs($this->admin())
-            ->from(route('admin.cats.index'))
-            ->followingRedirects()
+        // The editor shows the error under the photo field.
+        $this->actingAs($this->admin())
+            ->from(route('admin.cats.create'))
             ->post(route('admin.cats.store'), [
                 'cat_name' => 'Garfield',
                 'sex' => 'Male',
                 'cat_image' => $svg,
             ])
-            ->assertOk()
-            ->getContent();
+            ->assertRedirect(route('admin.cats.create'))
+            ->assertSessionHasErrors(['cat_image' => __('validation.image', ['attribute' => 'cat image'])]);
 
-        // Shown by the flash partial at the top of the page, not only inside the closed Add Cat modal.
-        $message = e(__('validation.image', ['attribute' => 'cat image']));
-        $flash = strpos($html, 'alert alert-danger');
-        $this->assertNotFalse($flash);
-        $this->assertLessThan(strpos($html, 'id="addCatModal"'), $flash);
-        $this->assertStringContainsString($message, substr($html, $flash, 500));
+        $this->assertDatabaseMissing('cats', ['cat_name' => 'Garfield']);
     }
 
-    public function test_news_event_delete_asks_for_confirmation_and_reports_success(): void
+    public function test_news_event_delete_reports_success(): void
     {
         $event = NewsEvent::create(['title' => 'Adoption day', 'description' => 'Meet the cats', 'event_date' => '2026-10-01']);
-        $admin = $this->admin();
 
-        $this->actingAs($admin)
-            ->get(route('news-events.index'))
-            ->assertOk()
-            ->assertSee("onsubmit=\"return confirm('Delete this event?')\"", false);
-
-        $this->actingAs($admin)
-            ->followingRedirects()
+        $this->actingAs($this->admin())
             ->delete(route('news-events.destroy', $event))
-            ->assertOk()
-            ->assertSee('News Event deleted successfully.');
+            ->assertRedirect(route('news-events.index'))
+            ->assertSessionHas('success', 'Post deleted.');
+
+        $this->assertModelMissing($event);
     }
 
     // Uploads are moved into public/images; keep tests away from the real folder.

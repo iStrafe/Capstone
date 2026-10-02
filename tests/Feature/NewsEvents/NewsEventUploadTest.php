@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\File;
+use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
 
 class NewsEventUploadTest extends TestCase
@@ -94,5 +95,50 @@ class NewsEventUploadTest extends TestCase
                 'event_date' => '2026-10-01',
             ])
             ->assertNotFound();
+    }
+
+    public function test_admin_list_opens_the_editor_for_a_new_post(): void
+    {
+        $this->event();
+
+        $this->actingAs($this->admin())->get(route('news-events.create'))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Admin/News')
+                ->where('editing', 'new')
+                ->where('storeUrl', route('news-events.store'))
+                ->has('posts.data', 1));
+
+        $this->actingAs($this->admin())->get(route('news-events.index'))
+            ->assertInertia(fn (Assert $page) => $page->where('editing', null));
+    }
+
+    public function test_admin_can_publish_a_post(): void
+    {
+        $this->actingAs($this->admin())
+            ->post(route('news-events.store'), ['title' => 'Vaccine drive', 'description' => 'Free shots', 'event_date' => '2026-11-02', 'remove_image' => '0'])
+            ->assertRedirect(route('news-events.index'))
+            ->assertSessionHas('success', 'Post published. It shows on the public News & events page.');
+
+        $this->assertDatabaseHas('news_events', ['title' => 'Vaccine drive', 'eventimage' => null]);
+    }
+
+    public function test_updating_can_remove_the_image(): void
+    {
+        $event = $this->event();
+        $event->forceFill(['eventimage' => 'old.jpg'])->save();
+
+        $this->actingAs($this->admin())
+            ->post(route('news-events.update', $event), [
+                '_method' => 'put',
+                'title' => 'Adoption day',
+                'description' => 'Meet the cats',
+                'event_date' => '2026-10-01',
+                'remove_image' => '1',
+            ])
+            ->assertRedirect(route('news-events.index'))
+            ->assertSessionHas('success', 'Post updated.');
+
+        $this->assertNull($event->fresh()->eventimage);
     }
 }

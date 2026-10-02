@@ -15,12 +15,11 @@ export default function AdminLayout({ title, active, children }) {
     useEffect(() => router.on('navigate', () => setMenuOpen(false)), []);
 
     const items = [
-        // `inertia` marks sections that are already React; the rest are Blade and need a full page load.
-        { key: 'cats', label: 'Cats', icon: 'cat', href: admin.links.cats, inertia: false },
-        { key: 'requests', label: 'Adoption requests', icon: 'list', href: admin.links.requests, count: admin.pendingRequests, countLabel: 'pending', inertia: true },
-        { key: 'messages', label: 'Messages', icon: 'inbox', href: admin.links.messages, count: admin.unreadMessages, countLabel: 'not handled', inertia: true },
-        { key: 'news', label: 'News & events', icon: 'news', href: admin.links.news, inertia: false },
-        { key: 'breed', label: 'Breed helper', icon: 'spark', href: admin.links.breedHelper, inertia: false },
+        { key: 'cats', label: 'Cats', icon: 'cat', href: admin.links.cats },
+        { key: 'requests', label: 'Adoption requests', icon: 'list', href: admin.links.requests, count: admin.pendingRequests, countLabel: 'pending' },
+        { key: 'messages', label: 'Messages', icon: 'inbox', href: admin.links.messages, count: admin.unreadMessages, countLabel: 'not handled' },
+        { key: 'news', label: 'News & events', icon: 'news', href: admin.links.news },
+        { key: 'breed', label: 'Breed helper', icon: 'spark', href: admin.links.breedHelper },
     ];
 
     const sidebar = (
@@ -32,11 +31,10 @@ export default function AdminLayout({ title, active, children }) {
 
             <nav aria-label="Admin" className="flex flex-col gap-1">
                 {items.map((item) => {
-                    const Component = item.inertia ? Link : 'a';
                     const current = item.key === active;
 
                     return (
-                        <Component
+                        <Link
                             key={item.key}
                             href={item.href}
                             aria-current={current ? 'page' : undefined}
@@ -50,7 +48,7 @@ export default function AdminLayout({ title, active, children }) {
                                     <span className="sr-only"> {item.countLabel}</span>
                                 </span>
                             )}
-                        </Component>
+                        </Link>
                     );
                 })}
             </nav>

@@ -54,6 +54,14 @@ class AdminPagesTest extends TestCase
         return [
             'adoption requests' => ['/admin/requests'],
             'released requests' => ['/admin/requests?status=released'],
+            'cats' => ['/adminDashboard/cats'],
+            'inactive cats' => ['/adminDashboard/cats?status=inactive'],
+            'archived cats' => ['/adminDashboard/cats?status=archived'],
+            'add a cat' => ['/adminDashboard/cats/create'],
+            'messages' => ['/admin/messages'],
+            'news and events' => ['/news-events'],
+            'new post' => ['/news-events/create'],
+            'breed helper' => ['/analyzeImage'],
         ];
     }
 
@@ -155,15 +163,19 @@ class AdminPagesTest extends TestCase
             ->assertDontSee('Muning');
     }
 
-    public function test_direct_create_show_and_edit_cat_urls_redirect_to_the_inventory(): void
+    public function test_cat_editor_pages_open_for_new_and_existing_cats(): void
     {
         $cat = $this->createCat();
         $admin = $this->admin();
 
-        // These are modals on the index page; the bare fragments are not pages.
-        $this->actingAs($admin)->get(route('admin.cats.create'))->assertRedirect(route('admin.cats.index'));
-        $this->actingAs($admin)->get(route('admin.cats.show', $cat))->assertRedirect(route('admin.cats.index'));
-        $this->actingAs($admin)->get(route('admin.cats.edit', $cat))->assertRedirect(route('admin.cats.index'));
+        $this->actingAs($admin)->get(route('admin.cats.create'))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page->component('Admin/Cats/Edit')->where('cat', null)->where('submitUrl', route('admin.cats.store')));
+        $this->actingAs($admin)->get(route('admin.cats.edit', $cat))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page->component('Admin/Cats/Edit')->where('cat.id', $cat->id)->where('submitUrl', route('admin.cats.update', $cat)));
+        // There is no separate view page; it opens the editor.
+        $this->actingAs($admin)->get(route('admin.cats.show', $cat))->assertRedirect(route('admin.cats.edit', $cat));
     }
 
     public function test_admin_can_add_a_cat(): void
@@ -212,9 +224,10 @@ class AdminPagesTest extends TestCase
         $this->assertNotNull($cat->archived_at);
         $this->assertSame('ARCHIVED', $cat->status);
 
+        $this->actingAs($admin)->get(route('admin.cats.archived'))->assertRedirect(route('admin.cats.index', ['status' => 'archived']));
         $this->actingAs($admin)
-            ->get(route('admin.cats.archived'))
+            ->get(route('admin.cats.index', ['status' => 'archived']))
             ->assertOk()
-            ->assertSee($cat->cat_name);
+            ->assertInertia(fn (Assert $page) => $page->where('cats.data.0.name', $cat->cat_name)->where('cats.data.0.state', 'archived'));
     }
 }

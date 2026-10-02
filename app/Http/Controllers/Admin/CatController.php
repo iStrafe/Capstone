@@ -6,33 +6,73 @@ use App\Enums\AdoptionStatus;
 use App\Http\Controllers\Concerns\StoresPublicImages;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\CatRequest;
+use App\Http\Resources\AdminCatResource;
 use App\Models\Cat;
+use App\Support\Paginated;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
-use Illuminate\View\View;
+use Illuminate\Support\Str;
+use Inertia\Inertia;
+use Inertia\Response;
 
+/**
+ * The admin cat inventory: Active, Inactive and Archived tabs, and one page to add or edit a cat.
+ */
 class CatController extends Controller
 {
     use StoresPublicImages;
 
-    public function index(): View
-    {
-        // Admins see every cat that isn't archived, including Inactive and adopted ones;
-        // the flags label cats that are off the public list because of an adoption.
-        $cats = Cat::notArchived()
-            ->withExists(['adoptionRequests as is_adopted' => fn ($query) => $query->where('status', AdoptionStatus::Released)])
-            ->withExists(['adoptionRequests as is_reserved' => fn ($query) => $query->where('status', AdoptionStatus::Approved)])
-            ->get();
+    private const TABS = ['active', 'inactive', 'archived'];
 
-        return view('admin.cats.index', compact('cats'));
+    public function index(Request $request): Response
+    {
+        $tab = in_array($request->query('status'), self::TABS, true) ? $request->query('status') : 'active';
+        $search = trim((string) $request->query('q', ''));
+        $sex = in_array($request->query('sex'), ['Male', 'Female'], true) ? $request->query('sex') : '';
+
+        $cats = $this->withAdminState(Cat::query())
+            ->when($tab === 'active', fn (Builder $query) => $query->notArchived()->where('status', Cat::STATUS_ACTIVE))
+            ->when($tab === 'inactive', fn (Builder $query) => $query->notArchived()->where('status', '!=', Cat::STATUS_ACTIVE))
+            ->when($tab === 'archived', fn (Builder $query) => $query->whereNotNull('archived_at'))
+            ->when($search !== '', function (Builder $query) use ($search) {
+                $term = '%'.Str::lower($search).'%';
+                $query->where(fn (Builder $match) => $match
+                    ->whereRaw('LOWER(cat_name) LIKE ?', [$term])
+                    ->orWhereRaw('LOWER(color) LIKE ?', [$term])
+                    ->orWhereRaw('LOWER(breed) LIKE ?', [$term]));
+            })
+            ->when($sex !== '', fn (Builder $query) => $query->where('sex', $sex))
+            ->orderByDesc($tab === 'archived' ? 'archived_at' : 'updated_at')
+            ->orderByDesc('id')
+            ->paginate(15);
+
+        return Inertia::render('Admin/Cats/Index', [
+            'cats' => Paginated::make($cats, AdminCatResource::class),
+            'filters' => ['status' => $tab, 'q' => $search, 'sex' => $sex],
+            'counts' => [
+                'active' => Cat::notArchived()->where('status', Cat::STATUS_ACTIVE)->count(),
+                'inactive' => Cat::notArchived()->where('status', '!=', Cat::STATUS_ACTIVE)->count(),
+                'archived' => Cat::whereNotNull('archived_at')->count(),
+            ],
+            'createUrl' => route('admin.cats.create'),
+        ]);
     }
 
-    // create, show and edit are modals on the index page; their direct URLs
-    // would only render a bare modal fragment, so send the admin to the index.
-    public function create(): RedirectResponse
+    public function create(Request $request): Response
     {
-        return redirect()->route('admin.cats.index');
+        return Inertia::render('Admin/Cats/Edit', [
+            'cat' => null,
+            // The breed helper links here with its guess filled in.
+            'defaults' => [
+                'breed' => Str::limit((string) $request->query('breed', ''), 100, ''),
+                'color' => Str::limit((string) $request->query('color', ''), 50, ''),
+            ],
+            'submitUrl' => route('admin.cats.store'),
+            'indexUrl' => route('admin.cats.index'),
+            'placeholder' => asset('images/placeholder.png'),
+        ]);
     }
 
     public function store(CatRequest $request): RedirectResponse
@@ -48,24 +88,39 @@ class CatController extends Controller
             $input['cat_clip'] = $this->moveToPublicImages($request->file('cat_clip'));
         }
 
-        Cat::create($input);
+        $cat = Cat::create($input);
 
-        return redirect()->route('admin.cats.index')->with('success', 'Pet created successfully.');
+        return redirect()->route('admin.cats.index')->with('success', $cat->cat_name.' was added. The profile is live on the adoption list.');
     }
 
     public function show(Cat $cat): RedirectResponse
     {
-        return redirect()->route('admin.cats.index');
+        return redirect()->route('admin.cats.edit', $cat);
     }
 
-    public function edit(Cat $cat): RedirectResponse
+    public function edit(Cat $cat): Response
     {
-        return redirect()->route('admin.cats.index');
+        $cat = $this->withAdminState(Cat::query())->findOrFail($cat->getKey());
+
+        return Inertia::render('Admin/Cats/Edit', [
+            'cat' => (new AdminCatResource($cat))->resolve(),
+            'defaults' => null,
+            'submitUrl' => route('admin.cats.update', $cat),
+            'indexUrl' => route('admin.cats.index', $cat->archived_at ? ['status' => 'archived'] : []),
+            'placeholder' => asset('images/placeholder.png'),
+        ]);
     }
 
     public function update(CatRequest $request, Cat $cat): RedirectResponse
     {
-        $cat->fill(Arr::except($request->validated(), ['cat_image', 'cat_clip']));
+        $except = ['cat_image', 'cat_clip'];
+
+        // An archived cat stays archived until it's restored.
+        if ($cat->archived_at !== null) {
+            $except[] = 'status';
+        }
+
+        $cat->fill(Arr::except($request->validated(), $except));
 
         if ($request->hasFile('cat_image')) {
             $cat->cat_image = $this->moveToPublicImages($request->file('cat_image'));
@@ -77,7 +132,8 @@ class CatController extends Controller
 
         $cat->save();
 
-        return redirect()->route('admin.cats.index')->with('success', 'Cat updated successfully');
+        return redirect()->route('admin.cats.index', $cat->archived_at ? ['status' => 'archived'] : [])
+            ->with('success', 'Saved the changes to '.$cat->cat_name.'.');
     }
 
     // Adoption requests for the cat are kept: their cat_id becomes NULL and they still carry the cat's name.
@@ -85,7 +141,7 @@ class CatController extends Controller
     {
         $cat->delete();
 
-        return redirect()->route($cat->archived_at ? 'admin.cats.archived' : 'admin.cats.index')
+        return redirect()->route('admin.cats.index', $cat->archived_at ? ['status' => 'archived'] : [])
             ->with('success', $cat->cat_name.' was deleted.');
     }
 
@@ -100,14 +156,13 @@ class CatController extends Controller
         $cat->status = Cat::STATUS_ARCHIVED;
         $cat->save();
 
-        return redirect()->route('admin.cats.index')->with('success', 'Cat archived successfully.');
+        return redirect()->route('admin.cats.index')->with('success', $cat->cat_name.' was archived. Its public page now explains why it\'s gone.');
     }
 
-    public function archived(): View
+    // Old URL for the archived list, now a tab.
+    public function archived(): RedirectResponse
     {
-        $archivedCats = Cat::whereNotNull('archived_at')->latest('archived_at')->get();
-
-        return view('admin.cats.archived', compact('archivedCats'));
+        return redirect()->route('admin.cats.index', ['status' => 'archived']);
     }
 
     // Back into the inventory as Active; the public list still follows Cat::available().
@@ -118,6 +173,17 @@ class CatController extends Controller
         $cat->status = Cat::STATUS_ACTIVE;
         $cat->save();
 
-        return redirect()->route('admin.cats.archived')->with('success', $cat->cat_name.' was restored to the cat inventory.');
+        return redirect()->route('admin.cats.index', ['status' => 'archived'])->with('success', $cat->cat_name.' was restored to the cat inventory.');
+    }
+
+    /**
+     * Adds what AdminCatResource needs to label each cat without a query per row.
+     */
+    private function withAdminState(Builder $query): Builder
+    {
+        return $query
+            ->withPendingRequestCount()
+            ->withExists(['adoptionRequests as is_adopted' => fn (Builder $requests) => $requests->where('status', AdoptionStatus::Released)])
+            ->withExists(['adoptionRequests as is_reserved' => fn (Builder $requests) => $requests->where('status', AdoptionStatus::Approved)]);
     }
 }

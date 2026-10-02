@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 use Inertia\Middleware;
 
 /**
- * Shared data for every React (Inertia) page. Blade pages don't use any of this.
+ * Shared data for every React (Inertia) page.
  */
 class HandleInertiaRequests extends Middleware
 {
@@ -51,16 +51,15 @@ class HandleInertiaRequests extends Middleware
             // Admin-only data for the admin layout. Other visitors don't get the key at all.
             ...($isAdmin ? [
                 'admin' => [
-                    // Same count as the Blade sidebar badge (view composer in AppServiceProvider).
                     'unreadMessages' => fn () => Contact::unhandled()->count(),
                     'pendingRequests' => fn () => AdoptionRequest::where('status', AdoptionStatus::Pending)->count(),
-                    // The admin sidebar. Cats, news and the breed helper are still Blade pages.
+                    // The admin sidebar.
                     'links' => [
                         'cats' => route('admin.cats.index'),
                         'requests' => route('admin.requests.index'),
                         'messages' => route('admin.messages.index'),
                         'news' => route('news-events.index'),
-                        'breedHelper' => url('analyzeImage'),
+                        'breedHelper' => route('analyze.form'),
                     ],
                 ],
             ] : []),
@@ -84,7 +83,7 @@ class HandleInertiaRequests extends Middleware
                 'logout' => route('logout'),
                 'myRequests' => route('myRequest'),
                 'profile' => route('profile.edit'),
-                'admin' => url('adminDashboard'),
+                'admin' => route('admin.cats.index'),
             ],
         ];
     }

@@ -82,52 +82,66 @@ class ArchivedCatsTest extends TestCase
         $this->assertNull($cat->fresh()->archived_at);
     }
 
-    public function test_inventory_asks_for_a_reason_before_archiving(): void
-    {
-        $this->createCat();
-
-        $this->actingAs($this->admin())
-            ->get(route('admin.cats.index'))
-            ->assertOk()
-            ->assertSee('data-bs-target="#archiveCatModal"', false)
-            ->assertSee('id="archiveCatModal"', false)
-            ->assertSee('name="archive_reason"', false)
-            ->assertSee(json_encode(route('admin.cats.archive', '__CAT__')), false)
-            // The Archive button sits in the card's actions, so it doesn't also open the View popup.
-            ->assertSee("closest('.card .actions')", false);
-    }
-
     public function test_inventory_keeps_inactive_and_adopted_cats_and_labels_adoptions(): void
     {
         $this->createCat(['cat_name' => 'Resting', 'status' => Cat::STATUS_INACTIVE]);
         $this->createRequest($this->createCat(['cat_name' => 'Gone Home']), AdoptionStatus::Released);
         $this->createRequest($this->createCat(['cat_name' => 'Almost Home']), AdoptionStatus::Approved);
+        $this->createCat(['cat_name' => 'Waiting']);
         $this->archived(['cat_name' => 'Shelved Muning']);
+        $admin = $this->admin();
 
-        $this->actingAs($this->admin())
-            ->get(route('admin.cats.index'))
+        $this->actingAs($admin)->get(route('admin.cats.index'))
             ->assertOk()
-            ->assertSee('Resting')
-            ->assertSee('Gone Home')
-            ->assertSee('Almost Home')
-            ->assertSee('>Adopted</span>', false)
-            ->assertSee('>Adoption in progress</span>', false)
-            ->assertDontSee('Shelved Muning');
+            ->assertInertia(fn (AssertableInertia $page) => $page
+                ->component('Admin/Cats/Index')
+                ->where('counts', ['active' => 3, 'inactive' => 1, 'archived' => 1])
+                ->where('cats.data', fn ($cats) => collect($cats)->pluck('state', 'name')->sortKeys()->all() === [
+                    'Almost Home' => 'reserved',
+                    'Gone Home' => 'adopted',
+                    'Waiting' => 'available',
+                ]));
+
+        $this->actingAs($admin)->get(route('admin.cats.index', ['status' => 'inactive']))
+            ->assertInertia(fn (AssertableInertia $page) => $page
+                ->has('cats.data', 1)
+                ->where('cats.data.0.name', 'Resting')
+                ->where('cats.data.0.state', 'inactive'));
     }
 
-    public function test_archived_list_shows_the_reason_and_restore_and_delete_buttons(): void
+    public function test_inventory_searches_and_filters_by_sex(): void
+    {
+        $this->createCat(['cat_name' => 'Mingming', 'sex' => 'Female', 'color' => 'Orange']);
+        $this->createCat(['cat_name' => 'Tiger', 'sex' => 'Male', 'color' => 'Brown tabby', 'breed' => 'Domestic shorthair']);
+        $admin = $this->admin();
+
+        $this->actingAs($admin)->get(route('admin.cats.index', ['q' => 'TABBY']))
+            ->assertInertia(fn (AssertableInertia $page) => $page->has('cats.data', 1)->where('cats.data.0.name', 'Tiger')->where('filters.q', 'TABBY'));
+        $this->actingAs($admin)->get(route('admin.cats.index', ['q' => 'shorthair']))
+            ->assertInertia(fn (AssertableInertia $page) => $page->has('cats.data', 1)->where('cats.data.0.name', 'Tiger'));
+        $this->actingAs($admin)->get(route('admin.cats.index', ['sex' => 'Female']))
+            ->assertInertia(fn (AssertableInertia $page) => $page->has('cats.data', 1)->where('cats.data.0.name', 'Mingming'));
+        $this->actingAs($admin)->get(route('admin.cats.index', ['sex' => 'Other']))
+            ->assertInertia(fn (AssertableInertia $page) => $page->has('cats.data', 2)->where('filters.sex', ''));
+    }
+
+    public function test_archived_tab_shows_the_reason_and_restore_and_delete_links(): void
     {
         $withReason = $this->archived(['cat_name' => 'Muning'], 'Moved to a partner shelter');
         $this->archived(['cat_name' => 'Tiger']);
 
         $this->actingAs($this->admin())
-            ->get(route('admin.cats.archived'))
+            ->get(route('admin.cats.index', ['status' => 'archived']))
             ->assertOk()
-            ->assertSee('Moved to a partner shelter')
-            ->assertSee('No reason given')
-            ->assertSee(route('admin.cats.restore', $withReason), false)
-            ->assertSee(route('admin.cats.destroy', $withReason), false)
-            ->assertSee("onsubmit=\"return confirm('Delete this cat for good?", false);
+            ->assertInertia(fn (AssertableInertia $page) => $page
+                ->has('cats.data', 2)
+                // Most recently archived first; both were archived just now, so the newest record leads.
+                ->where('cats.data.0.name', 'Tiger')
+                ->where('cats.data.0.archiveReason', null)
+                ->where('cats.data.1.name', 'Muning')
+                ->where('cats.data.1.archiveReason', 'Moved to a partner shelter')
+                ->where('cats.data.1.restoreUrl', route('admin.cats.restore', $withReason))
+                ->where('cats.data.1.deleteUrl', route('admin.cats.destroy', $withReason)));
     }
 
     public function test_restore_brings_the_cat_back_and_clears_the_reason(): void
@@ -135,10 +149,9 @@ class ArchivedCatsTest extends TestCase
         $cat = $this->archived([], 'Temporarily at the vet');
 
         $this->actingAs($this->admin())
-            ->followingRedirects()
             ->patch(route('admin.cats.restore', $cat))
-            ->assertOk()
-            ->assertSee('Mingming was restored to the cat inventory.');
+            ->assertRedirect(route('admin.cats.index', ['status' => 'archived']))
+            ->assertSessionHas('success', 'Mingming was restored to the cat inventory.');
 
         $cat->refresh();
         $this->assertNull($cat->archived_at);
@@ -154,10 +167,9 @@ class ArchivedCatsTest extends TestCase
         $id = $this->createRequest($cat, AdoptionStatus::Rejected);
 
         $this->actingAs($this->admin())
-            ->followingRedirects()
             ->delete(route('admin.cats.destroy', $cat))
-            ->assertOk()
-            ->assertSee('Mingming was deleted.');
+            ->assertRedirect(route('admin.cats.index', ['status' => 'archived']))
+            ->assertSessionHas('success', 'Mingming was deleted.');
 
         $this->assertModelMissing($cat);
         $request = AdoptionRequest::findOrFail($id);

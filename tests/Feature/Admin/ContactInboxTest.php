@@ -179,8 +179,9 @@ class ContactInboxTest extends TestCase
         $this->actingAs($this->admin())
             ->get(route('admin.cats.index'))
             ->assertOk()
-            ->assertSee('href="'.route('admin.messages.index').'"', false)
-            ->assertSee('title="Messages not handled yet">2</span>', false);
+            ->assertInertia(fn (Assert $page) => $page
+                ->where('admin.links.messages', route('admin.messages.index'))
+                ->where('admin.unreadMessages', 2));
     }
 
     public function test_regular_users_cannot_use_the_inbox(): void

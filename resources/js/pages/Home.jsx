@@ -142,7 +142,7 @@ export default function Home({ cats, events }) {
             </section>
 
             {/* Disclaimer and donation */}
-            <section className="mx-auto grid max-w-7xl gap-6 px-4 pb-16 sm:px-8 lg:grid-cols-2 lg:pb-20">
+            <section className="mx-auto grid max-w-7xl grid-cols-1 gap-6 px-4 pb-16 sm:px-8 lg:grid-cols-2 lg:pb-20">
                 <div className="flex flex-col gap-4 rounded-[28px] bg-azure-900 p-8 text-white sm:p-10">
                     <p className="flex items-center gap-2.5 font-bold text-azure-200">
                         <Icon name="shield" /> Please read
@@ -190,7 +190,7 @@ function DonateButton() {
     const openDonate = useDonate();
 
     return (
-        <Button onClick={openDonate} size="lg" className="self-start">
+        <Button onClick={openDonate} size="lg" className="self-start max-sm:h-auto max-sm:min-h-14 max-sm:whitespace-normal max-sm:py-3 max-sm:text-left">
             <Icon name="heart" size={18} /> Donate with GCash, Maya or card
         </Button>
     );
