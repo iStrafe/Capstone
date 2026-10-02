@@ -152,6 +152,9 @@ function checkStep(step, data) {
         if (!data.email.trim()) problems.email = 'Enter your email address.';
         else if (!looksLikeEmail(data.email.trim())) problems.email = 'Enter an email address like name@example.com.';
         if (!data.address.trim()) problems.address = 'Enter your home address.';
+        // Optional, but when given it has to be digits (spaces, dashes, dots and brackets are dropped, as on the server).
+        const phone = data.phone.replace(/[\s\-.()]/g, '');
+        if (phone && !/^\+?[0-9]{7,15}$/.test(phone)) problems.phone = 'Enter a phone number using digits, like 0917 123 4567.';
     }
 
     if (step === 1) {

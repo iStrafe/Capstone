@@ -34,7 +34,7 @@ class GoogleAuthController extends Controller
             $googleUser = Socialite::driver('google')->user();
         } catch (Throwable $e) {
             // Cancelled consent, an expired state or a Google outage all land here.
-            Log::warning('Google sign-in failed', ['error' => $e->getMessage()]);
+            Log::warning('Google sign-in failed', ['error' => $e::class, 'message' => $e->getMessage()]);
 
             return redirect()->route('login')->withErrors(['email' => 'Google sign-in did not complete. Please try again.']);
         }
