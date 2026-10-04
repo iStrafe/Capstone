@@ -37,9 +37,10 @@ class PasswordResetLinkController extends Controller
             $request->only('email')
         );
 
-        // The same answer whether or not an account uses the email, so this form can't be
-        // used to find out who has an account. Only "wait before retrying" is shown as an error.
-        if ($status === Password::RESET_LINK_SENT || $status === Password::INVALID_USER) {
+        // The same answer whether or not an account uses the email, so this form can't be used
+        // to find out who has an account. That includes RESET_THROTTLED (a second request within
+        // a minute), which only happens for real accounts; the route's own throttle still applies.
+        if (in_array($status, [Password::RESET_LINK_SENT, Password::INVALID_USER, Password::RESET_THROTTLED], true)) {
             return back()->with('status', 'If an account uses that email, a link to choose a new password is on its way. Check your inbox.');
         }
 

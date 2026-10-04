@@ -109,7 +109,7 @@ class AdminPageFixesTest extends TestCase
                 'cat_image' => $svg,
             ])
             ->assertRedirect(route('admin.cats.create'))
-            ->assertSessionHasErrors(['cat_image' => __('validation.image', ['attribute' => 'cat image'])]);
+            ->assertSessionHasErrors(['cat_image' => __('validation.image', ['attribute' => 'photo'])]);
 
         $this->assertDatabaseMissing('cats', ['cat_name' => 'Garfield']);
     }

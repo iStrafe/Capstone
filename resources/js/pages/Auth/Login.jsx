@@ -5,7 +5,8 @@ import GoogleButton, { OrDivider } from '../../components/GoogleButton';
 import AuthLayout from '../../layouts/AuthLayout';
 
 export default function Login({ panelCat }) {
-    const { links } = usePage().props;
+    // errors: messages the server sends with a redirect here, such as a failed Google sign-in.
+    const { links, errors } = usePage().props;
     const form = useForm({ email: '', password: '', remember: false });
 
     const submit = (event) => {
@@ -35,7 +36,7 @@ export default function Login({ panelCat }) {
                     required
                     value={form.data.email}
                     onChange={(event) => form.setData('email', event.target.value)}
-                    error={form.errors.email}
+                    error={form.errors.email ?? errors.email}
                 />
                 <Field
                     label="Password"

@@ -111,7 +111,7 @@ export default function Index({ cats, filters, counts, createUrl }) {
 
                     <table className="hidden w-full text-[15px] md:table">
                         <thead>
-                            <tr className="bg-cloud text-left text-[13px] text-muted">
+                            <tr className="bg-cloud text-left text-[13px] whitespace-nowrap text-muted">
                                 <th scope="col" className="px-4 py-3 font-semibold">Cat</th>
                                 {archived ? (
                                     <>
@@ -131,10 +131,10 @@ export default function Index({ cats, filters, counts, createUrl }) {
                         <tbody>
                             {cats.data.map((cat) => (
                                 <tr key={cat.id} className="border-t border-mist">
-                                    <td className="px-4 py-3">
+                                    <td className="max-w-xs px-4 py-3">
                                         <div className="flex items-center gap-3.5">
                                             <CatPhoto cat={cat} className={`size-12 shrink-0 rounded-xl ${archived ? 'grayscale-[0.4]' : ''}`} />
-                                            <div>
+                                            <div className="min-w-0">
                                                 <Link href={cat.editUrl} className="font-bold hover:text-azure-800 hover:underline">{cat.name}</Link>
                                                 <div className="text-[13px] text-muted">{catMeta(cat)}</div>
                                                 {!archived && <CatNotes cat={cat} />}
@@ -144,13 +144,13 @@ export default function Index({ cats, filters, counts, createUrl }) {
                                     {archived ? (
                                         <>
                                             <td className="max-w-sm px-4 py-3 text-body"><Reason cat={cat} /></td>
-                                            <td className="px-4 py-3 text-body">{cat.archivedAt}</td>
+                                            <td className="px-4 py-3 whitespace-nowrap text-body">{cat.archivedAt}</td>
                                         </>
                                     ) : (
                                         <>
-                                            <td className="px-4 py-3"><StatusBadge status={cat.state} /></td>
-                                            <td className="px-4 py-3 text-body">{cat.pendingCount === 0 ? 'None' : cat.pendingCount}</td>
-                                            <td className="px-4 py-3 text-body">{cat.updatedAt}</td>
+                                            <td className="px-4 py-3 whitespace-nowrap"><StatusBadge status={cat.state} /></td>
+                                            <td className="px-4 py-3 whitespace-nowrap text-body">{cat.pendingCount === 0 ? 'None' : cat.pendingCount}</td>
+                                            <td className="px-4 py-3 whitespace-nowrap text-body">{cat.updatedAt}</td>
                                         </>
                                     )}
                                     <td className="px-4 py-3">

@@ -18,7 +18,7 @@ class ContactMessageController extends Controller
 {
     private const FILTERS = ['open', 'handled', 'all'];
 
-    public function index(Request $request): Response
+    public function index(Request $request): Response|RedirectResponse
     {
         $filter = in_array($request->query('filter'), self::FILTERS, true) ? $request->query('filter') : 'open';
 
@@ -29,6 +29,11 @@ class ContactMessageController extends Controller
             ->latest('id')
             ->paginate(15)
             ->withQueryString();
+
+        // A page past the end (?page=99999, or an old link after deletions) goes to the last page.
+        if ($messages->currentPage() > $messages->lastPage() && $messages->total() > 0) {
+            return redirect()->to($messages->url($messages->lastPage()));
+        }
 
         // The opened message stays open after it's marked handled, even though it leaves the list.
         $selected = $request->filled('message')

@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Enums\AdoptionStatus;
+use App\Http\Controllers\GoogleAuthController;
 use App\Models\AdoptionRequest;
 use App\Models\Contact;
 use App\Support\UploadLimit;
@@ -78,7 +79,8 @@ class HandleInertiaRequests extends Middleware
                 'donate' => route('paymongo.create'),
                 'login' => route('login'),
                 'register' => route('register'),
-                'google' => route('google-auth'),
+                // Null hides the Google buttons when Google sign-in isn't set up.
+                'google' => GoogleAuthController::enabled() ? route('google-auth') : null,
                 'passwordRequest' => route('password.request'),
                 'passwordEmail' => route('password.email'),
                 'passwordStore' => route('password.store'),

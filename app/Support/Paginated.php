@@ -2,6 +2,7 @@
 
 namespace App\Support;
 
+use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Pagination\LengthAwarePaginator;
 
@@ -31,6 +32,12 @@ class Paginated
     public static function make(LengthAwarePaginator $paginator, string $resource): array
     {
         $paginator->withQueryString();
+
+        // A page past the end (an old link after deletions, or ?page=99999) would show an empty
+        // state that says there's nothing here, so go to the last page instead.
+        if ($paginator->currentPage() > $paginator->lastPage() && $paginator->total() > 0) {
+            throw new HttpResponseException(redirect()->to($paginator->url($paginator->lastPage())));
+        }
 
         $pages = $paginator->linkCollection()->slice(1, -1)->map(fn (array $link) => [
             'url' => $link['url'],

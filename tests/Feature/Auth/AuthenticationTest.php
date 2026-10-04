@@ -70,7 +70,8 @@ class AuthenticationTest extends TestCase
                 ->component('Auth/Login')
                 ->where('flash.status', 'Your password has been reset.')
                 ->where('links.passwordRequest', route('password.request'))
-                ->where('links.google', route('google-auth')));
+                // No Google keys in tests, so the Google button is hidden.
+                ->where('links.google', null));
     }
 
     public function test_login_returns_the_user_to_the_page_they_wanted(): void

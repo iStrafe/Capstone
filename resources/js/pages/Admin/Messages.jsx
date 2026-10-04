@@ -44,7 +44,8 @@ export default function Messages({ messages, selected, filter, counts }) {
                                 const current = selected?.id === message.id;
 
                                 return (
-                                    <li key={message.id}>
+                                    // relative: keeps the screen-reader-only label inside the item, so it can't widen the page.
+                                    <li key={message.id} className="relative">
                                         <Link
                                             href={message.url}
                                             preserveScroll

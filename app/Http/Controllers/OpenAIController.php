@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Support\UploadLimit;
 use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Http\Client\RequestException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -68,7 +69,7 @@ class OpenAIController extends Controller
             // PHP drops a failed upload before Laravel sees it; say why.
             'image.uploaded' => UploadLimit::failure($request->file('image'), 'photo'),
             'image.max' => 'The photo can be up to 10 MB.',
-        ]);
+        ], ['image' => 'photo']);
 
         $apiKey = config('services.openai.key');
 
@@ -128,8 +129,9 @@ class OpenAIController extends Controller
                 ->acceptJson()
                 ->timeout(30)
                 ->post('https://api.openai.com/v1/chat/completions', $payload);
-        } catch (ConnectionException $e) {
-            Log::warning('Image analysis failed: could not connect to OpenAI', ['message' => $e->getMessage()]);
+        } catch (ConnectionException|RequestException $e) {
+            // RequestException: a proxy or gateway answered with an error before OpenAI did.
+            Log::warning('Image analysis failed: could not reach OpenAI', ['message' => $e->getMessage()]);
         } finally {
             Storage::disk('public')->delete($imagePath);
         }

@@ -63,12 +63,12 @@ class ContactTest extends TestCase
                 'message' => 'Is Mingming still available?',
             ])
             ->assertRedirect(route('contactus'))
-            ->assertSessionHasErrors(['mobile_number' => 'The mobile number field must not be greater than 15 characters.']);
+            ->assertSessionHasErrors(['mobile_number' => 'Enter a phone number using digits, like 0917 123 4567.']);
 
         $this->get(route('contactus'))
             ->assertInertia(fn (Assert $page) => $page
                 ->component('Contact')
-                ->where('errors.mobile_number', 'The mobile number field must not be greater than 15 characters.'));
+                ->where('errors.mobile_number', 'Enter a phone number using digits, like 0917 123 4567.'));
 
         $this->assertSame(0, Contact::count());
     }
