@@ -1,12 +1,16 @@
+import { useState } from 'react';
 import Icon from './Icon';
 
 // A news or event post: optional photo, date, upcoming/past badge, title and text.
 export default function EventCard({ event, showImage = true, headingLevel: Heading = 'h3' }) {
+    // A missing file shows the same empty frame as a post without a photo.
+    const [failed, setFailed] = useState(null);
+
     return (
         <article className="flex flex-col overflow-hidden rounded-[20px] border border-mist bg-white">
             {showImage &&
-                (event.image ? (
-                    <img src={event.image} alt="" loading="lazy" className="h-48 w-full object-cover" />
+                (event.image && failed !== event.image ? (
+                    <img src={event.image} alt="" loading="lazy" onError={() => setFailed(event.image)} className="h-48 w-full object-cover" />
                 ) : (
                     <div className="flex h-48 items-center justify-center bg-neutral-bg text-muted" aria-hidden="true">
                         <Icon name="image" size={32} />

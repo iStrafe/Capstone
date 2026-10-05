@@ -163,11 +163,11 @@ class AdminHardeningTest extends TestCase
         ])->assertSessionHasNoErrors();
         $second = $cat->fresh()->cat_image;
 
-        Storage::disk('public')->assertMissing('images/'.$first);
-        Storage::disk('public')->assertExists('images/'.$second);
+        Storage::disk('public')->assertMissing($first);
+        Storage::disk('public')->assertExists($second);
 
         $this->delete(route('admin.cats.destroy', $cat));
-        Storage::disk('public')->assertMissing('images/'.$second);
+        Storage::disk('public')->assertMissing($second);
     }
 
     public function test_images_that_came_with_the_site_are_never_deleted(): void
@@ -188,8 +188,9 @@ class AdminHardeningTest extends TestCase
         $post = NewsEvent::sole();
         $first = $post->eventimage;
 
+        Storage::disk('public')->assertExists($first);
         $this->post(route('news-events.update', $post), ['_method' => 'put', 'title' => 'Adoption day', 'description' => 'Meet the cats', 'event_date' => '2026-10-10', 'remove_image' => 1]);
-        Storage::disk('public')->assertMissing('images/'.$first);
+        Storage::disk('public')->assertMissing($first);
     }
 
     public function test_event_dates_must_be_real_calendar_dates(): void

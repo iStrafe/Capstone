@@ -122,8 +122,8 @@ class CatInventoryTest extends TestCase
             ->assertRedirect(route('admin.cats.index'));
 
         $clip = $cat->fresh()->cat_clip;
-        $this->assertNotNull($clip);
-        Storage::disk('public')->assertExists('images/'.$clip);
+        $this->assertMatchesRegularExpression('#^cats/'.$cat->id.'/videos/[A-Za-z0-9]{40}\.mp4$#', $clip);
+        Storage::disk('public')->assertExists($clip);
     }
 
     public function test_uploaded_images_get_random_names(): void
@@ -143,7 +143,11 @@ class CatInventoryTest extends TestCase
 
         $images = Cat::pluck('cat_image');
         $this->assertCount(2, $images->unique());
-        $images->each(fn ($image) => Storage::disk('public')->assertExists('images/'.$image));
+        Cat::all()->each(function (Cat $cat) {
+            $this->assertMatchesRegularExpression('#^cats/'.$cat->id.'/images/[A-Za-z0-9]{40}\.jpg$#', $cat->cat_image);
+            $this->assertStringNotContainsString('photo', $cat->cat_image);
+            Storage::disk('public')->assertExists($cat->cat_image);
+        });
     }
 
     public function test_webp_photos_are_accepted(): void

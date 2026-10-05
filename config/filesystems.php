@@ -33,14 +33,26 @@ return [
     | Upload Disks
     |--------------------------------------------------------------------------
     |
-    | Cat photos, cat clips and news images go on the media disk, which must be
-    | publicly readable. Applicant ID photos go on the private disk and are only
-    | sent to admins through an authorized route. Set either to "s3" to move the
-    | files to a bucket; the database only stores file names.
+    | Cat photos, cat clips and news images go on the media disk: the "public"
+    | disk (storage/app/public, served at /storage) in development, "s3" in
+    | production. The database stores only object keys such as
+    | cats/12/images/<random>.jpg, so switching disks is a config change.
+    |
+    | On S3 the bucket stays private and the site hands out presigned URLs that
+    | last MEDIA_URL_MINUTES (they change once an hour, so browsers can cache
+    | them). Set MEDIA_SIGNED_URLS=false only when the files are published some
+    | other way, such as CloudFront at AWS_URL.
+    |
+    | Applicant ID photos go on the private disk and are only sent to admins
+    | through an authorized route.
     |
     */
 
     'media_disk' => env('MEDIA_DISK', 'public'),
+
+    'media_signed_urls' => (bool) env('MEDIA_SIGNED_URLS', true),
+
+    'media_url_minutes' => (int) env('MEDIA_URL_MINUTES', 180),
 
     'private_uploads_disk' => env('PRIVATE_UPLOADS_DISK', 'local'),
 
@@ -70,6 +82,8 @@ return [
             'endpoint' => env('AWS_ENDPOINT'),
             'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
             'throw' => false,
+            // Log S3 errors (credentials, network, permissions) instead of failing silently.
+            'report' => true,
         ],
 
     ],

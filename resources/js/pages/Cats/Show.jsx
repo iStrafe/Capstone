@@ -1,4 +1,5 @@
 import { Link, usePage } from '@inertiajs/react';
+import { useState } from 'react';
 import { ButtonLink } from '../../components/Button';
 import CatCard from '../../components/CatCard';
 import CatPhoto from '../../components/CatPhoto';
@@ -38,6 +39,8 @@ export default function Show({ cat, medicalRecord, status, adoption, otherCats }
 }
 
 function Profile({ cat, medicalRecord, adoption, links }) {
+    // A clip whose file is gone is hidden rather than shown as a broken player.
+    const [clipFailed, setClipFailed] = useState(null);
     const facts = [
         ['Age', cat.ageLabel],
         ['Sex', cat.sex],
@@ -49,9 +52,9 @@ function Profile({ cat, medicalRecord, adoption, links }) {
         <section className="grid gap-10 pb-14 pt-6 lg:grid-cols-[1.1fr_1fr] lg:gap-14">
             <div className="flex flex-col gap-4">
                 <CatPhoto cat={cat} className="aspect-[5/4] w-full rounded-[28px]" />
-                {cat.clip && (
+                {cat.clip && clipFailed !== cat.clip && (
                     <figure className="overflow-hidden rounded-[20px] bg-azure-950">
-                        <video src={cat.clip} controls preload="metadata" className="aspect-video w-full" aria-label={`Video of ${cat.name}`} />
+                        <video src={cat.clip} controls preload="metadata" onError={() => setClipFailed(cat.clip)} className="aspect-video w-full" aria-label={`Video of ${cat.name}`} />
                     </figure>
                 )}
             </div>

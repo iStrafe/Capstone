@@ -57,7 +57,8 @@ class NewsEventUploadTest extends TestCase
         $image = NewsEvent::sole()->eventimage;
         $this->assertStringEndsNotWith('.html', $image);
         $this->assertStringEndsWith('.gif', $image);
-        Storage::disk('public')->assertExists('images/'.$image);
+        $this->assertStringStartsWith('news/'.NewsEvent::sole()->id.'/images/', $image);
+        Storage::disk('public')->assertExists($image);
     }
 
     public function test_updating_an_event_rejects_files_that_are_not_images(): void
