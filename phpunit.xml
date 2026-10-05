@@ -25,6 +25,9 @@
         <!-- Never the dev database from .env: RefreshDatabase drops every table. CI's env values still take precedence. -->
         <env name="DB_DATABASE" value="aducats_test"/>
         <env name="MAIL_MAILER" value="array"/>
+        <!-- Tests fake the local disks; never upload to a bucket set in .env. -->
+        <env name="MEDIA_DISK" value="public"/>
+        <env name="PRIVATE_UPLOADS_DISK" value="local"/>
         <env name="PULSE_ENABLED" value="false"/>
         <env name="QUEUE_CONNECTION" value="sync"/>
         <env name="SESSION_DRIVER" value="array"/>

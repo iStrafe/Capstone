@@ -100,6 +100,10 @@ class MoveUploads extends Command
 
         $this->linkPublicStorage();
 
+        if ($counts['media'] > 0) {
+            $this->line('Next, give the photos and clips their object keys: php artisan app:migrate-media');
+        }
+
         return $counts['skipped'] > 0 ? self::FAILURE : self::SUCCESS;
     }
 
@@ -148,7 +152,8 @@ class MoveUploads extends Command
         $stream = fopen($file->getPathname(), 'rb');
 
         try {
-            $written = $disk->writeStream($target, $stream, $public ? ['visibility' => 'public'] : []);
+            // Media goes through PublicMedia so a bucket gets no public ACL (new buckets refuse ACLs).
+            $written = $public ? PublicMedia::writeStream($target, $stream) : $disk->writeStream($target, $stream);
         } finally {
             if (is_resource($stream)) {
                 fclose($stream);

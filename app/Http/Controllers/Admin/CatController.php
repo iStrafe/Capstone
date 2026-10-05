@@ -13,6 +13,7 @@ use App\Support\QueryText;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Arr;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -78,17 +79,8 @@ class CatController extends Controller
     public function store(CatRequest $request): RedirectResponse
     {
         // New cats always start Active.
-        $input = Arr::except($request->validated(), ['cat_image', 'cat_clip', 'status']);
-
-        if ($request->hasFile('cat_image')) {
-            $input['cat_image'] = $this->moveToPublicImages($request->file('cat_image'));
-        }
-
-        if ($request->hasFile('cat_clip')) {
-            $input['cat_clip'] = $this->moveToPublicImages($request->file('cat_clip'));
-        }
-
-        $cat = Cat::create($input);
+        $cat = new Cat(Arr::except($request->validated(), ['cat_image', 'cat_clip', 'status']));
+        $this->saveWithMedia($cat, $this->uploads($request));
 
         return redirect()->route('admin.cats.index')->with('success', $cat->cat_name.' was added. The profile is live on the adoption list.');
     }
@@ -121,18 +113,7 @@ class CatController extends Controller
         }
 
         $cat->fill(Arr::except($request->validated(), $except));
-        $old = [$cat->cat_image, $cat->cat_clip];
-
-        if ($request->hasFile('cat_image')) {
-            $cat->cat_image = $this->moveToPublicImages($request->file('cat_image'));
-        }
-
-        if ($request->hasFile('cat_clip')) {
-            $cat->cat_clip = $this->moveToPublicImages($request->file('cat_clip'));
-        }
-
-        $cat->save();
-        $this->deleteUnusedPublicImages(...array_diff($old, [$cat->cat_image, $cat->cat_clip]));
+        $this->saveWithMedia($cat, $this->uploads($request));
 
         return redirect()->route('admin.cats.index', $cat->archived_at ? ['status' => 'archived'] : [])
             ->with('success', 'Saved the changes to '.$cat->cat_name.'.');
@@ -189,6 +170,19 @@ class CatController extends Controller
         $cat->save();
 
         return redirect()->route('admin.cats.index', ['status' => 'archived'])->with('success', $cat->cat_name.' was restored to the cat inventory.');
+    }
+
+    /**
+     * The photo and clip from the editor; stored under cats/{id}/images/ and cats/{id}/videos/.
+     *
+     * @return array<string, array{0: ?UploadedFile, 1: string, 2: string}>
+     */
+    private function uploads(CatRequest $request): array
+    {
+        return [
+            'cat_image' => [$request->file('cat_image'), 'images', 'photo'],
+            'cat_clip' => [$request->file('cat_clip'), 'videos', 'clip'],
+        ];
     }
 
     /**
