@@ -231,6 +231,23 @@ class CatMediaStorageTest extends TestCase
         $this->get(route('cats.show', $cat))->assertOk();
     }
 
+    public function test_signed_urls_never_ask_s3_for_more_than_seven_days(): void
+    {
+        // Presigning happens locally; no request reaches this endpoint.
+        config([
+            'filesystems.disks.s3' => array_merge(config('filesystems.disks.s3'), [
+                'key' => 'test', 'secret' => 'test', 'region' => 'ap-southeast-1', 'bucket' => 'aducats',
+                'endpoint' => 'http://127.0.0.1:1', 'use_path_style_endpoint' => true,
+            ]),
+            'filesystems.media_disk' => 's3',
+            'filesystems.media_url_minutes' => 99999,
+        ]);
+
+        $url = PublicMedia::url('cats/1/images/'.str_repeat('d', 40).'.jpg');
+
+        $this->assertStringContainsString('X-Amz-Expires=604800', $url);
+    }
+
     public function test_when_the_database_refuses_the_row_the_stored_files_are_removed(): void
     {
         Cat::updating(fn () => throw new RuntimeException('database refused the row'));

@@ -30,6 +30,7 @@ trait StoresPublicImages
     {
         $previous = array_map(fn (string $column) => $record->getOriginal($column), array_combine(array_keys($uploads), array_keys($uploads)));
         $stored = [];
+        $wasNew = ! $record->exists;
 
         try {
             DB::transaction(function () use ($record, $uploads, &$stored) {
@@ -58,6 +59,12 @@ trait StoresPublicImages
         } catch (Throwable $e) {
             foreach ($stored as $key) {
                 PublicMedia::delete($key);
+            }
+
+            // The insert was rolled back; don't leave the model looking saved.
+            if ($wasNew) {
+                $record->exists = false;
+                $record->setAttribute($record->getKeyName(), null);
             }
 
             throw $e;

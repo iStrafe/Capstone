@@ -12,6 +12,7 @@ use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Throwable;
 
 /**
  * Gives every cat photo, cat clip and news image an object key (cats/{id}/images/..., etc.) on
@@ -54,63 +55,34 @@ class MigrateMedia extends Command
     {
         $fromName = $this->option('from') ?: PublicMedia::diskName();
         $from = Storage::disk($fromName);
-        $to = PublicMedia::disk();
         $dryRun = (bool) $this->option('dry-run');
 
         $counts = ['copied' => 0, 'done' => 0, 'missing' => 0, 'failed' => 0];
         $entries = [];
 
-        foreach (self::COLUMNS as [$model, $column, $kind]) {
-            /** @var Model $record */
-            foreach ($model::query()->whereNotNull($column)->where($column, '!=', '')->lazyById() as $record) {
-                $old = $record->getRawOriginal($column);
-                $source = PublicMedia::path($old);
+        try {
+            foreach (self::COLUMNS as [$model, $column, $kind]) {
+                /** @var Model $record */
+                foreach ($model::query()->whereNotNull($column)->where($column, '!=', '')->lazyById() as $record) {
+                    try {
+                        [$result, $entry] = $this->migrateRecord($record, $column, $kind, $from, $fromName, $dryRun);
+                        $counts[$result]++;
 
-                // Already keyed and on the media disk: nothing to do.
-                if (PublicMedia::isKey($old) && $to->exists($old)) {
-                    $counts['done']++;
-
-                    continue;
+                        if ($entry !== null) {
+                            $entries[] = $entry;
+                        }
+                    } catch (Throwable $e) {
+                        // One unreachable or broken file must not stop the run or lose the manifest.
+                        report($e);
+                        $counts['failed']++;
+                        $this->error(sprintf('%s #%d %s: %s', class_basename($model), $record->getKey(), $column, $e->getMessage()));
+                    }
                 }
-
-                if (! $from->exists($source)) {
-                    $counts['missing']++;
-                    $this->warn(sprintf('Missing: %s #%d %s = %s (no %s on the %s disk). Left as it is.', class_basename($model), $record->getKey(), $column, $old, $source, $fromName));
-
-                    continue;
-                }
-
-                $key = PublicMedia::isKey($old) ? $old : PublicMedia::key($record, $kind, Str::random(40).'.'.$this->extension($old));
-                $this->line(sprintf('%s #%d %s: %s:%s -> %s:%s', class_basename($model), $record->getKey(), $column, $fromName, $source, PublicMedia::diskName(), $key), null, $dryRun ? 'normal' : 'v');
-
-                if ($dryRun) {
-                    $counts['copied']++;
-
-                    continue;
-                }
-
-                if (! $this->copy($from, $source, $key)) {
-                    $counts['failed']++;
-
-                    continue;
-                }
-
-                // Only if an admin hasn't changed the record meanwhile; then the copy isn't needed.
-                $updated = $record->newQuery()->toBase()->where('id', $record->getKey())->where($column, $old)->update([$column => $key]);
-
-                if ($updated === 0 && $key !== $old) {
-                    $to->delete($key);
-                    $counts['failed']++;
-                    $this->warn(sprintf('%s #%d changed while copying; run the command again.', class_basename($model), $record->getKey()));
-
-                    continue;
-                }
-
-                $counts['copied']++;
-                $entries[] = [
-                    'table' => $record->getTable(), 'id' => $record->getKey(), 'column' => $column,
-                    'old' => $old, 'new' => $key, 'from_disk' => $fromName, 'from_path' => $source,
-                ];
+            }
+        } finally {
+            // Written even when the run stops early, so every record changed so far can be reverted or pruned.
+            if (! $dryRun && $entries !== []) {
+                $manifestPath = $this->writeManifest($entries);
             }
         }
 
@@ -127,20 +99,77 @@ class MigrateMedia extends Command
             return self::SUCCESS;
         }
 
-        if ($entries !== []) {
-            $path = self::MANIFESTS.'/'.now()->format('Ymd_His').'.json';
-            $this->privateDisk()->put($path, json_encode([
-                'media_disk' => PublicMedia::diskName(),
-                'created_at' => now()->toIso8601String(),
-                'entries' => $entries,
-            ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
-
+        if (isset($manifestPath)) {
+            $path = $manifestPath;
             $this->info("Old files were kept. Manifest: {$path}");
             $this->line("Check the site, then delete the old files with: php artisan app:migrate-media --prune={$path}");
             $this->line("To undo: php artisan app:migrate-media --revert={$path}");
         }
 
         return $counts['failed'] > 0 ? self::FAILURE : self::SUCCESS;
+    }
+
+    /**
+     * Copy one record's file to its key and point the record at it.
+     *
+     * @return array{0: 'copied'|'done'|'missing'|'failed', 1: ?array<string, mixed>} the result and the manifest entry
+     */
+    private function migrateRecord(Model $record, string $column, string $kind, Filesystem $from, string $fromName, bool $dryRun): array
+    {
+        $to = PublicMedia::disk();
+        $old = $record->getRawOriginal($column);
+        $source = PublicMedia::path($old);
+        $name = class_basename($record).' #'.$record->getKey().' '.$column;
+
+        // Already keyed and on the media disk: nothing to do.
+        if (PublicMedia::isKey($old) && $to->exists($old)) {
+            return ['done', null];
+        }
+
+        if (! $from->exists($source)) {
+            $this->warn("Missing: {$name} = {$old} (no {$source} on the {$fromName} disk). Left as it is.");
+
+            return ['missing', null];
+        }
+
+        $key = PublicMedia::isKey($old) ? $old : PublicMedia::key($record, $kind, Str::random(40).'.'.$this->extension($old));
+        $this->line("{$name}: {$fromName}:{$source} -> ".PublicMedia::diskName().":{$key}", null, $dryRun ? 'normal' : 'v');
+
+        if ($dryRun) {
+            return ['copied', null];
+        }
+
+        if (! $this->copy($from, $source, $key)) {
+            return ['failed', null];
+        }
+
+        // Only if an admin hasn't changed the record meanwhile; then the copy isn't needed.
+        $updated = $record->newQuery()->toBase()->where('id', $record->getKey())->where($column, $old)->update([$column => $key]);
+
+        if ($updated === 0 && $key !== $old) {
+            $to->delete($key);
+            $this->warn("{$name} changed while copying; run the command again.");
+
+            return ['failed', null];
+        }
+
+        return ['copied', [
+            'table' => $record->getTable(), 'id' => $record->getKey(), 'column' => $column,
+            'old' => $old, 'new' => $key, 'from_disk' => $fromName, 'from_path' => $source,
+        ]];
+    }
+
+    /** @param  array<int, array<string, mixed>>  $entries */
+    private function writeManifest(array $entries): string
+    {
+        $path = self::MANIFESTS.'/'.now()->format('Ymd_His').'_'.Str::lower(Str::random(4)).'.json';
+        $this->privateDisk()->put($path, json_encode([
+            'media_disk' => PublicMedia::diskName(),
+            'created_at' => now()->toIso8601String(),
+            'entries' => $entries,
+        ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+
+        return $path;
     }
 
     private function copy(Filesystem $from, string $source, string $key): bool
@@ -180,15 +209,45 @@ class MigrateMedia extends Command
     private function revert(array $manifest): int
     {
         $reverted = 0;
+        $skipped = 0;
+        $media = PublicMedia::disk();
 
         foreach ($manifest['entries'] as $entry) {
+            $oldPath = PublicMedia::path($entry['old']);
+
+            // The site reads the old name from the current media disk. After a --from run the old
+            // file is on another disk, so copy it back first; after a prune it may be gone.
+            if (! $media->exists($oldPath)) {
+                $from = Storage::disk($entry['from_disk']);
+
+                if (! $from->exists($entry['from_path']) || ! $this->copyBack($from, $entry['from_path'], $oldPath)) {
+                    $skipped++;
+                    $this->warn("Kept {$entry['table']} #{$entry['id']} on {$entry['new']}: the old file {$entry['from_disk']}:{$entry['from_path']} is gone (pruned?).");
+
+                    continue;
+                }
+            }
+
             $reverted += $this->query($entry['table'])->where('id', $entry['id'])->where($entry['column'], $entry['new'])
                 ->update([$entry['column'] => $entry['old']]);
         }
 
         $this->info("Pointed {$reverted} of ".count($manifest['entries']).' records back at their old files. The copies were kept.');
 
-        return self::SUCCESS;
+        return $skipped > 0 ? self::FAILURE : self::SUCCESS;
+    }
+
+    private function copyBack(Filesystem $from, string $source, string $target): bool
+    {
+        $stream = $from->readStream($source);
+
+        try {
+            return $stream && PublicMedia::writeStream($target, $stream) && PublicMedia::disk()->size($target) === $from->size($source);
+        } finally {
+            if (is_resource($stream)) {
+                fclose($stream);
+            }
+        }
     }
 
     private function prune(array $manifest): int

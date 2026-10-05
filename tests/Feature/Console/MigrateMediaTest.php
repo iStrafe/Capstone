@@ -5,8 +5,10 @@ namespace Tests\Feature\Console;
 use App\Models\Cat;
 use App\Models\NewsEvent;
 use App\Support\PublicMedia;
+use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Storage;
+use League\Flysystem\UnableToRetrieveMetadata;
 use Tests\TestCase;
 
 class MigrateMediaTest extends TestCase
@@ -107,6 +109,51 @@ class MigrateMediaTest extends TestCase
 
         $this->assertSame('1730882812.png', $cat->fresh()->cat_image);
         Storage::disk('bucket')->assertExists($key);
+        // The old file was on the local disk; it is copied back so the site can show it from the bucket.
+        $this->assertTrue(PublicMedia::exists('1730882812.png'));
+        $this->assertSame('photo', Storage::disk('bucket')->get('images/1730882812.png'));
+    }
+
+    public function test_revert_after_prune_keeps_records_on_their_copies(): void
+    {
+        Storage::disk('public')->put('images/1730882812.png', 'photo');
+        $cat = Cat::create(['cat_name' => 'Mingming', 'sex' => 'Female', 'cat_image' => '1730882812.png']);
+        $this->artisan('app:migrate-media', ['--from' => 'public'])->assertSuccessful();
+        $key = $cat->fresh()->cat_image;
+        $this->artisan('app:migrate-media', ['--prune' => $this->manifest()])->assertSuccessful();
+
+        $this->artisan('app:migrate-media', ['--revert' => $this->manifest()])
+            ->expectsOutputToContain('is gone')
+            ->assertFailed();
+
+        $this->assertSame($key, $cat->fresh()->cat_image);
+        $this->assertTrue(PublicMedia::exists($cat->fresh()->cat_image));
+    }
+
+    public function test_a_storage_error_on_one_file_neither_stops_the_run_nor_loses_the_manifest(): void
+    {
+        $fake = Storage::disk('public');
+        Storage::set('public', new class($fake->getDriver(), $fake->getAdapter(), $fake->getConfig()) extends FilesystemAdapter
+        {
+            public function size($path)
+            {
+                return str_contains($path, 'broken') ? throw UnableToRetrieveMetadata::fileSize($path) : parent::size($path);
+            }
+        });
+        Storage::disk('public')->put('images/a.png', 'a');
+        Storage::disk('public')->put('images/broken.png', 'b');
+        Storage::disk('public')->put('images/c.png', 'c');
+        foreach (['a', 'broken', 'c'] as $name) {
+            Cat::create(['cat_name' => $name, 'sex' => 'Male', 'cat_image' => $name.'.png']);
+        }
+
+        $this->artisan('app:migrate-media', ['--from' => 'public'])->assertFailed();
+
+        $this->assertSame('broken.png', Cat::where('cat_name', 'broken')->sole()->cat_image);
+        $migrated = Cat::whereIn('cat_name', ['a', 'c'])->pluck('cat_image');
+        $migrated->each(fn (string $key) => $this->assertTrue(PublicMedia::isKey($key)));
+        $manifest = json_decode(Storage::disk('local')->get($this->manifest()), true);
+        $this->assertEqualsCanonicalizing($migrated->all(), array_column($manifest['entries'], 'new'));
     }
 
     public function test_prune_deletes_old_files_only_once_nothing_uses_them(): void

@@ -103,7 +103,8 @@ class PublicMedia
             return self::disk()->url(self::path($value));
         }
 
-        $minutes = max(61, (int) config('filesystems.media_url_minutes', 180));
+        // S3 refuses presigned URLs that last longer than 7 days.
+        $minutes = min(10080, max(61, (int) config('filesystems.media_url_minutes', 180)));
         $signedAt = now()->startOfHour();
 
         // Signing from the start of the hour keeps the URL identical all hour, and every URL
@@ -166,9 +167,9 @@ class PublicMedia
     }
 
     /**
-     * A local public disk needs world-readable files. A bucket gets no ACL at all: new buckets
-     * refuse ACLs (Object Ownership "bucket owner enforced"), and access is decided by the
-     * bucket, not by each file.
+     * A local public disk needs world-readable files. A bucket gets Flysystem's default private
+     * ACL, never public-read: new buckets refuse public ACLs (Object Ownership "bucket owner
+     * enforced"), and access is decided by the bucket, not by each file.
      */
     private static function writeOptions(): array
     {
