@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use App\Models\NewsEvent;
+use App\Support\PublicMedia;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -26,7 +27,7 @@ class NewsEventResource extends JsonResource
             'date' => $this->event_date?->format('M j, Y'),
             // For <time datetime> and sorting.
             'isoDate' => $this->event_date?->format('Y-m-d'),
-            'image' => $this->eventimage ? asset('images/'.$this->eventimage) : null,
+            'image' => PublicMedia::url($this->eventimage),
             // Today counts as upcoming.
             'isUpcoming' => $this->event_date !== null && $this->event_date->gte(today()),
         ];

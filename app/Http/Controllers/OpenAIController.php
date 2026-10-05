@@ -8,7 +8,6 @@ use Illuminate\Http\Client\RequestException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -79,12 +78,9 @@ class OpenAIController extends Controller
             return redirect()->route('analyze.form')->with('analysis_error', self::FAILURE_MESSAGE);
         }
 
-        // Store the uploaded image
+        // Read the photo straight from PHP's temporary upload; it is never saved where it could be served
         $image = $request->file('image');
-        $imagePath = $image->store('uploads', 'public');
-
-        // Encode the image to base64
-        $base64Image = base64_encode(Storage::disk('public')->get($imagePath));
+        $base64Image = base64_encode($image->get());
         $mimeType = $image->getMimeType();
 
         // Prepare the payload for OpenAI API
@@ -121,7 +117,7 @@ class OpenAIController extends Controller
             'max_tokens' => 2000,
         ];
 
-        // Send the request to OpenAI API; the upload is removed whatever happens
+        // Send the request to OpenAI API
         $response = null;
 
         try {
@@ -132,8 +128,6 @@ class OpenAIController extends Controller
         } catch (ConnectionException|RequestException $e) {
             // RequestException: a proxy or gateway answered with an error before OpenAI did.
             Log::warning('Image analysis failed: could not reach OpenAI', ['message' => $e->getMessage()]);
-        } finally {
-            Storage::disk('public')->delete($imagePath);
         }
 
         $analysis = data_get($response?->json(), 'choices.0.message.content');

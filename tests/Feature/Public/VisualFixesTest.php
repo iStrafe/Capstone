@@ -27,7 +27,7 @@ class VisualFixesTest extends TestCase
         $this->actingAs($admin)->get(route('news-events.edit', $event->id))
             ->assertInertia(fn (Assert $page) => $page
                 ->where('editing.title', 'Adoption Day at the Park')
-                ->where('editing.image', asset('images/event.jpg'))
+                ->where('editing.image', asset('storage/images/event.jpg'))
                 ->has('posts.data', 1));
     }
 
@@ -52,8 +52,9 @@ class VisualFixesTest extends TestCase
 
     public function test_cats_without_a_photo_show_the_generic_placeholder_in_the_gallery(): void
     {
+        // 8c2edf…: the old cat photo 1730882812.png, which used to be in public/images.
         $this->assertNotSame(
-            md5_file(public_path('images/1730882812.png')),
+            '8c2edf85cc8958474af4cb778977818a',
             md5_file(public_path('images/placeholder.png')),
             'placeholder.png must not be a copy of a real cat photo'
         );

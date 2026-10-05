@@ -25,7 +25,7 @@ class AuthPanelCat
 
         return [
             'name' => $cat->cat_name,
-            'image' => self::photoExists($cat) ? asset('images/'.$cat->cat_image) : null,
+            'image' => self::photoExists($cat) ? PublicMedia::url($cat->cat_image) : null,
             'placeholder' => asset('images/placeholder.png'),
             'adopting' => $wanted !== null,
         ];
@@ -55,6 +55,6 @@ class AuthPanelCat
 
     private static function photoExists(Cat $cat): bool
     {
-        return $cat->cat_image !== null && is_file(public_path('images/'.$cat->cat_image));
+        return PublicMedia::exists($cat->cat_image);
     }
 }

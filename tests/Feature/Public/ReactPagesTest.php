@@ -41,7 +41,7 @@ class ReactPagesTest extends TestCase
                 ->has('cats', 1)
                 ->where('cats.0.name', 'Awake')
                 ->where('cats.0.ageLabel', 'Under 1 year')
-                ->where('cats.0.image', asset('images/awake.png'))
+                ->where('cats.0.image', asset('storage/images/awake.png'))
                 ->where('cats.0.url', route('cats.show', Cat::firstWhere('cat_name', 'Awake'))));
     }
 

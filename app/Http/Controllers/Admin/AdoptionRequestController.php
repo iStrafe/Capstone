@@ -168,15 +168,10 @@ class AdoptionRequestController extends Controller
     {
         $filename = basename($filename);
 
-        if (Storage::disk('local')->exists('valid-ids/'.$filename)) {
-            return Storage::disk('local')->response('valid-ids/'.$filename);
-        }
+        $disk = Storage::disk(config('filesystems.private_uploads_disk'));
+        abort_unless($disk->exists('valid-ids/'.$filename), 404);
 
-        // IDs uploaded before they moved to private storage still live in public/images.
-        $legacy = public_path('images/'.$filename);
-        abort_unless(is_file($legacy), 404);
-
-        return response()->file($legacy);
+        return $disk->response('valid-ids/'.$filename);
     }
 
     // The adoption contract for one request, as a PDF download

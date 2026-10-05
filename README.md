@@ -22,10 +22,24 @@ Set `DB_USERNAME` and `DB_PASSWORD` in `.env`, create the `aducats` database, th
 
 ```bash
 php artisan migrate --seed
+php artisan storage:link
 php artisan serve
 ```
 
 The seeder creates one admin account from `ADMIN_EMAIL` and `ADMIN_PASSWORD`. If the password is empty, a random one is printed once. Use it for local setup only.
+
+## Uploaded files
+
+Uploads are never saved in `public/` or committed to git.
+
+- Cat photos, cat clips and news images go on the media disk: `storage/app/public/images`, served at `/storage/images/...` through the link `php artisan storage:link` creates.
+- Applicant ID photos go on the private disk: `storage/app/valid-ids`. They are not reachable by URL; admins see them through `/valid-ids/{file}`, which checks the admin role.
+
+To use an S3 bucket instead, install `league/flysystem-aws-s3-v3`, fill in the `AWS_*` settings and set `MEDIA_DISK=s3` (and `PRIVATE_UPLOADS_DISK` to a second, private disk). The database only stores file names, so nothing else changes.
+
+Back up `storage/app` along with the database; git no longer has a copy of the uploads.
+
+`php artisan app:move-uploads` moves files that older versions saved in `public/images` and `public/videos`: photos and clips the cats and news records use go to the media disk, applicant IDs and files no record uses go to private storage (`storage/app/legacy-uploads`). Add `--dry-run` to only list what would move, `--keep` to copy instead of move, and `--from=<folder>` to read from a backup copy.
 
 ## Admin accounts on a real server
 

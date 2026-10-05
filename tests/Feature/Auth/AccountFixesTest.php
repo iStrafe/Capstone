@@ -9,6 +9,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
 
@@ -201,6 +202,7 @@ class AccountFixesTest extends TestCase
 
     public function test_login_shows_the_cat_the_guest_wanted_to_adopt(): void
     {
+        Storage::fake('public')->put('images/1730882812.png', 'photo');
         $cat = Cat::create(['cat_name' => 'Snow', 'age' => 2, 'color' => 'White', 'breed' => 'Puspin', 'sex' => 'Female', 'status' => Cat::STATUS_ACTIVE, 'cat_image' => '1730882812.png']);
 
         $this->get(route('adoption.start', $cat))->assertRedirect(route('login'));
@@ -209,11 +211,12 @@ class AccountFixesTest extends TestCase
             ->component('Auth/Login')
             ->where('panelCat.name', 'Snow')
             ->where('panelCat.adopting', true)
-            ->where('panelCat.image', asset('images/1730882812.png')));
+            ->where('panelCat.image', asset('storage/images/1730882812.png')));
     }
 
     public function test_login_without_a_wanted_cat_shows_an_available_cat_with_a_photo(): void
     {
+        Storage::fake('public')->put('images/1730882812.png', 'photo');
         Cat::create(['cat_name' => 'Nophoto', 'age' => 2, 'color' => 'Grey', 'breed' => 'Puspin', 'sex' => 'Male', 'status' => Cat::STATUS_ACTIVE]);
         Cat::create(['cat_name' => 'Snow', 'age' => 2, 'color' => 'White', 'breed' => 'Puspin', 'sex' => 'Female', 'status' => Cat::STATUS_ACTIVE, 'cat_image' => '1730882812.png']);
 

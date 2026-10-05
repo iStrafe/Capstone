@@ -21,6 +21,7 @@ class AnalyzeImageTest extends TestCase
         parent::setUp();
 
         Storage::fake('public');
+        Storage::fake('local');
         config(['services.openai.key' => 'sk-test-dummy']);
         Http::preventStrayRequests();
         $this->withoutMiddleware(ValidateCsrfToken::class);
@@ -48,7 +49,8 @@ class AnalyzeImageTest extends TestCase
             ->assertRedirect('/analyzeImage')
             ->assertSessionHas('analysis', "Color: Orange\nBreed: Puspin\n- short coat");
 
-        Storage::disk('public')->assertDirectoryEmpty('uploads');
+        Storage::disk('public')->assertDirectoryEmpty('/');
+        Storage::disk('local')->assertDirectoryEmpty('/');
     }
 
     public function test_the_photo_is_sent_with_its_own_type(): void
@@ -93,7 +95,8 @@ class AnalyzeImageTest extends TestCase
             ->assertRedirect('/analyzeImage')
             ->assertSessionHas('analysis_error', self::FAILURE_MESSAGE);
 
-        Storage::disk('public')->assertDirectoryEmpty('uploads');
+        Storage::disk('public')->assertDirectoryEmpty('/');
+        Storage::disk('local')->assertDirectoryEmpty('/');
     }
 
     public function test_a_connection_failure_shows_a_friendly_message_and_removes_the_upload(): void
@@ -104,7 +107,8 @@ class AnalyzeImageTest extends TestCase
             ->assertRedirect('/analyzeImage')
             ->assertSessionHas('analysis_error', self::FAILURE_MESSAGE);
 
-        Storage::disk('public')->assertDirectoryEmpty('uploads');
+        Storage::disk('public')->assertDirectoryEmpty('/');
+        Storage::disk('local')->assertDirectoryEmpty('/');
     }
 
     public function test_a_missing_api_key_makes_no_outbound_call(): void

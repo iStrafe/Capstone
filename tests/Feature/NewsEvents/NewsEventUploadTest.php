@@ -7,7 +7,7 @@ use App\Models\User;
 use App\Support\UploadLimit;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
 
@@ -15,22 +15,12 @@ class NewsEventUploadTest extends TestCase
 {
     use RefreshDatabase;
 
-    private string $publicPath;
-
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->publicPath = sys_get_temp_dir().'/aducats-public-'.uniqid();
-        File::ensureDirectoryExists($this->publicPath.'/images');
-        $this->app->usePublicPath($this->publicPath);
-    }
-
-    protected function tearDown(): void
-    {
-        File::deleteDirectory($this->publicPath);
-
-        parent::tearDown();
+        // Uploads go on the media disk; fake it so tests never touch real files.
+        Storage::fake('public');
     }
 
     private function admin(): User
@@ -67,7 +57,7 @@ class NewsEventUploadTest extends TestCase
         $image = NewsEvent::sole()->eventimage;
         $this->assertStringEndsNotWith('.html', $image);
         $this->assertStringEndsWith('.gif', $image);
-        $this->assertFileExists($this->publicPath.'/images/'.$image);
+        Storage::disk('public')->assertExists('images/'.$image);
     }
 
     public function test_updating_an_event_rejects_files_that_are_not_images(): void
@@ -84,7 +74,7 @@ class NewsEventUploadTest extends TestCase
             ->assertSessionHasErrors('eventimage');
 
         $this->assertNull($event->fresh()->eventimage);
-        $this->assertSame([], File::files($this->publicPath.'/images'));
+        $this->assertSame([], Storage::disk('public')->allFiles());
     }
 
     public function test_updating_a_missing_event_returns_404(): void
