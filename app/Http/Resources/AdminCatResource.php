@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use App\Models\Cat;
+use App\Support\PublicMedia;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -35,9 +36,9 @@ class AdminCatResource extends JsonResource
             // For StatusBadge: available, reserved, adopted, inactive or archived.
             'state' => $this->state(),
             'pendingCount' => (int) ($this->pending_requests_count ?? 0),
-            'image' => $this->cat_image ? asset('images/'.$this->cat_image) : null,
+            'image' => PublicMedia::url($this->cat_image),
             'placeholder' => asset('images/placeholder.png'),
-            'clip' => $this->cat_clip ? asset('images/'.$this->cat_clip) : null,
+            'clip' => PublicMedia::url($this->cat_clip),
             'updatedAt' => $this->updated_at?->format('M j, Y'),
             'archivedAt' => $this->archived_at?->format('M j, Y'),
             'archiveReason' => $this->archive_reason,

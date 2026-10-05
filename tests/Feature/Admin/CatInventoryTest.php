@@ -9,6 +9,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
 
@@ -16,23 +17,12 @@ class CatInventoryTest extends TestCase
 {
     use RefreshDatabase;
 
-    private string $publicPath;
-
     protected function setUp(): void
     {
         parent::setUp();
 
-        // Uploads are moved into public/images; point that at a scratch folder so tests never touch real site files.
-        $this->publicPath = sys_get_temp_dir().'/aducats-public-'.uniqid();
-        File::ensureDirectoryExists($this->publicPath.'/images');
-        $this->app->usePublicPath($this->publicPath);
-    }
-
-    protected function tearDown(): void
-    {
-        File::deleteDirectory($this->publicPath);
-
-        parent::tearDown();
+        // Uploads go on the media disk; fake it so tests never touch real files.
+        Storage::fake('public');
     }
 
     private function admin(): User
@@ -77,8 +67,8 @@ class CatInventoryTest extends TestCase
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->component('Admin/Cats/Edit')
-                ->where('cat.clip', asset('images/clip.mp4'))
-                ->where('cat.image', asset('images/photo.jpg'))
+                ->where('cat.clip', asset('storage/images/clip.mp4'))
+                ->where('cat.image', asset('storage/images/photo.jpg'))
                 ->where('cat.medicalRecord', 'Vaccinated')
                 ->where('cat.ageLabel', 'Under 1 year')
                 ->where('cat.updateUrl', route('admin.cats.update', $cat))
@@ -133,7 +123,7 @@ class CatInventoryTest extends TestCase
 
         $clip = $cat->fresh()->cat_clip;
         $this->assertNotNull($clip);
-        $this->assertFileExists($this->publicPath.'/images/'.$clip);
+        Storage::disk('public')->assertExists('images/'.$clip);
     }
 
     public function test_uploaded_images_get_random_names(): void
@@ -153,7 +143,7 @@ class CatInventoryTest extends TestCase
 
         $images = Cat::pluck('cat_image');
         $this->assertCount(2, $images->unique());
-        $images->each(fn ($image) => $this->assertFileExists($this->publicPath.'/images/'.$image));
+        $images->each(fn ($image) => Storage::disk('public')->assertExists('images/'.$image));
     }
 
     public function test_webp_photos_are_accepted(): void

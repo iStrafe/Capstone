@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use App\Models\Cat;
+use App\Support\PublicMedia;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -27,9 +28,9 @@ class CatResource extends JsonResource
             'color' => $this->color,
             'breed' => $this->breed,
             // Null when there is no photo; the page then shows the generic placeholder.
-            'image' => $this->cat_image ? asset('images/'.$this->cat_image) : null,
+            'image' => PublicMedia::url($this->cat_image),
             'placeholder' => asset('images/placeholder.png'),
-            'clip' => $this->cat_clip ? asset('images/'.$this->cat_clip) : null,
+            'clip' => PublicMedia::url($this->cat_clip),
             'url' => route('cats.show', $this->resource),
             // The adoption request page; guests are sent to log in first and come back here.
             'adoptUrl' => route('adoption.start', $this->resource),

@@ -67,7 +67,7 @@ class AdoptionController extends Controller
             $valid_ids = [];
             foreach ($request->file('valid_id', []) as $file) {
                 // IDs are personal documents: keep them off the public disk under a random name.
-                $valid_ids[] = basename($file->store('valid-ids', 'local'));
+                $valid_ids[] = basename($file->store('valid-ids', config('filesystems.private_uploads_disk')));
             }
 
             $user->adoptionRequests()->create([

@@ -56,7 +56,7 @@ class NewsEventResourceTest extends TestCase
             'description' => 'Meet the cats',
             'date' => 'Oct 9, 2026',
             'isoDate' => '2026-10-09',
-            'image' => asset('images/event.jpg'),
+            'image' => asset('storage/images/event.jpg'),
             'isUpcoming' => true,
         ], (new NewsEventResource($today->fresh()))->resolve());
 
@@ -78,7 +78,7 @@ class NewsEventResourceTest extends TestCase
                     ->where('description', 'Meet the cats')
                     ->where('date', 'Oct 9, 2026')
                     ->where('isoDate', '2026-10-09')
-                    ->where('image', asset('images/event.jpg'))
+                    ->where('image', asset('storage/images/event.jpg'))
                     ->has('isUpcoming')));
     }
 }

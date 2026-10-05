@@ -14,7 +14,6 @@ use Illuminate\Http\Client\RequestException;
 use Illuminate\Http\Client\Response as ClientResponse;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Testing\AssertableInertia as Assert;
@@ -30,23 +29,13 @@ class AdminHardeningTest extends TestCase
 
     private User $admin;
 
-    private string $publicPath;
-
     protected function setUp(): void
     {
         parent::setUp();
 
         $this->admin = User::factory()->create(['role' => 'admin']);
-        $this->publicPath = sys_get_temp_dir().'/aducats-public-'.uniqid();
-        File::ensureDirectoryExists($this->publicPath.'/images');
-        $this->app->usePublicPath($this->publicPath);
-    }
-
-    protected function tearDown(): void
-    {
-        File::deleteDirectory($this->publicPath);
-
-        parent::tearDown();
+        // Uploads go on the media disk; fake it so tests never touch real files.
+        Storage::fake('public');
     }
 
     private function cat(array $overrides = []): Cat
@@ -174,21 +163,21 @@ class AdminHardeningTest extends TestCase
         ])->assertSessionHasNoErrors();
         $second = $cat->fresh()->cat_image;
 
-        $this->assertFileDoesNotExist($this->publicPath.'/images/'.$first);
-        $this->assertFileExists($this->publicPath.'/images/'.$second);
+        Storage::disk('public')->assertMissing('images/'.$first);
+        Storage::disk('public')->assertExists('images/'.$second);
 
         $this->delete(route('admin.cats.destroy', $cat));
-        $this->assertFileDoesNotExist($this->publicPath.'/images/'.$second);
+        Storage::disk('public')->assertMissing('images/'.$second);
     }
 
     public function test_images_that_came_with_the_site_are_never_deleted(): void
     {
-        File::put($this->publicPath.'/images/1730882812.png', 'old');
+        Storage::disk('public')->put('images/1730882812.png', 'old');
         $cat = $this->cat(['cat_image' => '1730882812.png']);
 
         $this->actingAs($this->admin)->delete(route('admin.cats.destroy', $cat));
 
-        $this->assertFileExists($this->publicPath.'/images/1730882812.png');
+        Storage::disk('public')->assertExists('images/1730882812.png');
     }
 
     public function test_news_images_are_removed_when_replaced_or_the_post_is_deleted(): void
@@ -200,7 +189,7 @@ class AdminHardeningTest extends TestCase
         $first = $post->eventimage;
 
         $this->post(route('news-events.update', $post), ['_method' => 'put', 'title' => 'Adoption day', 'description' => 'Meet the cats', 'event_date' => '2026-10-10', 'remove_image' => 1]);
-        $this->assertFileDoesNotExist($this->publicPath.'/images/'.$first);
+        Storage::disk('public')->assertMissing('images/'.$first);
     }
 
     public function test_event_dates_must_be_real_calendar_dates(): void

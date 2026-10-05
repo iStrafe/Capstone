@@ -28,6 +28,22 @@ return [
     |
     */
 
+    /*
+    |--------------------------------------------------------------------------
+    | Upload Disks
+    |--------------------------------------------------------------------------
+    |
+    | Cat photos, cat clips and news images go on the media disk, which must be
+    | publicly readable. Applicant ID photos go on the private disk and are only
+    | sent to admins through an authorized route. Set either to "s3" to move the
+    | files to a bucket; the database only stores file names.
+    |
+    */
+
+    'media_disk' => env('MEDIA_DISK', 'public'),
+
+    'private_uploads_disk' => env('PRIVATE_UPLOADS_DISK', 'local'),
+
     'disks' => [
 
         'local' => [

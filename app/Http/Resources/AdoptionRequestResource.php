@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use App\Models\AdoptionRequest;
+use App\Support\PublicMedia;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -33,7 +34,7 @@ class AdoptionRequestResource extends JsonResource
             'cat' => $this->whenLoaded('cat', fn () => $this->cat ? [
                 'id' => $this->cat->id,
                 'name' => $this->cat->cat_name,
-                'image' => $this->cat->cat_image ? asset('images/'.$this->cat->cat_image) : null,
+                'image' => PublicMedia::url($this->cat->cat_image),
                 'placeholder' => asset('images/placeholder.png'),
                 'url' => route('cats.show', $this->cat),
                 // Another applicant was approved for this cat (or already took it home). Load with

@@ -4,21 +4,18 @@ namespace App\Http\Controllers\Concerns;
 
 use App\Models\Cat;
 use App\Models\NewsEvent;
+use App\Support\PublicMedia;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\File;
 
 trait StoresPublicImages
 {
     /**
-     * Move an upload into public/images under a random, server-chosen name and extension,
-     * so uploads can't overwrite each other and the client's filename never reaches the web root.
+     * Store an upload on the media disk under a random, server-chosen name and extension,
+     * so uploads can't overwrite each other and the client's filename is never used.
      */
     protected function moveToPublicImages(UploadedFile $file): string
     {
-        $name = $file->hashName();
-        $file->move(public_path('images'), $name);
-
-        return $name;
+        return PublicMedia::store($file);
     }
 
     /**
@@ -37,7 +34,7 @@ trait StoresPublicImages
                 || NewsEvent::where('eventimage', $name)->exists();
 
             if (! $used) {
-                File::delete(public_path('images/'.$name));
+                PublicMedia::delete($name);
             }
         }
     }

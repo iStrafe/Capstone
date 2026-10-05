@@ -29,7 +29,7 @@ class PublicPagesTest extends TestCase
             ->assertInertia(fn (Assert $page) => $page
                 ->where('cats.0.name', 'Tiger')
                 ->where('cats.0.clip', null)
-                ->where('cats.1.clip', asset('images/first.mp4')));
+                ->where('cats.1.clip', asset('storage/images/first.mp4')));
     }
 
     public function test_home_page_does_not_inline_the_unused_stylesheet(): void
